@@ -1,20 +1,43 @@
 # phackp
-PHP Modern Micro Framework
+PHP Micro Framework, born in PHP7 Age!
+
+# disclaimer
+
+pHackp is actually in alpha stage.
+the framework might change in ways that make alpha/beta releases un-compatible with the first stable version in the future.
+The first stable will be compatible with PHP7+ only. (actually codebase is php 5.3+)
 
 # Introduction
-phackp aim to provide a fast and easy way to build modern and resposive websites and apps.
+pHackp aim to provide a fast and easy way to build modern and resposive websites and apps.
 It provides an Model View Controller structure for organizing your project and tries to be as far as possible "convention over configuration".
 
 
-## Features
-* Routing
+## Features and Roadmap
+\* marked are under development or analysis
+### Routing
   * json mapped routes
+  * actions are mapped as Controller@method
   * exclusion of non-mapped routes (return a routable 404 page mapping)
   * 100% pretty urls (e.g. ...blog/title/1)
   * parameter bound with simple tag {tag} (e.g. tag/{tag}/)
-  * REST method mapping (GET,POST,DELETE,PUT)
+  * REST method mapping (GET,POST,DELETE,PUT)*
   * auto parameters injection to target method signature
-  * rich set of RESTful features (e.g. auto json decoding/encoding)
-* Persistence
-  * object-relational mapping engine built on top of PDO.
-  * auto model mapping (convention-based)
+  * rich set of RESTful features (e.g. auto json decoding/encoding)*
+
+### Persistence
+   * object-relational mapping engine built on top of PDO.
+   * API for intuitive access
+   * auto model mapping (convention-based)
+   * OneToMany, ManyToOne, ManyToMany relationships between objects
+   * Self reflecting methods (Abstract) (e.g. $object->save() .)
+   * dependency injection (e.g self::oneToMany($this, 'Parent') returns $Parent.)*
+   * Singleton Database instance provides one connection per execution
+   * ability to use Database standalone to preserve "is a" OOP rule. (but Model API is more productive!)*
+   
+### Model View Controller
+  * Controller API provides all useful stuff (sessions, flash scopes, security etc...)*
+  * simple API for models
+  * view variables rendering from controllers (e.g $View->renderArgs("name", value) accessible from view as $name.)
+  * view render specific template (e.g. $View->render("app/blogpage") .)
+  * built-in template system support template inheritance.*
+  * it's all about conventions!
