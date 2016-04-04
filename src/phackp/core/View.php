@@ -1,5 +1,5 @@
 <?php
-namespace PlayPhp\Classes;
+namespace yuxblank\phackp\core;
 /*
  * Copyright (C) 2015 yuri.blanc
  *
