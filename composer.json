@@ -15,7 +15,7 @@
   },
   "autoload": {
     "psr-4": {
-      "yuxblank\\phackp\\core\\": "src/Core/"
+      "yuxblank\\phackp\\core\\": "src/phackp/core/"
     }
   }
 }
