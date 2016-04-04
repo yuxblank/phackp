@@ -1,0 +1,21 @@
+{
+  "name": "yuxblank/phackp",
+  "description": "description_text",
+  "version": "0.1-alpha",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Yuri Blanc",
+      "email": "yuxblank@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "yuxblank\\phackp\\core\\": "src/Core/"
+    }
+  }
+}
