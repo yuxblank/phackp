@@ -337,7 +337,7 @@ class Router
 
     public static function getController($action)
     {
-        return explode('@', $action->action):
+        return explode('@', $action->action);
     }
 
     /**

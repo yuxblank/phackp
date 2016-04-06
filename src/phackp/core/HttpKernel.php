@@ -20,7 +20,9 @@ final class HttpKernel
     public function __construct()
     {
         $this->method = $_SERVER['REQUEST_METHOD'];
-        $this->content_type = $_SERVER['CONTENT_TYPE'];
+        if (isset($_SERVER['CONTENT_TYPE'])) {
+            $this->content_type = $_SERVER['CONTENT_TYPE'];
+        }
         $this->url = $this->parseUrl();
 
     }
