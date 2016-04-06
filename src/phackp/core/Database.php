@@ -18,6 +18,8 @@ namespace yuxblank\phackp\core;
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+use yuxblank\phackp\api\ObjectRelationalMapping;
+use yuxblank\phackp\api\ObjectsDataAccess;
 
 /**
  * This class is a API based on top of PDO. The class allow query building, Object relationship mapping and db access.
@@ -26,7 +28,7 @@ namespace yuxblank\phackp\core;
  * @version 0.2
  */
 
-class Database {
+class Database implements ObjectRelationalMapping, ObjectsDataAccess{
     private $pdo;
     private $stm;
     private $dbDriver;
@@ -50,8 +52,9 @@ class Database {
         }
     }
 
-    public function nativeQuery($query,$params) {
-        $this->query($query);
+    public function findAsArray($object,$query,$params) {
+        $table = $this->objectInjector($object);
+        $this->query('SELECT * FROM '.$table.' WHERE '.$query);
         $this->paramsBinder($params);
         $this->execute();
         return $this->stm->fetch(PDO::FETCH_ASSOC);
@@ -62,8 +65,9 @@ class Database {
      * @param mixed[] $params
      * @return stdClass
      */
-    public function findMagic($query, $params) {
-        $this->query($query);
+    public function findAs($object,$query, $params) {
+        $table = $this->objectInjector($object);
+        $this->query('SELECT * FROM ' . $table . ' WHERE '. $query);
         if(isset($params)) {
             $this->paramsBinder($params);
         }
@@ -76,8 +80,9 @@ class Database {
      * @param mixed[] $params
      * @return stdClass[]
      */
-    public function findMagicSet($query, $params) {
-        $this->query($query);
+    public function findAsAll($object, $query, $params) {
+        $table = $this->objectInjector($object);
+        $this->query('SELECT * FROM ' . $table . ' WHERE '. $query);
         $this->paramsBinder($params);
         $this->execute();
         return $this->stm->fetchAll(PDO::FETCH_OBJ);
@@ -97,7 +102,7 @@ class Database {
         } catch (Exception $e) {
             return;
         }
-        $statement = "SELECT * FROM $table ".$query;
+        $statement = "SELECT * FROM $table WHERE ".$query;
         $this->query($statement);
         $this->paramsBinder($params);
         return $this->fetchSingleObject($object);
@@ -135,7 +140,8 @@ class Database {
         } catch (Exception $e) {
             return;
         }
-        $statement = "SELECT * FROM $table ".$query;
+        $isWhere = $query!=null ? ' WHERE ' : '';
+        $statement = "SELECT * FROM " . $table.$isWhere.$query;
         if (isset($current) && isset($max)) {
             if(isset($order)) {
                 $statement.=" ".$order;
@@ -153,7 +159,7 @@ class Database {
         }
         if (isset($current) && isset($max)) {
             $this->bindValue(++$lastValue, $current, PDO::PARAM_INT);
-            $this->bindValu(++$lastValue, $max, PDO::PARAM_INT);
+            $this->bindValue(++$lastValue, $max, PDO::PARAM_INT);
 
         }
         return $this->fetchObjectSet($object);
@@ -167,14 +173,14 @@ class Database {
 
     public function countObjects($object) {
         $table = $this->objectInjector($object);
-        $query = "SELECT COUNT(*) FROM $table";
+        $query = 'SELECT COUNT(*) FROM ' . $table;
         $this->query($query);
         return $this->rowCount();
     }
 
     public function _countObjects($object,$query,$params) {
         $table = $this->objectInjector($object);
-        $query = "SELECT COUNT(*) FROM $table $query";
+        $query = 'SELECT COUNT(*) FROM '. $table . ' WHERE ' . $query;
         $this->query($query);
         $this->paramsBinder($params);
         return $this->rowCount();
@@ -527,6 +533,7 @@ class Database {
         $this->execute();
         return $this->stm->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $object);
     }
+
 
 }
 

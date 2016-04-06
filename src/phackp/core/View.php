@@ -16,7 +16,7 @@ namespace yuxblank\phackp\core;
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-require_once APP_ROOT.'playphp/class/exceptions/IoExceptions.php';
+require_once APP_ROOT.'playphp/class/exceptions/IOException.php';
 
 
 /**
@@ -58,7 +58,7 @@ class View {
         extract($this->var);
         try {
             if (!file_exists($this->page_content)) {
-                throw new \FileNotFoundException("File not found: ". $this->page_content);
+                throw new \IOException("File not found: ". $this->page_content);
             }
             if (!$path) {
             include APP_ROOT."view/main.php";
@@ -67,10 +67,10 @@ class View {
             }
 
             if (!file_exists(APP_ROOT."template/$this->template/index.php")) {
-                 throw new \FileNotFoundException ("File not found: " . APP_ROOT."template/$this->template/index.php");
+                 throw new \IOException ("File not found: " . APP_ROOT."template/$this->template/index.php");
             }
             
-        } catch (\FileNotFoundException $ex) {
+        } catch (\IOException $ex) {
             
         }
     }

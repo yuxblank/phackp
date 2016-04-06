@@ -61,7 +61,7 @@ class Secure extends Controller {
      */
     private static function Crypto() {
         if (self::$cripto == null) {
-            self::$cripto = new \PlayPHP\Classes\Security\Crypto();
+            self::$cripto = new Crypto();
         }
         return self::$cripto;
     }

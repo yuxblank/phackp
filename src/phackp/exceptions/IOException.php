@@ -1,5 +1,5 @@
 <?php
-
+namespace yuxblank\phackp\exceptions;
 /*
  * Copyright (C) 2015 yuri.blanc
  *
@@ -22,7 +22,7 @@
  *
  * @author yuri.blanc
  */
-class FileNotFoundException extends Exception {
+class IOException extends Exception {
 
 
 }

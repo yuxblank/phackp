@@ -53,12 +53,12 @@ abstract class Model  {
         return self::$db->findById(get_called_class(), $id);
     }
 
-    public final function findMagic($query, $params=null) {
-        return self::$db->findMagic($query, $params);
+    public final function findAs($query, $params=null) {
+        return self::$db->findAs(get_called_class(),$query, $params);
     }
 
     public final function findMagicSet($query, $params) {
-        return self::$db->findMagicSet($query, $params);
+        return self::$db->findAsAll(get_called_class(),$query, $params);
     }
 
     public final function lastInsertId() {
@@ -66,7 +66,7 @@ abstract class Model  {
     }
 
     public final function nativeQuery($query, $params) {
-        return self::$db->nativeQuery($query, $params);
+        return self::$db->findAsArray(get_called_class(),$query, $params);
     }
 
     public function save() {
