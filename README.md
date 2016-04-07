@@ -11,11 +11,24 @@ The first stable will be compatible with PHP7+ only. (actually codebase is php 5
 pHackp aim to provide a fast and easy way to build modern and resposive websites and apps.
 It provides an Model View Controller structure for organizing your project and tries to be as far as possible "convention over configuration".
 
+# Requirements
+Actually the frameworks is on heavy development. it has been tested with Apache server only. I planned to provide support for both Apahce, Ngnix and IIS.
+
 
 ## Features and Roadmap
 \* marked are under development or analysis
+
+### Main features
+  * Small footprint
+  * Totally object oriented
+  * Easy to use
+  * 0 dependecies required
+  * PHP 7 or greather*
+  * easy extendibility (API's, Modules etc.)*
+  * Almost no configuration (No yaml, xml, ini.. Just PHP and PHP/json for routes)*
+
 ### Routing
-  * json mapped routes
+  * json/array mapped routes*
   * actions are mapped as Controller@method
   * exclusion of non-mapped routes (return a routable 404 page mapping)
   * 100% pretty urls (e.g. ...blog/title/1)
@@ -41,3 +54,12 @@ It provides an Model View Controller structure for organizing your project and t
   * view render specific template (e.g. $View->render("app/blogpage") .)
   * built-in template system support template inheritance.*
   * it's all about conventions!
+
+### Presentation layer
+  * Built-in engine for views
+   * plain PHP syntax
+   * template inheritance
+ 
+### PSR-4
+  * use composer default autoload psr-4
+  * auto mapping for project classes
