@@ -37,6 +37,10 @@ class Application
         return $this->config;
     }
 
+    public function getRoutes() {
+        return $this->config['ROUTES'];
+    }
+
 
 
     /**

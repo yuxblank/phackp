@@ -257,7 +257,7 @@ class Router
     {
         //test
         $routes = array(); // routes loaded
-        foreach ($routes as $uri => $route) {
+        foreach (Application::getInstance()->getConfig()['ROUTES'] as $uri => $route) {
             // case without params
             if ($uri === $query) {
                 return $route;
