@@ -31,8 +31,9 @@ final class HttpKernel
     {
         $path = implode('/', array_slice(explode('/', $_SERVER['SCRIPT_NAME']), 0, -1));
         $uri = substr($_SERVER['REQUEST_URI'], strlen($path));
-        $root = ltrim($uri, '/');
-        return explode('/', parse_url($root, PHP_URL_PATH));
+        $root = $uri!=='/' ? ltrim($uri, '/') : $uri;
+        return $root;
+        //return explode('/', parse_url($root, PHP_URL_PATH));
     }
 
     /**

@@ -34,7 +34,8 @@ class Router
      */
     private function __construct()
     {
-        Router::$routes = json_decode(file_get_contents(APP_ROOT . 'config/routes.json'));
+        Router::$routes = Application::getInstance()->getConfig()['ROUTES'];
+        /*Router::$routes = json_decode(file_get_contents(APP_ROOT . 'config/routes.json'));*/
     }
 
     /**

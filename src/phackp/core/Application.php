@@ -30,6 +30,16 @@ class Application
     }
 
     /**
+     * @return mixed
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+
+
+    /**
      * Bootstrap the application. Requires the path of the configuration files.
      * @param $config
      */
@@ -38,22 +48,31 @@ class Application
 
         if (is_dir($config)) {
 
+            $tmp = null;
             $files = glob($config . '*.php');
 
             foreach ($files as $file) {
-                $this->config[] = require $file;
+                $tmp[] = require $file;
             }
+
+            foreach ($tmp as $key => $value ) {
+
+                foreach($value as $key2 => $innervalue) {
+
+                    $this->config[$key2] = $innervalue;
+
+                }
+
+            }
+
+
 
         }
 
 
-        $this->config = $config;
-
-        $this->run();
-
     }
 
-    private function run()
+    public function run()
     {
         // get the httpKernel
         $httpKernel = new HttpKernel();
