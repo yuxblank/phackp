@@ -338,7 +338,10 @@ class Router
 
     public static function getController($action)
     {
-        return explode('@', $action->action);
+        $array = explode('@', $action);
+        $array[0] = 'controller\\'.$array[0];
+
+        return $array;
     }
 
     /**

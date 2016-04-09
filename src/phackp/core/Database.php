@@ -1,7 +1,7 @@
 <?php
 namespace yuxblank\phackp\core;
 //use Exception;
-//use PDO;
+use PDO;
 /*
  * Copyright (C) 2015 yuri.blanc
  *

@@ -12,7 +12,7 @@ namespace yuxblank\phackp\api;
 interface ObjectRelationalMapping
 {
     public function oneToOne($a,$b);
-    public function oneToMany($a,$b):array;
+    public function oneToMany($a,$b);
     public function manyToOne($a,$b);
     public function manyToMany($a,$b);
 
