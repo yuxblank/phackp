@@ -46,6 +46,10 @@ class Application
         return self::getInstance()->config['DATABASE'];
     }
 
+    public static function getNameSpace() {
+        return self::getInstance()->config['NAMESPACE'];
+    }
+
     public static function getAppRoot() {
         return self::getInstance()->APP_ROOT;
     }
