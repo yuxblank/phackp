@@ -22,6 +22,11 @@ class Application
 
     }
 
+    /**
+     * Get the application instance.
+     * If it's not followed by bootstrap() the application will run under exception.
+     * @return Application
+     */
     public static function getInstance()
     {
         if (self::$instance === null) {
@@ -31,39 +36,59 @@ class Application
     }
 
     /**
-     * @return mixed
+     * Return the entire array of configurations.
+     * @return array
      */
     public function getConfig()
     {
         return self::getInstance()->config;
     }
 
+    /**
+     * Return routes
+     * @return array
+     */
     public static function getRoutes() {
         return self::getInstance()->config['ROUTES'];
     }
 
+    /**
+     * Return database configurations
+     * @return array
+     */
     public static function getDatabase(){
         return self::getInstance()->config['DATABASE'];
     }
-
+    /**
+     * Return namespaces configured for the project
+     * @return array
+     */
     public static function getNameSpace() {
         return self::getInstance()->config['NAMESPACE'];
     }
 
+    /**
+     * Return the application root (__DIR__)
+     * @return string
+     */
     public static function getAppRoot() {
         return self::getInstance()->APP_ROOT;
     }
+
+    /**
+     * Return the application url configured
+     * @return string
+     */
 
     public static function getAppUrl() {
         return self::getInstance()->config['APP_URL'];
     }
 
 
-
-
     /**
-     * Bootstrap the application. Requires the path of the configuration files.
-     * @param $config
+     * Bootstrap the application. Requires the root path of the application (__DIR__)
+     * Configuration files folder MUST be present at ROOT/config/.. path.
+     * @param $realPath (__DIR__)
      */
     public function bootstrap(string $realPath)
     {
@@ -97,6 +122,9 @@ class Application
 
     }
 
+    /**
+     * Where fun starts!
+     */
     public function run()
     {
         // get the httpKernel

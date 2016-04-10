@@ -252,7 +252,12 @@ class Router
         return $route;
     }
 
-    // TODO new routing
+    /**
+     * Read the url and return route if found in routes file.
+     * If route has not been found, retrun null
+     * @param $query (relative url)
+     * @return array|null
+     */
     public function _findAction($query)
     {
         //test
@@ -281,7 +286,13 @@ class Router
         return null;
     }
 
-    // TODO new routing filter
+    /**
+     * Read the url and the route and watch if it matches, Replacing the wildcards {val} until the url match then return the url
+     * Return null if the given url does not match the route.
+     * @param $routeParams
+     * @param $realParams
+     * @return null|string
+     */
     private static function compareRoutes($routeParams, $realParams)
     {
         $count = count($realParams);
@@ -308,7 +319,13 @@ class Router
         return implode('/', $routeParams);
     }
 
-// TODO new routing wildcard parser
+    /**
+     * Read the route wildCards {name} and return an associative array paired on {name} => value.
+     * The value is taken from the current request parameter.
+     * @param $routeParams
+     * @param $queryArray
+     * @return array
+     */
     private static function getWildCardParams($routeParams, $queryArray)
     {
         $params = preg_grep(self::WILDCARD_REGEXP, $routeParams);
@@ -348,8 +365,8 @@ class Router
     }*/
 
     /**
-     * TODO find way to distinguish application-level namespaces and classes from dependencies
      * Performs a inverse route returning returning an array with [0 => 'Controller', 1 => 'action']
+     * Recreate the current application CONTROLLER namespace using the application configuration.
      * @param string $action
      * @return mixed[]
      */
@@ -387,7 +404,11 @@ class Router
     }
 
 
-    // TODO switch can be avoided and encapsulated with $httpKernel->method;
+    /**
+     * Dispatch HTTP request and parameters to the current HttpKernel instance.
+     * @param $route
+     * @param HttpKernel $httpKernel
+     */
     public static function dispatch($route, HttpKernel $httpKernel)
     {
 

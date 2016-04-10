@@ -17,6 +17,9 @@ final class HttpKernel
     private $content_type;
     private $params;
 
+    /**
+     * HttpKernel constructor. When i run it capture all the information about the request and parse the url.
+     */
     public function __construct()
     {
         $this->method = $_SERVER['REQUEST_METHOD'];
@@ -27,6 +30,10 @@ final class HttpKernel
 
     }
 
+    /**
+     * Get the current relative url
+     * @return string
+     */
     private function parseUrl()
     {
         $path = implode('/', array_slice(explode('/', $_SERVER['SCRIPT_NAME']), 0, -1));
@@ -37,7 +44,8 @@ final class HttpKernel
     }
 
     /**
-     * @return array
+     * Return actual url
+     * @return string
      */
     public function getUrl()
     {
@@ -45,7 +53,8 @@ final class HttpKernel
     }
 
     /**
-     * @return mixed
+     * Return the request METHOD
+     * @return string
      */
     public function getMethod()
     {
@@ -53,7 +62,8 @@ final class HttpKernel
     }
 
     /**
-     * @return mixed
+     * Return the request content-type
+     * @return string
      */
     public function getContentType()
     {
@@ -61,19 +71,30 @@ final class HttpKernel
     }
 
     /**
-     * @return mixed
+     * return the array of params if any.
+     * if no parameters has been found return null
+     * @return array|null
      */
     public function getParams()
     {
         return $this->params;
     }
 
-
+    /**
+     * Set parameters to the request
+     * @param $params
+     */
     public function setParams($params){
         $this->params[$this->getMethod()] = $params;
     }
 
+
     // todo implements all content type
+    /**
+     * Parse the request content type
+     * @param $body
+     * @return mixed
+     */
     public function parseContentType($body) {
 
         switch($this->getContentType()){
@@ -88,6 +109,11 @@ final class HttpKernel
 
     }
 
+    /**
+     * Read the input data and return the json as an array
+     * @param $jsonData
+     * @return array
+     */
     private function parseJson($jsonData) {
         return json_decode($jsonData);
     }
