@@ -266,7 +266,7 @@ class Router
                 $replace = "";
                 $routeArray = explode('/', $uri);
                 $queryArray = explode('/', $query);
-                $url = $this->compareRoutes($routeArray, $queryArray);
+                $url = self::compareRoutes($routeArray, $queryArray);
                 if ($url !== null) {
                     $route->url = $url;
                     $route->getParams = $this->getWildCardParams($routeArray, $queryArray);
@@ -280,7 +280,7 @@ class Router
     }
 
     // TODO new routing filter
-    private function compareRoutes($routeParams, $realParams)
+    private static function compareRoutes($routeParams, $realParams)
     {
         $count = count($realParams);
         for ($i = 0; $i < $count; $i++) {

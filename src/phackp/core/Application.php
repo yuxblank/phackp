@@ -54,6 +54,11 @@ class Application
         return self::getInstance()->APP_ROOT;
     }
 
+    public static function getAppUrl() {
+        return self::getInstance()->config['APP_URL'];
+    }
+
+
 
 
     /**
@@ -87,6 +92,7 @@ class Application
             }
 
         }
+
 
 
     }
