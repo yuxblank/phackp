@@ -41,14 +41,20 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
      * Constructor connects to database
      */
     public function __construct() {
-        $dsn = $this->dbDriver.':host=' .$this->dbHost . ";dbname=".$this->dbName;
-        try {
-            $this->pdo = new PDO($dsn, $this->dbUser, $this->dbPwd);
-            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
-        } catch (PDOException $ex) {
-            $ex->getMessage();
 
+        if (Application::getConfig()['USE_DATABASE']) {
+
+            $database = Application::getDatabase();
+
+            $dsn = $database['DRIVER'] . ':host=' . $database['HOST'] . ";dbname=" . $database['NAME'];
+            try {
+                $this->pdo = new PDO($dsn, $database['USER'], $database['PSW']);
+                $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
+            } catch (PDOException $ex) {
+                $ex->getMessage();
+
+            }
         }
     }
 

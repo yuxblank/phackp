@@ -10,6 +10,7 @@ class Application
 {
 
     protected static $instance;
+    protected $APP_ROOT;
     private $config;
     protected $version;
 
@@ -34,11 +35,19 @@ class Application
      */
     public function getConfig()
     {
-        return $this->config;
+        return self::getInstance()->config;
     }
 
-    public function getRoutes() {
-        return $this->config['ROUTES'];
+    public static function getRoutes() {
+        return self::getInstance()->config['ROUTES'];
+    }
+
+    public static function getDatabase(){
+        return self::getInstance()->config['DATABASE'];
+    }
+
+    public static function getAppRoot() {
+        return self::getInstance()->APP_ROOT;
     }
 
 
@@ -47,8 +56,12 @@ class Application
      * Bootstrap the application. Requires the path of the configuration files.
      * @param $config
      */
-    public function bootstrap($config)
+    public function bootstrap(string $realPath)
     {
+
+        $this->APP_ROOT = $realPath;
+
+        $config = $realPath.'/config/';
 
         if (is_dir($config)) {
 
@@ -68,8 +81,6 @@ class Application
                 }
 
             }
-
-
 
         }
 

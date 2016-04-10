@@ -336,13 +336,13 @@ class Router
         }
     }
 
-    public static function getController($action)
+/*    public static function getController($action)
     {
         $array = explode('@', $action);
         $array[0] = 'controller\\'.$array[0];
 
         return $array;
-    }
+    }*/
 
     /**
      * TODO find way to distinguish application-level namespaces and classes from dependencies
@@ -350,16 +350,12 @@ class Router
      * @param string $action
      * @return mixed[]
      */
-    public static function _getController($action)
+    public static function getController($action)
     {
-        /*return explode("@", $action->action);*/
-        $parse = explode("@", $action->action);
-        if (class_exists($parse[0], true)) {
-            return new $parse[0]();
-        } else {
-            die("class: " . $parse[0] . " cannot be loaded, check autoloading configurations");
-        }
-
+        $namespace = Application::getNamesSpaces()['CONTROLLER'];
+        $array = explode('@', $action);
+        $array[0] = $namespace.$array[0];
+        return $array;
     }
 
 
