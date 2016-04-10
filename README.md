@@ -25,10 +25,10 @@ Actually the frameworks is on heavy development. it has been tested with Apache 
   * 0 dependecies required
   * PHP 7 or greather*
   * easy extendibility (API's, Modules etc.)*
-  * Almost no configuration (No yaml, xml, ini.. Just PHP and PHP/json for routes)*
+  * Almost no configuration (No yaml, xml, ini.. Just PHP)*
 
 ### Routing
-  * json/array mapped routes*
+  * array mapped routes
   * actions are mapped as Controller@method
   * exclusion of non-mapped routes (return a routable 404 page mapping)
   * 100% pretty urls (e.g. ...blog/title/1)
