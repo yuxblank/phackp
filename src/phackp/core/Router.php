@@ -352,7 +352,7 @@ class Router
      */
     public static function getController($action)
     {
-        $namespace = Application::getNamesSpace()['CONTROLLER'];
+        $namespace = Application::getNameSpace()['CONTROLLER'];
         $array = explode('@', $action);
         $array[0] = $namespace.$array[0];
         return $array;
