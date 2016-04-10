@@ -263,16 +263,18 @@ class Router
                 return $route;
                 // case with {} params
             } else {
-                $replace = "";
-                $routeArray = explode('/', $uri);
-                $queryArray = explode('/', $query);
-                $url = self::compareRoutes($routeArray, $queryArray);
-                if ($url !== null) {
-                    $route->url = $url;
-                    $route->getParams = $this->getWildCardParams($routeArray, $queryArray);
-                    return $uri;
-                } else {
-                    continue;
+                if (preg_match(self::WILDCARD_REGEXP, $uri)) {
+                    $replace = "";
+                    $routeArray = explode('/', $uri);
+                    $queryArray = explode('/', $query);
+                    $url = self::compareRoutes($routeArray, $queryArray);
+                    if ($url !== null) {
+                        $route['params'] = array();
+                        $route['params'] = self::getWildCardParams($routeArray, $queryArray);
+                        return $route;
+                    } else {
+                        continue;
+                    }
                 }
             }
         }
@@ -288,7 +290,8 @@ class Router
                 continue;
             } else {
                 if (preg_match(self::WILDCARD_REGEXP, $routeParams[$i])) {
-                    preg_replace(self::WILDCARD_REGEXP, $realParams[$i], $routeParams[$i]);
+                    $replaceParam = preg_replace(self::WILDCARD_REGEXP, $realParams[$i], $routeParams[$i]);
+                    $routeParams[$i] = $replaceParam;
                     if ($realParams[$i] === $routeParams[$i]) {
                         continue;
                         // not the same route
@@ -306,7 +309,7 @@ class Router
     }
 
 // TODO new routing wildcard parser
-    private function getWildCardParams($routeParams, $queryArray)
+    private static function getWildCardParams($routeParams, $queryArray)
     {
         $params = preg_grep(self::WILDCARD_REGEXP, $routeParams);
         $getParams = array();

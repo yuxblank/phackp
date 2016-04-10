@@ -104,6 +104,7 @@ class Application
         // get the route
         $route = Router::_findAction($httpKernel->getUrl());
         Router::dispatch($route, $httpKernel);
+        $httpKernel->setParams($route['params']);
         $action = Router::getController($route['action']);
         $controller = new $action[0];
         $a = $action[1];
