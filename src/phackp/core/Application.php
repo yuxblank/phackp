@@ -39,7 +39,7 @@ class Application
      * Return the entire array of configurations.
      * @return array
      */
-    public function getConfig()
+    public static function getConfig()
     {
         return self::getInstance()->config;
     }

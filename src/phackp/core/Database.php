@@ -39,11 +39,10 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
     private $dbPwd;
     private $options;
     /**
+     * TODO exception handlers
      * Constructor connects to database
      */
     public function __construct() {
-
-        if (Application::getConfig()['USE_DATABASE']) {
 
             $database = Application::getDatabase();
 
@@ -56,7 +55,7 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
                 $ex->getMessage();
 
             }
-        }
+
     }
 
     public function findAsArray($object,$query,$params) {
