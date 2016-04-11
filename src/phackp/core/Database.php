@@ -20,6 +20,7 @@ use PDO;
  */
 use yuxblank\phackp\api\ObjectRelationalMapping;
 use yuxblank\phackp\api\ObjectsDataAccess;
+use yuxblank\phackp\utils\NamespaceParser;
 
 /**
  * This class is a API based on top of PDO. The class allow query building, Object relationship mapping and db access.
@@ -472,7 +473,7 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
 //            return strtolower(get_class($object));
 //        }
 
-        return strtolower($object);
+        return strtolower(NamespaceParser::stripNamespace($object));
     }
     /**
      * @internal parse params from a given array and bind them in a prepared statement
