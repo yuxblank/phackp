@@ -17,7 +17,8 @@
     "psr-4": {
       "yuxblank\\phackp\\core\\": "src/phackp/core/",
       "yuxblank\\phackp\\api\\": "src/phackp/api/",
-      "yuxblank\\phackp\\exceptions\\": "src/phackp/exceptions/"
+      "yuxblank\\phackp\\exceptions\\": "src/phackp/exceptions/",
+      "yuxblank\\phackp\\utils\\" : "src/phackp/utils"
     }
   }
 }
