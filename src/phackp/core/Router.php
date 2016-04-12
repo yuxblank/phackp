@@ -121,6 +121,29 @@ class Router
     }*/
 
     /**
+     * Get a link url without checking if the route is really defined.
+     * To set params, specify the ordinal position in the link as {param}, the array must preserve params ordinal position.
+     * This is the faster way to get a real link, but will return 404 not found when the route does not exist.
+     * @param string $link
+     * @param array $params
+     * @return string
+     */
+    public static function link(string $link, array $params =null):string {
+        if ($params!==null){
+            $url = explode('/', $link);
+            $wildcards = preg_grep(self::WILDCARD_REGEXP,$url);
+            $i=0;
+            foreach ($wildcards as $key => $wildcard) {
+                $url[$key] = $params[$i];
+                $i++;
+            }
+            return Application::getAppUrl().'/'.implode('/', $url);
+        } else {
+            return Application::getAppUrl().'/'.$link;
+        }
+    }
+
+    /**
      * Redirect (302) to another action from an action.
      * @static
      * @param string $action
@@ -269,7 +292,6 @@ class Router
                 // case with {} params
             } else {
                 if (preg_match(self::WILDCARD_REGEXP, $uri)) {
-                    $replace = "";
                     $routeArray = explode('/', $uri);
                     $queryArray = explode('/', $query);
                     $url = self::compareRoutes($routeArray, $queryArray);
@@ -296,13 +318,17 @@ class Router
     private static function compareRoutes($routeParams, $realParams)
     {
         $count = count($realParams);
+        if ($count < count($routeParams)) {
+            return null;
+        }
+
         for ($i = 0; $i < $count; $i++) {
             if ($realParams[$i] === $routeParams[$i]) {
                 continue;
             } else {
                 if (preg_match(self::WILDCARD_REGEXP, $routeParams[$i])) {
                     $replaceParam = preg_replace(self::WILDCARD_REGEXP, $realParams[$i], $routeParams[$i]);
-                    $routeParams[$i] = $replaceParam;
+
                     if ($realParams[$i] === $routeParams[$i]) {
                         continue;
                         // not the same route
