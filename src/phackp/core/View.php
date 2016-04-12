@@ -40,6 +40,7 @@ class View {
         $this->var[$name] = $value;
     }
     /**
+     * // TODO conventional render()
      * Render the view. Using relative paths you can specify subfolders of view root. (e.g. blog/post = view/blog/post.php)
      * Automatically set .php extension to the view name.
      * @param string $view

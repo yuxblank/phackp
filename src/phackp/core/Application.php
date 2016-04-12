@@ -84,6 +84,17 @@ class Application
         return self::getInstance()->config['APP_URL'];
     }
 
+    /**
+     * Return the action for the given error code from routes.
+     * @param int $code
+     * @return mixed
+     */
+    private static function getErrorRoute(int $code)
+    {
+        return self::getRoutes()[$code]['action'];
+    }
+
+
 
     /**
      * Bootstrap the application. Requires the root path of the application (__DIR__)
@@ -141,7 +152,10 @@ class Application
             $a = $action[1];
             $controller->$a($httpKernel->getParams());
         } else {
-            die("404 not found");
+            $notFoundRoute = Router::getController(self::getErrorRoute(404));
+            $controller = new $notFoundRoute[0]();
+            $a = $notFoundRoute[1];
+            $controller->$a();
         }
     }
 
