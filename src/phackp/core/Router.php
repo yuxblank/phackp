@@ -328,7 +328,7 @@ class Router
             } else {
                 if (preg_match(self::WILDCARD_REGEXP, $routeParams[$i])) {
                     $replaceParam = preg_replace(self::WILDCARD_REGEXP, $realParams[$i], $routeParams[$i]);
-
+                    $routeParams[$i] = $replaceParam;
                     if ($realParams[$i] === $routeParams[$i]) {
                         continue;
                         // not the same route
