@@ -283,9 +283,8 @@ class Router
      */
     public function _findAction($query)
     {
-        //test
-        $routes = array(); // routes loaded
-        foreach (Application::getInstance()->getConfig()['ROUTES'] as $uri => $route) {
+
+        foreach (Application::getRoutes() as $uri => $route) {
             // case without params
             if ($uri === $query) {
                 return $route;

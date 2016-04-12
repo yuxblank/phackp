@@ -149,7 +149,7 @@ class Application
             }
             $action = Router::getController($route['action']);
             $controller = new $action[0];
-            $a = $action[1];
+            $a = $action[1]();
             $controller->$a($httpKernel->getParams());
         } else {
             $notFoundRoute = Router::getController(self::getErrorRoute(404));
