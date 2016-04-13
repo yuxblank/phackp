@@ -227,7 +227,7 @@ class Router
      * @param string $query
      * @return stdClass
      */
-    public static function findAction($query)
+/*    public static function findAction($query)
     {
         $queryArray = explode("/", $query);
         //print_r($queryArray);
@@ -240,7 +240,7 @@ class Router
                 $route->url = $query;
                 return $route;
             } else if (preg_match(self::WILDCARD_REGEXP, $route->url)) {
-                // check parametered routes  
+                // check parametered routes
                 $queryReplace;
                 //echo "for 2";
                 $routeArray = explode("/", $route->url);
@@ -273,25 +273,26 @@ class Router
         //return $route;
         http_response_code(404);
         return $route;
-    }
+    }*/
 
     /**
      * Read the url and return route if found in routes file.
-     * If route has not been found, retrun null
+     * If route has not been found, return null
      * @param $query (relative url)
+     * @param $method (HTTP_METHOD)
      * @return array|null
      */
-    public function _findAction($query)
+    public function findAction(string $query, string $method)
     {
 
-        foreach (Application::getRoutes() as $uri => $route) {
+        foreach (Application::getRoutes()[$method] as $key => $route) {
             // case without params
-            if ($uri === $query) {
+            if ($route['url'] === $query) {
                 return $route;
                 // case with {} params
             } else {
-                if (preg_match(self::WILDCARD_REGEXP, $uri)) {
-                    $routeArray = explode('/', $uri);
+                if (preg_match(self::WILDCARD_REGEXP, $route['url'])) {
+                    $routeArray = explode('/',$route['url']);
                     $queryArray = explode('/', $query);
                     $url = self::compareRoutes($routeArray, $queryArray);
                     if ($url !== null) {
