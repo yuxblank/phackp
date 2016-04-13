@@ -27,8 +27,8 @@ namespace yuxblank\phackp\core;
 class Controller {
     private static $session;
     
-    public function __construct() { 
-        defined("PlayExec") or die (".:: Play Execution - unvalid access to resources ::. ");
+    public function __construct() {
+        defined('pHackpRuntime') or die ('.:: pHackp runtime never initiated! - invalid access to resources ::. ');
     }
     /**
      * @static

@@ -107,6 +107,11 @@ class Application
         }
     }
 
+    private final function runtime () {
+        $id = random_int(1,9999);
+        define('pHackpRuntime', $id, false);
+    }
+
 
 
     /**
@@ -116,6 +121,8 @@ class Application
      */
     public function bootstrap(string $realPath)
     {
+
+        $this->runtime();
 
         $this->APP_ROOT = $realPath;
 
@@ -174,7 +181,7 @@ class Application
 
         if(self::isDebug()) {
             // Anywhere else in the script
-            echo '<p style="position: fixed; bottom:0; margin: 0 auto;"> Total execution time in seconds: ' . (microtime(true) - $time_start) . '</p>';
+            echo '<p style="position: fixed; bottom:0; margin: 0 auto;"> Total execution time in seconds: ' . (microtime(true) - $time_start) . ' runtime_id: ' . pHackpRuntime .'</p>';
         }
     }
 
