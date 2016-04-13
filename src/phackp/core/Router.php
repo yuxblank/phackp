@@ -420,13 +420,8 @@ class Router
 
     public static function notFound()
     {
-        // http_response_code(404);
-        if (APP_DEBUG) {
-            die("Route not found:: with method <br>");
-        }
-        $r = Router::go("Errors@404");
-        http_response_code(404);
-        header("location:$r", true);
+        header('location:'.Application::getAppUrl() . '/' . Application::getErrorRoute(404)['url'], true);
+        exit(0);
     }
 
 

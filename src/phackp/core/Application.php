@@ -89,9 +89,22 @@ class Application
      * @param int $code
      * @return mixed
      */
-    private static function getErrorRoute(int $code)
+    public static function getErrorRoute(int $code)
     {
-        return self::getRoutes()[$code]['action'];
+        return self::getRoutes()['ERROR'][$code]['action'];
+    }
+
+    /**
+     * Check if the application APP_MODE is set to DEBUG
+     * @return bool
+     */
+    public static function isDebug() {
+
+        switch (self::getConfig()['APP_MODE']){
+            case 'DEBUG':
+                return true;
+                break;
+        }
     }
 
 
@@ -138,6 +151,10 @@ class Application
      */
     public function run()
     {
+        if (self::isDebug()) {
+            // At start of script
+            $time_start = microtime(true);
+        }
         // get the httpKernel
         $httpKernel = new HttpKernel();
         // get the route
@@ -153,6 +170,11 @@ class Application
             $controller = new $notFoundRoute[0]();
             $a = $notFoundRoute[1];
             $controller->$a();
+        }
+
+        if(self::isDebug()) {
+            // Anywhere else in the script
+            echo '<p style="position: fixed; bottom:0; margin: 0 auto;"> Total execution time in seconds: ' . (microtime(true) - $time_start) . '</p>';
         }
     }
 
