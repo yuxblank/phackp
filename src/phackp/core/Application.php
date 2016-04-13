@@ -161,6 +161,7 @@ class Application
         if (self::isDebug()) {
             // At start of script
             $time_start = microtime(true);
+            $memoryPeak = memory_get_peak_usage(true);
         }
         // get the httpKernel
         $httpKernel = new HttpKernel();
@@ -181,7 +182,7 @@ class Application
 
         if(self::isDebug()) {
             // Anywhere else in the script
-            echo '<p style="position: fixed; bottom:0; margin: 0 auto;"> Total execution time in seconds: ' . (microtime(true) - $time_start) . ' runtime_id: ' . pHackpRuntime .'</p>';
+            echo '<p style="position: fixed; bottom:0; margin: 0 auto;"> Total execution time in seconds: ' . (microtime(true) - $time_start) . ' runtime_id: ' . pHackpRuntime .' memory peak: '. $memoryPeak .'</p>';
         }
     }
 

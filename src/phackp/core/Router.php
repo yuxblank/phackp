@@ -324,7 +324,7 @@ class Router
             return null;
         }
         $count = count($realParams);
-        if ($count < count($routeParams)) {
+        if ($count !== count($routeParams)) {
             return null;
         }
 
