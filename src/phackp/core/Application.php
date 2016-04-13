@@ -143,10 +143,7 @@ class Application
         // get the route
         $route = Router::findAction($httpKernel->getUrl(), $httpKernel->getMethod());
         if ($route!==null) {
-            Router::dispatch($route, $httpKernel);
-            if (array_key_exists('params', $route)) {
-                $httpKernel->setParams($route['params']);
-            }
+            $httpKernel->dispatch($route, $httpKernel);
             $action = Router::getController($route['action']);
             $controller = new $action[0];
             $a = $action[1];

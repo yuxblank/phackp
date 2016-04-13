@@ -119,4 +119,47 @@ final class HttpKernel
     }
 
 
-}
+    /**
+     * Dispatch HTTP request and parameters to the current HttpKernel instance.
+     * @param array $route (the current route object)
+     */
+    public function dispatch(array $route)
+    {
+
+        switch ($this->getMethod()) {
+            case 'GET':
+                // get paramets ?name=value
+                if (!empty($_GET)) {
+                    $this->setParams($_GET);
+                }
+                if (array_key_exists('params', $route)) {
+                    $this->setParams($route['params']);
+                }
+                break;
+            // TODO check about waterfall
+            case ('PUT' || 'DELETE'):
+                $body = file_get_contents('php://input');
+                $this->setParams($this->parseContentType($body));
+                break;
+
+            case 'POST':
+                $this->setParams($_POST);
+                break;
+
+                break;
+            case 'HEAD':
+                //rest_head($request);
+                break;
+
+            case 'OPTIONS':
+                //rest_options($request);
+                break;
+            default:
+                //rest_error($request);
+                break;
+        }
+    }
+
+
+
+    }
