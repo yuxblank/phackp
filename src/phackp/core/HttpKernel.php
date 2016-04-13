@@ -113,12 +113,17 @@ final class HttpKernel
     }
 
 
-    private function HTTPStatus(int $status) {
+    /**
+     * Set http response code by given number
+     * @param int $status
+     */
+    public function HTTPStatus(int $status) {
 
-        switch($status){
+        http_response_code($status);
+     /*   switch($status){
             case 415:
                 http_response_code(415);
-        }
+        }*/
 
     }
 
@@ -127,7 +132,7 @@ final class HttpKernel
      * @param $jsonData
      * @return array
      */
-    private function parseJson($jsonData) {
+    private function parseJson($jsonData):array {
         return json_decode($jsonData, true);
     }
 

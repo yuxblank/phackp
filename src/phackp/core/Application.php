@@ -166,7 +166,7 @@ class Application
         // get the httpKernel
         $httpKernel = new HttpKernel();
         // get the route
-        $route = Router::findAction($httpKernel->getUrl(), $httpKernel->getMethod());
+        $route = Router::findAction($httpKernel);
         if ($route!==null) {
             $httpKernel->dispatch($route, $httpKernel);
             $action = Router::getController($route['action']);

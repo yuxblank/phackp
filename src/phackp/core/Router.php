@@ -282,18 +282,23 @@ class Router
      * @param $method (HTTP_METHOD)
      * @return array|null
      */
-    public function findAction(string $query, string $method)
+    public function findAction(HttpKernel $httpKernel)
     {
 
-        foreach (Application::getRoutes()[$method] as $key => $route) {
+        foreach (Application::getRoutes()[$httpKernel->getMethod()] as $key => $route) {
             // case without params
-            if ($route['url'] === $query) {
+
+            if (array_key_exists('options', $route) && !self::isSameContentType($route,$httpKernel)){
+                continue;
+            }
+
+            if ($route['url'] === $httpKernel->getUrl()) {
                 return $route;
                 // case with {} params
             } else {
                 if (preg_match(self::WILDCARD_REGEXP, $route['url'])) {
                     $routeArray = explode('/',$route['url']);
-                    $queryArray = explode('/', $query);
+                    $queryArray = explode('/', $httpKernel->getUrl());
                     $url = self::compareRoutes($routeArray, $queryArray);
                     if ($url !== null) {
                         $route['params'] = array();
@@ -307,6 +312,24 @@ class Router
         }
         return null;
     }
+
+
+    /**
+     * Check if the content-type of the request is the same of the 'options'=>'accept' value of the given route.
+     * 'option' is an optional array to be used when you want to restrict a particular content-type submission.
+     * set HTTP_HEADER to 415 when false.
+     * @param array $route
+     * @param HttpKernel $httpKernel
+     * @return bool
+     */
+    private static function isSameContentType(array $route, HttpKernel $httpKernel):bool{
+        if($route['options']['accept'] === $httpKernel->getContentType()) {
+            return true;
+        }
+        $httpKernel->HTTPStatus(415);
+        return false;
+    }
+
 
     /**
      * Read the url and the route and watch if it matches, Replacing the wildcards {val} until the url match then return the url
