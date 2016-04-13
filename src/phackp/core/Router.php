@@ -316,6 +316,12 @@ class Router
      */
     private static function compareRoutes($routeParams, $realParams)
     {
+
+        // TODO check about performances
+        $staticParams = preg_grep(self::WILDCARD_REGEXP,$routeParams,PREG_GREP_INVERT);
+        if (count(array_diff($staticParams,$realParams))>0) {
+            return null;
+        }
         $count = count($realParams);
         if ($count < count($routeParams)) {
             return null;
