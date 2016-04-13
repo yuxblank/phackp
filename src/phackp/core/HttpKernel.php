@@ -99,12 +99,25 @@ final class HttpKernel
 
         switch($this->getContentType()){
             case "application/json":
-                $this->parseJson($body);
+                return $this->parseJson($body);
                 break;
             case "application/x-www-form-urlencoded":
-                 parse_str($body,$parsed);
-                 return $parsed;
+                parse_str($body,$parsed);
+                return $parsed;
                 break;
+
+            default:
+                $this->HTTPStatus(415);
+        }
+
+    }
+
+
+    private function HTTPStatus(int $status) {
+
+        switch($status){
+            case 415:
+                http_response_code(415);
         }
 
     }
@@ -115,7 +128,7 @@ final class HttpKernel
      * @return array
      */
     private function parseJson($jsonData) {
-        return json_decode($jsonData);
+        return json_decode($jsonData, true);
     }
 
 
@@ -136,17 +149,17 @@ final class HttpKernel
                     $this->setParams($route['params']);
                 }
                 break;
+
+            case 'POST':
+                $this->setParams($_POST);
+
             // TODO check about waterfall
-            case ('PUT' || 'DELETE'):
+            // $_POST won't work with body, so we fallthrough here
+            case ('PUT' || 'DELETE' || 'HEAD' || 'PATCH' || 'OPTIONS'):
                 $body = file_get_contents('php://input');
                 $this->setParams($this->parseContentType($body));
                 break;
 
-            case 'POST':
-                $this->setParams($_POST);
-                break;
-
-                break;
             case 'HEAD':
                 //rest_head($request);
                 break;
