@@ -107,7 +107,8 @@ final class HttpKernel
                 break;
 
             default:
-                $this->HTTPStatus(415);
+                parse_str($body,$parsed);
+                return $parsed;
         }
 
     }
