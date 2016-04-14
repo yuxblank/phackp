@@ -94,7 +94,11 @@ final class HttpKernel
      * @param $params
      */
     public function setParams($params){
-        $this->params[$this->getMethod()] = $params;
+        if (!array_key_exists($this->method, $this->params)) {
+            $this->params[$this->getMethod()] = $params;
+        } else {
+            $this->params[$this->getMethod()] = array_merge($this->params[$this->getMethod()], $params);
+        }
     }
 
 
@@ -156,12 +160,12 @@ final class HttpKernel
 
         switch ($this->getMethod()) {
             case 'GET':
+                if (array_key_exists('params', $route)) {
+                    $this->setParams($route['params']);
+                }
                 // get paramets ?name=value
                 if (Application::getConfig()['INJECT_QUERY_STRING']) {
                     $this->setParams($_GET);
-                }
-                if (array_key_exists('params', $route)) {
-                    $this->setParams($route['params']);
                 }
                 break;
 
