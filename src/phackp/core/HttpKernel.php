@@ -23,10 +23,19 @@ final class HttpKernel
     public function __construct()
     {
         $this->method = $_SERVER['REQUEST_METHOD'];
-        if (isset($_SERVER['CONTENT_TYPE'])) {
+
+        if (array_key_exists('CONTENT_TYPE', $_SERVER)) {
             $this->content_type = $_SERVER['CONTENT_TYPE'];
         }
         $this->url = $this->parseUrl();
+        if (array_key_exists('QUERY_STRING', $_SERVER)) {
+            $this->queryString = '?'. $_SERVER['QUERY_STRING'];
+            // remove query string from internal url
+            $this->url = str_replace($this->queryString,'',$this->url);
+            if ($this->url === '') {
+                $this->url = '/';
+            }
+        }
 
     }
 
@@ -148,7 +157,7 @@ final class HttpKernel
         switch ($this->getMethod()) {
             case 'GET':
                 // get paramets ?name=value
-                if (!empty($_GET)) {
+                if (Application::getConfig()['INJECT_QUERY_STRING']) {
                     $this->setParams($_GET);
                 }
                 if (array_key_exists('params', $route)) {

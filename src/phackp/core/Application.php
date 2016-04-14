@@ -184,7 +184,7 @@ class Application
 
         if(self::isDebug()) {
             // Anywhere else in the script
-            echo '<p style="position: fixed; bottom:0; margin: 0 auto;"> Total execution time in seconds: ' . (microtime(true) - $time_start) . ' runtime_id: ' . pHackpRuntime .' memory peak: '. UnitConversion::byteConvert($memoryPeak) .'</p>';
+            echo '<p style="position: fixed; bottom:0; margin: 0 auto;"> Total execution time in seconds: ' . (microtime(true) - $time_start) . ' runtime_id: ' . pHackpRuntime .' memory peak: '. UnitConversion::byteConvert($memoryPeak)      .'</p>';
         }
     }
 
