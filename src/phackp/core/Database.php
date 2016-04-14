@@ -343,6 +343,7 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
         } catch (Exception $e) {
             return;
         }
+        // TODO join instead will be faster
         $query = "SELECT * FROM $child WHERE id = (SELECT ". $child ."_id FROM $parent WHERE id=?)";
         $this->query($query);
         $this->bindValue(1, $object->id);

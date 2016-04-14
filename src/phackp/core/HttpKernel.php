@@ -102,9 +102,9 @@ final class HttpKernel
     }
 
 
-    // todo implements all content type
     /**
-     * Parse the request content type
+     * Parse the request content type. If application/json serialize to array.
+     * If other, parse body.
      * @param $body
      * @return mixed
      */

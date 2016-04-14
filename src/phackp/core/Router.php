@@ -288,23 +288,28 @@ class Router
         foreach (Application::getRoutes()[$httpKernel->getMethod()] as $key => $route) {
             // case without params
 
+            // if options, check if the content-type is the same
             if (array_key_exists('options', $route) && !self::isSameContentType($route,$httpKernel)){
                 continue;
             }
 
+            // if the url is the same static route, just return!
             if ($route['url'] === $httpKernel->getUrl()) {
                 return $route;
-                // case with {} params
+
             } else {
+                // find wildcard
                 if (preg_match(self::WILDCARD_REGEXP, $route['url'])) {
                     $routeArray = preg_split('@/@',$route['url'], NULL, PREG_SPLIT_NO_EMPTY);
                     $queryArray = preg_split('@/@', $httpKernel->getUrl(), NULL, PREG_SPLIT_NO_EMPTY);
                     $url = self::compareRoutes($routeArray, $queryArray);
+                    // if compare routes matched and the url has been recreated, return this route
                     if ($url !== null) {
                         $route['params'] = array();
                         $route['params'] = self::getWildCardParams($routeArray, $queryArray);
                         return $route;
                     } else {
+                        // search again
                         continue;
                     }
                 }
@@ -341,23 +346,28 @@ class Router
     private static function compareRoutes($routeParams, $realParams)
     {
 
-        // TODO check about performances
+        // try checking if wildcards static params are less than the difference with real
         $staticParams = preg_grep(self::WILDCARD_REGEXP,$routeParams,PREG_GREP_INVERT);
         if (count(array_diff($staticParams,$realParams))>0) {
             return null;
         }
+        // if the count of real and the count of route does not match, the route does not match
         $count = count($realParams);
         if ($count !== count($routeParams)) {
             return null;
         }
 
+        // now loops and replace wicards will params, check, rerun until a difference has been spot
         for ($i = 0; $i < $count; $i++) {
+            // faster, if a static param match continue!
             if ($realParams[$i] === $routeParams[$i]) {
                 continue;
             } else {
                 if (preg_match(self::WILDCARD_REGEXP, $routeParams[$i])) {
+                    // replace {value} wildcard with the same url parameter e.g {value} -> value
                     $replaceParam = preg_replace(self::WILDCARD_REGEXP, $realParams[$i], $routeParams[$i]);
                     $routeParams[$i] = $replaceParam;
+                    // if match, continue
                     if ($realParams[$i] === $routeParams[$i]) {
                         continue;
                         // not the same route
@@ -371,6 +381,7 @@ class Router
             }
 
         }
+        // if loop has ended, all params matched. return the url string
         return implode('/', $routeParams);
     }
 
