@@ -5,14 +5,14 @@ PHP Micro Framework, born in PHP7 Age!
 
 pHackp is actually in alpha stage.
 the framework might change in ways that make alpha/beta releases un-compatible with the first stable version in the future.
-The first stable will be compatible with PHP7+ only. (actually codebase is php 5.3+)
+The framework is actually compatible with PHP7+.
 
 # Introduction
 pHackp aim to provide a fast and easy way to build modern and resposive websites and apps.
 It provides an Model View Controller structure for organizing your project and tries to be as far as possible "convention over configuration".
 
 # Requirements
-Actually the frameworks is on heavy development. it has been tested with Apache server only. I planned to provide support for both Apahce, Ngnix and IIS.
+Actually the frameworks is on heavy development. it has been tested with Apache and built-in PHP 7 server only. I planned to provide support for both Apahce, Ngnix and IIS.
 
 
 ## Features and Roadmap
@@ -23,17 +23,17 @@ Actually the frameworks is on heavy development. it has been tested with Apache 
   * Totally object oriented
   * Easy to use
   * 0 dependecies required
-  * PHP 7 or greather*
+  * PHP 7
   * easy extendibility (API's, Modules etc.)*
   * Almost no configuration (No yaml, xml, ini.. Just PHP)*
 
 ### Routing
   * array mapped routes
   * actions are mapped as Controller@method
-  * exclusion of non-mapped routes (return a routable 404 page mapping)
+  * exclusion of non-mapped routes (return configurable error routes)
   * 100% pretty urls (e.g. ...blog/title/1)
   * parameter bound with simple tag {tag} (e.g. tag/{tag}/)
-  * REST method mapping (GET,POST,DELETE,PUT)*
+  * REST method mapping (GET,POST,DELETE,PUT)**
   * auto parameters injection to target method signature
   * rich set of RESTful features (e.g. auto json decoding/encoding)*
 
@@ -63,3 +63,8 @@ Actually the frameworks is on heavy development. it has been tested with Apache 
 ### PSR-4
   * use composer default autoload psr-4
   * auto mapping for project classes
+  
+### RESTful
+  * routes GET,POST,PUT,DELETE for CRUD API's
+  * automatic serialize/un-serialize json-to-array
+  * content-type filtering (via routes options)
