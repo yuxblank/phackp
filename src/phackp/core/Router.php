@@ -297,8 +297,8 @@ class Router
                 // case with {} params
             } else {
                 if (preg_match(self::WILDCARD_REGEXP, $route['url'])) {
-                    $routeArray = explode('/',$route['url']);
-                    $queryArray = explode('/', $httpKernel->getUrl());
+                    $routeArray = preg_split('@/@',$route['url'], NULL, PREG_SPLIT_NO_EMPTY);
+                    $queryArray = preg_split('@/@', $httpKernel->getUrl(), NULL, PREG_SPLIT_NO_EMPTY);
                     $url = self::compareRoutes($routeArray, $queryArray);
                     if ($url !== null) {
                         $route['params'] = array();
