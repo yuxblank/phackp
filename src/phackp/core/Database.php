@@ -43,9 +43,7 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
      * Constructor connects to database
      */
     public function __construct() {
-
             $database = Application::getDatabase();
-
             $dsn = $database['DRIVER'] . ':host=' . $database['HOST'] . ";dbname=" . $database['NAME'];
             try {
                 $this->pdo = new PDO($dsn, $database['USER'], $database['PSW']);
