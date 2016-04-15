@@ -368,25 +368,35 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
      */
     public function manyToMany($object, $target) {
 
+        /**
+         *  * TODO perfomance optimizations:
+         * SELECT tag.id, tag.tag FROM tag
+         *   JOIN post_tag ON tag.id= post_tag.tag_id
+         *   JOIN post ON post_tag.post_id=post.id;
+         * The class shall extract object properties in order to be able to do such! (reflection based)
+         *        $childAttributes = array_keys(get_class_vars($this->objectRelocator($target)));
+        $parentAttribute = array_keys(get_class($object));
+        $target = strtolower($target);
         $parent = $this->objectInjector(get_class($object));
-        $child = $this->objectInjector($target);
+        $query = 'SELECT '.implode(', ',$childAttributes).' FROM '.$target
+        . ' JOIN ' . $parent .'_'.$target .' ON '.$target.'.id='.$target.'.id'
+         */
+
+        $parent = $this->objectInjector(get_class($object));
+        $child = strtolower($target);
         $query = "SELECT * FROM ".$parent ."_". $child ." WHERE ". $parent ."_id = ?";
-        //echo $query;
         $this->query($query);
         $this->bindValue(1, $object->id);
         $relations = $this->fetchObj();
-
-
-//        print_r($relations);
-        $list = new ArrayObject();
+        $list = array();
         $child_id = $child.'_id';
         foreach ($relations as $key => $value) {
 
-            $query = "SELECT * from $target WHERE id=?";
+            $query = "SELECT * from $child WHERE id=?";
             $this->query($query);
             $this->bindValue(1, $value->$child_id);
-            $obj = $this->fetchSingleObject($this->objectInjector($target));
-            $list->append($obj);
+            $obj = $this->fetchSingleObject($this->objectRelocator($target));
+            $list[] = $obj ;
 
         }
 
@@ -475,6 +485,10 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
 
         return strtolower(NamespaceParser::stripNamespace($object));
     }
+    private function objectRelocator($object) {
+        return Application::getNameSpace()['MODEL'].$object;
+    }
+
     /**
      * @internal parse params from a given array and bind them in a prepared statement
      * @param type $params
