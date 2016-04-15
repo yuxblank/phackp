@@ -15,7 +15,7 @@ final class HttpKernel
     private $url;
     private $method;
     private $content_type;
-    private $params;
+    private $params = array();
 
     /**
      * HttpKernel constructor. When i run it capture all the information about the request and parse the url.
