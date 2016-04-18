@@ -17,36 +17,38 @@ class QueryBuilder
 
     private $object;
     private $query = '';
+    private $table;
 
 
     public function __construct($object)
     {
         $this->object = $object;
+        $this->table = $this->resolveTablename($this->object);
     }
 
     public function select () {
         $this->query .= 'SELECT '
-                        .implode(', ', ReflectionUtils::getProperties($this->object))
-                        . ' FROM '
-                        . $this->resolveTablename($this->object);
+            .implode(', ', ReflectionUtils::getProperties($this->object))
+            . ' FROM '
+            . $this->resolveTablename($this->object);
         return $this;
     }
 
     public function where(string $conditions) {
-        $this->query .= ' WHERE'
-                        . $conditions;
+        $this->query .= ' WHERE '
+            . $conditions;
         return $this;
     }
 
     public function join($object, $first, $second, $type='inner') {
 
         $this->query .= ' JOIN '
-                        . $this->_resolveTablename($object)
-                        . ' ON ' . $this->object.'.'.$first.'='.$object.'.'.$second;
+            . $this->_resolveTablename($object)
+            . ' ON ' . $this->table .'.'.$first.'='.$this->resolveTablename($object).'.'.$second;
         return $this;
     }
 
-    public function groupBy() {
+    public function groupBy(array $fields) {
 
     }
 
@@ -68,7 +70,7 @@ class QueryBuilder
         return Application::getNameSpace()['MODEL'].get_class($this->object);
     }
     private function resolveTablename():string {
-        return NamespaceParser::stripNamespace(get_class($this->object));
+        return strtolower(NamespaceParser::stripNamespace(get_class($this->object)));
     }
     private function _resolveTablename($object):string {
         return NamespaceParser::stripNamespace(get_class($object));
