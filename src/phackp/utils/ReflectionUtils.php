@@ -14,7 +14,7 @@ class ReflectionUtils
 
 
     public static function getProperties($object):array {
-        return array_keys(get_class_vars($object));
+        return array_keys(get_class_vars(get_class($object)));
     }
 
 

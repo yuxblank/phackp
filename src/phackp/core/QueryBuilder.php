@@ -15,22 +15,18 @@ use yuxblank\phackp\utils\ReflectionUtils;
 class QueryBuilder
 {
 
-    private $object;
     private $query = '';
-    private $table;
 
 
-    public function __construct($object)
+    public function __construct()
     {
-        $this->object = $object;
-        $this->table = $this->resolveTablename($this->object);
     }
 
-    public function select () {
+    public function select ($object) {
         $this->query .= 'SELECT '
-            .implode(', ', ReflectionUtils::getProperties($this->object))
+            .implode(', ', ReflectionUtils::getProperties($object))
             . ' FROM '
-            . $this->resolveTablename($this->object);
+            . $this->resolveTablename($object);
         return $this;
     }
 
@@ -40,11 +36,11 @@ class QueryBuilder
         return $this;
     }
 
-    public function join($object, $first, $second, $type='inner') {
+    public function join($parent,$child, $first, $second, $type='inner') {
 
         $this->query .= ' JOIN '
-            . $this->_resolveTablename($object)
-            . ' ON ' . $this->table .'.'.$first.'='.$this->resolveTablename($object).'.'.$second;
+            . $this->resolveTablename($child)
+            . ' ON ' . $this->resolveTablename($parent) .'.'.$first.'='.$this->resolveTablename($child).'.'.$second;
         return $this;
     }
 
@@ -69,11 +65,8 @@ class QueryBuilder
     private function resolveNamespace():string {
         return Application::getNameSpace()['MODEL'].get_class($this->object);
     }
-    private function resolveTablename():string {
-        return strtolower(NamespaceParser::stripNamespace(get_class($this->object)));
-    }
-    private function _resolveTablename($object):string {
-        return NamespaceParser::stripNamespace(get_class($object));
+    private function resolveTablename($object):string {
+        return strtolower(NamespaceParser::stripNamespace(get_class($object)));
     }
 
     private function resolveTables(array $objects) {
