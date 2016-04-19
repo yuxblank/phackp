@@ -117,7 +117,7 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
      * @param int    $id
      * @return object Object instance
      **/
-    public function findById($object,$id) {
+    /*public function findById($object,$id) {
         try {
             $table = $this->objectInjector($object);
         } catch (Exception $e) {
@@ -126,6 +126,17 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
         $statement = "SELECT * FROM $table WHERE id=:id";
         $this->stm = $this->pdo->prepare($statement);
         $this->bindValue(":id",$id);
+        return $this->fetchSingleObject($object);
+    }*/
+
+    public function findByid($object, $id) {
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder
+            ->select($this->objectInjector($object), ReflectionUtils::getProperties($object))
+            ->from(array($this->objectInjector($object)))
+            ->where('id=?');
+        $this->query($queryBuilder->getQuery());
+        $this->bindValue(1,$id);
         return $this->fetchSingleObject($object);
     }
     /**
