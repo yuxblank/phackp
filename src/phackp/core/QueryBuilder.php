@@ -21,11 +21,12 @@ class QueryBuilder
     {
     }
 
-    public function select (string $table,array $properties) {
+    public function select (array $properties) {
         $this->query .= 'SELECT '
             .implode(', ', $properties);
         return $this;
     }
+
     public function from(array $tables) {
         $this->query .= ' FROM ' . implode(', ', $tables);
         return $this;

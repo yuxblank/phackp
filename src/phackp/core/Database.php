@@ -132,7 +132,7 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
     public function findByid($object, $id) {
         $queryBuilder = new QueryBuilder();
         $queryBuilder
-            ->select($this->objectInjector($object), ReflectionUtils::getProperties($object))
+            ->select(ReflectionUtils::getProperties($object))
             ->from(array($this->objectInjector($object)))
             ->where('id=?');
         $this->query($queryBuilder->getQuery());
@@ -186,10 +186,13 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
      * @return int
      */
 
+
     public function countObjects($object) {
-        $table = $this->objectInjector($object);
-        $query = 'SELECT COUNT(*) FROM ' . $table;
-        $this->query($query);
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder
+            ->select(array(' COUNT(*) '))
+            ->from(array($this->objectInjector($object)));
+        $this->query($queryBuilder->getQuery());
         return $this->rowCount();
     }
 
