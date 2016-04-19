@@ -101,7 +101,24 @@ class QueryBuilder
     }
 
 
-    public function insert() {
+    public function insert(string $table, array $fields, array $values) {
+        $this->query .= ' INSERT INTO ' . $table
+                        . ' SET (' . implode(', ', $fields) . ')'
+                        . ' VALUES (' . implode(', ', $values) .')';
+        return $this;
+    }
+
+    public function update(string $table, array $fields, array $values) {
+        $this->query .= ' UPDATE ' . $table .' SET ';
+        $updateString = '';
+        for($i=0, $max = count($fields); $i<$max; $i++) {
+            $updateString .= $fields[$i] . ' = ' .$values[$i] . ', ';
+        }
+        $this->query .= $updateString;
+        $this->query .= rtrim($this->query, ',');
+
+        return $this;
+
 
     }
 
@@ -164,7 +181,13 @@ $queryBuilder2->select('tag', array('*'))
     ->order(array('tag.id ASC', 'tag.count DESC'))
     ->limit(0,10)
     ->union()
-    ->select('x',array('*'));
+    ->select('x',array('*'));*/
+/*$queryBuilder3 = new QueryBuilder();
+$queryBuilder3
+    ->insert('tabella', array('id','nome'), array(1,'pippo'));*/
+$queryBuilder4 = new QueryBuilder();
+$queryBuilder4
+    ->update('tabella', array('id','titolo'),array(1,'prova'));
 
-$queryBuilder->addSubQueryBuilder($queryBuilder2);
-print_r($queryBuilder);*/
+/*$queryBuilder->addSubQueryBuilder($queryBuilder3);*/
+print_r($queryBuilder4);
