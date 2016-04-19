@@ -9,7 +9,6 @@
 namespace yuxblank\phackp\core;
 
 
-use yuxblank\phackp\utils\NamespaceParser;
 use yuxblank\phackp\utils\ReflectionUtils;
 
 class QueryBuilder
@@ -123,7 +122,7 @@ class QueryBuilder
         return Application::getNameSpace()['MODEL'].get_class($this->object);
     }
     private function resolveTablename($object):string {
-        return strtolower(NamespaceParser::stripNamespace(get_class($object)));
+        return strtolower(ReflectionUtils::stripNamespace(get_class($object)));
     }
 
     private function resolveTables(array $objects) {

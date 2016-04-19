@@ -16,6 +16,9 @@ class ReflectionUtils
     public static function getProperties($object):array {
         return array_keys(get_class_vars(get_class($object)));
     }
+    public static function stripNamespace($classname) {
+        return substr($classname, strrpos($classname, '\\') + 1);
+    }
 
 
 }
