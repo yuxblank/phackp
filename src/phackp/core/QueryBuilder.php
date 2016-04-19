@@ -101,6 +101,11 @@ class QueryBuilder
     }
 
 
+    public function insert() {
+
+    }
+
+
 
 
     public function addSubQueryBuilder(QueryBuilder $queryBuilder) {

@@ -149,7 +149,7 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
      * @param int $max
      * @return list
      */
-    public function findAll($object,$query=null,$values=null,$current=null,$max=null,$order=null) {
+  /*  public function findAll($object,$query=null,$values=null,$current=null,$max=null,$order=null) {
         try {
             $table = $this->objectInjector($object);
         } catch (Exception $e) {
@@ -178,14 +178,36 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
 
         }
         return $this->fetchObjectSet($object);
+    }*/
+
+
+    public function findAll ($object, $query=null, $params=null) {
+
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder
+            ->select(ReflectionUtils::getProperties($object))
+            ->from(array($this->objectInjector($object)));
+        $isQuery = $query!==null ? $queryBuilder->where($query) : false;
+        $this->query($queryBuilder->getQuery());
+        if ($isQuery) {
+            $this->paramsBinder($params);
+        }
+        return $this->fetchObjectSet($object);
     }
+
+
 
     /**
      * Counts the occurrencies of a give object type
      * @param string $object
      * @return int
      */
-
+    /* public function countObjects($object) {
+            $table = $this->objectInjector($object);
+            $query = 'SELECT COUNT(*) FROM ' . $table;
+            $this->query($query);
+            return $this->rowCount();
+        }*/
 
     public function countObjects($object) {
         $queryBuilder = new QueryBuilder();
