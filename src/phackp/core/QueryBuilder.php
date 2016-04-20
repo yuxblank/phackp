@@ -114,10 +114,12 @@ class QueryBuilder
             $this->query .= $fields[$i] . ' = ' .$values[$i] . ', ';
         }
         $this->query = rtrim($this->query, ', ');
-
         return $this;
+    }
 
-
+    public function delete(string $table) {
+        $this->query .= ' DELETE  FROM ' . $table;
+        return $this;
     }
 
 
