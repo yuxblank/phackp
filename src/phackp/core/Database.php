@@ -315,20 +315,37 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
      * @return object
      */
     public function oneToOne($object, $target) {
-        try {
 
-            $parent = $this->objectInjector(get_class($object));
-            $child = $this->objectInjector($target);
-        } catch (Exception $e) {
-            return;
-        }
-        $query = "SELECT * FROM $child WHERE id=(SELECT ".$child."_id FROM $parent WHERE id=?)";
-        $this->query($query);
-//        echo $query;
-//        echo $object->id;
-        $this->bindValue(1, $object->id);
+        /*
+         * SELECT tag.id, tag.tag, tag.post_id FROM tag
+           INNER JOIN post WHERE tag.post_id = post.id;
+         */
 
-        return $this->fetchSingleObject($target);
+        $parent = $this->objectInjector(get_class($object));
+        $child = $this->objectInjector($target);
+
+        $queryBuilder = new QueryBuilder();
+
+        $queryBuilder
+            ->select($this->setTableToProperties(ReflectionUtils::getProperties($target), $child))
+            ->from(array($child))
+            ->innerJoin($child,$parent.'_id',$parent,'id')
+            ->where($parent.'.id=?');
+        $this->query($queryBuilder->getQuery());
+        $this->bindValue(1,$object->id);
+
+        return $this->fetchObjectSet($this->objectRelocator($child));
+
+
+
+
+        /*        $query = "SELECT * FROM $child WHERE id=(SELECT ".$child."_id FROM $parent WHERE id=?)";
+                $this->query($query);
+        //        echo $query;
+        //        echo $object->id;
+                $this->bindValue(1, $object->id);
+
+                return $this->fetchSingleObject($target);*/
     }
     /**
      * Create 1-N relationship from two objects. Returns an array of target objects of the relationship.
@@ -521,6 +538,14 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
     }
     private function objectRelocator($object) {
         return Application::getNameSpace()['MODEL'].$object;
+    }
+
+    private function setTableToProperties(array $properties, string $table) {
+        $result = array();
+        foreach ($properties as $property) {
+            $result[] = $table.'.'.$property;
+        }
+        return $result;
     }
 
     /**

@@ -46,25 +46,25 @@ class QueryBuilder
     }
 
     public function innerJoin(string $parent, string $parentJoin, string $child,  string $childJoin) {
-        $this->query .= 'INNER JOIN '
+        $this->query .= ' INNER JOIN '
             . $child
             . ' ON ' . $parent .'.'.$parentJoin.'='.$child.'.'.$childJoin;
         return $this;
     }
     public function fullJoin(string $parent, string $parentJoin, string $child,  string $childJoin) {
-        $this->query .= 'FULL JOIN '
+        $this->query .= ' FULL JOIN '
             . $child
             . ' ON ' . $parent .'.'.$parentJoin.'='.$child.'.'.$childJoin;
         return $this;
     }
     public function leftJoin(string $parent, string $parentJoin, string $child,  string $childJoin) {
-        $this->query .= 'LEFT JOIN '
+        $this->query .= ' LEFT JOIN '
             . $child
             . ' ON ' . $parent .'.'.$parentJoin.'='.$child.'.'.$childJoin;
         return $this;
     }
     public function rightJoin(string $parent, string $parentJoin, string $child,  string $childJoin) {
-        $this->query .= 'RIGHT JOIN '
+        $this->query .= ' RIGHT JOIN '
             . $child
             . ' ON ' . $parent .'.'.$parentJoin.'='.$child.'.'.$childJoin;
         return $this;
