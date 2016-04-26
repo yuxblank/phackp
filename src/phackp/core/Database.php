@@ -129,7 +129,7 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
         return $this->fetchSingleObject($object);
     }*/
 
-    public function findByid($object, $id) {
+    public function findById($object, $id) {
         $queryBuilder = new QueryBuilder();
         $queryBuilder
             ->select(ReflectionUtils::getProperties($object))

@@ -10,6 +10,9 @@
       "email": "yuxblank@gmail.com"
     }
   ],
+  "require-dev": {
+    "phpdocumentor/phpdocumentor": "2.*"
+  },
   "require": {
     "php": ">=5.6"
   },
