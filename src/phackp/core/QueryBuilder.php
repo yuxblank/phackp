@@ -101,10 +101,15 @@ class QueryBuilder
     }
 
 
-    public function insert(string $table, array $fields, array $values) {
+    public function insert(string $table, array $fields) {
         $this->query .= ' INSERT INTO ' . $table
-                        . ' SET (' . implode(', ', $fields) . ')'
-                        . ' VALUES (' . implode(', ', $values) .')';
+            . ' (' . implode(', ', $fields) . ') VALUES (';
+
+        foreach ($fields as $field) {
+            $this->query .= '?,';
+        }
+        $this->query = rtrim($this->query, ', ');
+        $this->query .= ')';
         return $this;
     }
 

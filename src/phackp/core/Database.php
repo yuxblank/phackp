@@ -43,16 +43,16 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
      * Constructor connects to database
      */
     public function __construct() {
-            $database = Application::getDatabase();
-            $dsn = $database['DRIVER'] . ':host=' . $database['HOST'] . ";dbname=" . $database['NAME'];
-            try {
-                $this->pdo = new PDO($dsn, $database['USER'], $database['PSW']);
-                $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
-            } catch (PDOException $ex) {
-                $ex->getMessage();
+        $database = Application::getDatabase();
+        $dsn = $database['DRIVER'] . ':host=' . $database['HOST'] . ";dbname=" . $database['NAME'];
+        try {
+            $this->pdo = new PDO($dsn, $database['USER'], $database['PSW']);
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
+        } catch (PDOException $ex) {
+            $ex->getMessage();
 
-            }
+        }
 
     }
 
@@ -117,18 +117,6 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
      * @param int    $id
      * @return object Object instance
      **/
-    /*public function findById($object,$id) {
-        try {
-            $table = $this->objectInjector($object);
-        } catch (Exception $e) {
-            return;
-        }
-        $statement = "SELECT * FROM $table WHERE id=:id";
-        $this->stm = $this->pdo->prepare($statement);
-        $this->bindValue(":id",$id);
-        return $this->fetchSingleObject($object);
-    }*/
-
     public function findById($object, $id) {
         $queryBuilder = new QueryBuilder();
         $queryBuilder
@@ -149,40 +137,39 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
      * @param int $max
      * @return list
      */
-  /*  public function findAll($object,$query=null,$values=null,$current=null,$max=null,$order=null) {
-        try {
-            $table = $this->objectInjector($object);
-        } catch (Exception $e) {
-            return;
-        }
-        $isWhere = $query!=null ? ' WHERE ' : '';
-        $statement = "SELECT * FROM " . $table.$isWhere.$query;
-        if (isset($current) && isset($max)) {
-            if(isset($order)) {
-                $statement.=" ".$order;
-            }
-            $statement.= " LIMIT ?, ? ";
-        }
-        $this->query($statement);
-        $lastValue = 0;
-        if (isset($query) && isset($values)){
-            foreach ($values as $key => $value) {
-                $key++; // + 1 for bindParams
-                $this->bindValue($key, $value);
-                $lastValue++;
-            }
-        }
-        if (isset($current) && isset($max)) {
-            $this->bindValue(++$lastValue, $current, PDO::PARAM_INT);
-            $this->bindValue(++$lastValue, $max, PDO::PARAM_INT);
+    /*  public function findAll($object,$query=null,$values=null,$current=null,$max=null,$order=null) {
+          try {
+              $table = $this->objectInjector($object);
+          } catch (Exception $e) {
+              return;
+          }
+          $isWhere = $query!=null ? ' WHERE ' : '';
+          $statement = "SELECT * FROM " . $table.$isWhere.$query;
+          if (isset($current) && isset($max)) {
+              if(isset($order)) {
+                  $statement.=" ".$order;
+              }
+              $statement.= " LIMIT ?, ? ";
+          }
+          $this->query($statement);
+          $lastValue = 0;
+          if (isset($query) && isset($values)){
+              foreach ($values as $key => $value) {
+                  $key++; // + 1 for bindParams
+                  $this->bindValue($key, $value);
+                  $lastValue++;
+              }
+          }
+          if (isset($current) && isset($max)) {
+              $this->bindValue(++$lastValue, $current, PDO::PARAM_INT);
+              $this->bindValue(++$lastValue, $max, PDO::PARAM_INT);
 
-        }
-        return $this->fetchObjectSet($object);
-    }*/
+          }
+          return $this->fetchObjectSet($object);
+      }*/
 
 
     public function findAll ($object, $query=null, $params=null) {
-
         $queryBuilder = new QueryBuilder();
         $queryBuilder
             ->select(ReflectionUtils::getProperties($object))
@@ -202,12 +189,6 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
      * @param string $object
      * @return int
      */
-    /* public function countObjects($object) {
-            $table = $this->objectInjector($object);
-            $query = 'SELECT COUNT(*) FROM ' . $table;
-            $this->query($query);
-            return $this->rowCount();
-        }*/
 
     public function countObjects($object) {
         $queryBuilder = new QueryBuilder();
@@ -227,22 +208,18 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
     }
 
 
-
     /**
-     * Persist an object in the data-layer
-     * @param object $object
+     * Persist an object to the target database
+     * @param $object
+     * @return mixed
      */
     public function save($object) {
         $table = $this->objectInjector(get_class($object));
-        $statement = "INSERT INTO $table VALUES (";
-        $values="";
-        foreach ($object as $key => $value) {
-            $values.= ":".$key.",";
-        }
-        $values = substr($values, 0, -1);
-        $values.=")";
-        $statement.=$values;
-        $this->stm = $this->pdo->prepare($statement);
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder
+            ->insert($table, ReflectionUtils::getPropertiesWithValues($object));
+        $this->query($queryBuilder->getQuery());
+        $this->paramsBinder(ReflectionUtils::getPropertiesValues($object));
         return $this->execute($object);
     }
     /**
@@ -315,17 +292,9 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
      * @return object
      */
     public function oneToOne($object, $target) {
-
-        /*
-         * SELECT tag.id, tag.tag, tag.post_id FROM tag
-           INNER JOIN post WHERE tag.post_id = post.id;
-         */
-
         $parent = $this->objectInjector(get_class($object));
         $child = $this->objectInjector($target);
-
         $queryBuilder = new QueryBuilder();
-
         $queryBuilder
             ->select($this->setTableToProperties(ReflectionUtils::getProperties($target), $child))
             ->from(array($child))
@@ -333,19 +302,7 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
             ->where($parent.'.id=?');
         $this->query($queryBuilder->getQuery());
         $this->bindValue(1,$object->id);
-
         return $this->fetchObjectSet($this->objectRelocator($child));
-
-
-
-
-        /*        $query = "SELECT * FROM $child WHERE id=(SELECT ".$child."_id FROM $parent WHERE id=?)";
-                $this->query($query);
-        //        echo $query;
-        //        echo $object->id;
-                $this->bindValue(1, $object->id);
-
-                return $this->fetchSingleObject($target);*/
     }
     /**
      * Create 1-N relationship from two objects. Returns an array of target objects of the relationship.
@@ -355,20 +312,6 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
      * @param string $target
      * @return array
      */
-/*    public function oneToMany($object, $target) {
-
-            $parent = $this->objectInjector(get_class($object));
-            $child = $this->objectInjector($target);
-        $query = "SELECT * FROM $child WHERE ". $parent ."_id =?";
-        $this->query($query);
-        $this->bindValue(1, $object->id);
-
-
-        return $this->fetchObjectSet($target);
-
-
-
-    }*/
     public function oneToMany($object, $target) {
         $parent = $this->objectInjector(get_class($object));
         $child = strtolower(ReflectionUtils::stripNamespace($target));
@@ -377,17 +320,9 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
             ->select($this->setTableToProperties(ReflectionUtils::getProperties($target),$child))
             ->from(array($child))
             ->where($parent.'_id =?');
-
         $this->query($queryBuilder->getQuery());
         $this->bindValue(1, $object->id);
         return $this->fetchObjectSet($target);
-
-
-        /*
-         * SELECT * FROM `tags` WHERE blogpost_id = (SELECT  id FROM blogpost WHERE ID = 20)
-         */
-
-
     }
 
     /**
@@ -410,17 +345,10 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
         $query = "SELECT * FROM $child WHERE id = (SELECT ". $child ."_id FROM $parent WHERE id=?)";
         $this->query($query);
         $this->bindValue(1, $object->id);
-
         return $this->fetchSingleObject($target);
 
-        /*
-         * SELECT * FROM `tags` WHERE blogpost_id = (SELECT  id FROM blogpost WHERE ID = 20)
-         */
-
     }
-    /*
-     * SELECT * from blogpost_tags WHERE tag_id = ?;
-     */
+
     /**
      * Return a collection of ojects of a N to N relationship. The table must be called $object_$target, the N/N table must contain
      * $object_id reference. The table names uses the convetion of lowercase (@see ObjectInjector).
@@ -429,27 +357,6 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
      * @param string $target
      * @return \ArrayObject
      */
-/*    public function manyToMany($object, $target) {
-        $parent = $this->objectInjector(get_class($object));
-        $child = strtolower($target);
-        $query = "SELECT * FROM ".$parent ."_". $child ." WHERE ". $parent ."_id = ?";
-        $this->query($query);
-        $this->bindValue(1, $object->id);
-        $relations = $this->fetchObj();
-        $list = array();
-        $child_id = $child.'_id';
-        foreach ($relations as $key => $value) {
-
-            $query = "SELECT * from $child WHERE id=?";
-            $this->query($query);
-            $this->bindValue(1, $value->$child_id);
-            $obj = $this->fetchSingleObject($this->objectRelocator($target));
-            $list[] = $obj ;
-
-        }
-
-        return $list;
-    }*/
     public function manyToMany($object, $target) {
         $parent = $this->objectInjector(get_class($object));
         $child = strtolower(ReflectionUtils::stripNamespace($target));
@@ -558,9 +465,9 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
 
     /**
      * @internal parse params from a given array and bind them in a prepared statement
-     * @param type $params
+     * @param array $params
      */
-    private function paramsBinder($params) {
+    private function paramsBinder(array $params) {
         foreach ($params as $key => $value) {
             $key++; // + 1 for bindParams
             $this->bindValue($key, $value);
@@ -590,11 +497,7 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
      * @param object $object
      */
     private function execute($object=null) {
-        if(isset($object)){
-            return $this->stm->execute((array)$object);
-        } else {
-            return $this->stm->execute();
-        }
+        return $this->stm->execute();
     }
     private function rowCount() {
         $this->execute();
