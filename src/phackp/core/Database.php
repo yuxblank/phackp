@@ -56,7 +56,34 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
 
     }
 
+    /**
+     * Query and return an associative array of one result.
+     * @param $object
+     * @param $query
+     * @param $params
+     * @return mixed
+     */
     public function findAsArray($object,$query,$params) {
+        $table = $this->objectInjector($object);
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder
+            ->select(ReflectionUtils::getProperties($object))
+            ->from(array($table))
+            ->where($query);
+        $this->query($queryBuilder->getQuery());
+        $this->paramsBinder($params);
+        $this->execute();
+        return $this->singleResult();
+    }
+
+    /**
+     * Query and return an array of associative arrays of results.
+     * @param $object
+     * @param $query
+     * @param $params
+     * @return mixed
+     */
+    public function findAllAsArray($object,$query,$params) {
         $table = $this->objectInjector($object);
 
         $queryBuilder = new QueryBuilder();
@@ -68,7 +95,7 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
         $this->query($queryBuilder->getQuery());
         $this->paramsBinder($params);
         $this->execute();
-        return $this->stm->fetch(PDO::FETCH_ASSOC);
+        return $this->resultList();
     }
     /**
      * Returns a stdClass represention of the target table.
@@ -78,11 +105,19 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
      */
     public function findAs($object,$query, $params) {
         $table = $this->objectInjector($object);
-        $this->query('SELECT * FROM ' . $table . ' WHERE '. $query);
-        if(isset($params)) {
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder
+            ->select(ReflectionUtils::getProperties($object))
+            ->from(array($table));
+
+        if ($query!==null && $params!==null) {
+            $queryBuilder
+                ->where($query);
+            $this->query($queryBuilder->getQuery());
             $this->paramsBinder($params);
+        } else {
+            $this->query($queryBuilder->getQuery());
         }
-        $this->execute();
         return $this->stm->fetch(PDO::FETCH_OBJ);
     }
     /**
@@ -551,17 +586,17 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
         $this->execute();
         return $this->stm->fetchColumn();
     }
-    private function resultSet() {
+    private function resultList() {
         $this->execute();
         return $this->stm->fetchAll(PDO::FETCH_ASSOC);
+    }
+    private function singleResult() {
+        $this->execute();
+        return $this->stm->fetch(PDO::FETCH_ASSOC);
     }
     private function fetchObj() {
         $this->execute();
         return $this->stm->fetchAll(PDO::FETCH_OBJ);
-    }
-    private function resultSingle() {
-        $this->execute();
-        return $this->stm->fetch(PDO::FETCH_ASSOC);
     }
     private function fetchSingleObject($object) {
         $this->stm->setFetchMode(PDO::FETCH_INTO, new $object());
