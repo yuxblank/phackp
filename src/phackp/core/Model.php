@@ -57,6 +57,9 @@ abstract class Model  {
     public final function findAs($query, $params=null) {
         return self::$db->findAs(get_called_class(),$query, $params);
     }
+    public final function findAsArray($query,$params=null){
+        return self::$db->findAsArray(get_called_class(),$query, $params);
+    }
 
     public final function findMagicSet($query, $params) {
         return self::$db->findAsAll(get_called_class(),$query, $params);

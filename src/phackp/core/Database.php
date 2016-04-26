@@ -58,7 +58,14 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
 
     public function findAsArray($object,$query,$params) {
         $table = $this->objectInjector($object);
-        $this->query('SELECT * FROM '.$table.' WHERE '.$query);
+
+        $queryBuilder = new QueryBuilder();
+
+        $queryBuilder
+            ->select(ReflectionUtils::getProperties($object))
+            ->from(array($table))
+            ->where($query);
+        $this->query($queryBuilder->getQuery());
         $this->paramsBinder($params);
         $this->execute();
         return $this->stm->fetch(PDO::FETCH_ASSOC);
