@@ -27,7 +27,7 @@ class ReflectionUtils
      * @param $object
      * @return array
      */
-    public static function getPropertiesWithValues($object):array {
+    public static function getInstanceProperties($object):array {
         return array_keys(get_object_vars($object));
     }
     /**
@@ -35,9 +35,21 @@ class ReflectionUtils
      * @param $object
      * @return array
      */
-    public static function getPropertiesValues($object):array {
+    public static function getInstancePropertiesValues($object):array {
         return array_values(get_object_vars($object));
     }
+
+
+    public static function getDeferredInstanceProperties($object) {
+        $array = array();
+        foreach (get_object_vars($object) as $key => $var) {
+            if ($var!==null) {
+                $array[$key] = $var;
+            }
+        }
+        return $array;
+    }
+
 
     /**
      * Strip namespaces from a classname, return the global class name.

@@ -113,10 +113,10 @@ class QueryBuilder
         return $this;
     }
 
-    public function update(string $table, array $fields, array $values) {
+    public function update(string $table, array $fields) {
         $this->query .= ' UPDATE ' . $table .' SET ';
         for($i=0, $max = count($fields); $i<$max; $i++) {
-            $this->query .= $fields[$i] . ' = ' .$values[$i] . ', ';
+            $this->query .= $fields[$i] . ' = ?, ';
         }
         $this->query = rtrim($this->query, ', ');
         return $this;

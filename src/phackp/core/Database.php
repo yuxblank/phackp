@@ -217,9 +217,9 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
         $table = $this->objectInjector(get_class($object));
         $queryBuilder = new QueryBuilder();
         $queryBuilder
-            ->insert($table, ReflectionUtils::getPropertiesWithValues($object));
+            ->insert($table, ReflectionUtils::getInstanceProperties($object));
         $this->query($queryBuilder->getQuery());
-        $this->paramsBinder(ReflectionUtils::getPropertiesValues($object));
+        $this->paramsBinder(ReflectionUtils::getInstancePropertiesValues($object));
         return $this->execute($object);
     }
     /**
@@ -227,7 +227,7 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
      * @param object $object
      * @param int $id
      */
-    public function update($object) {
+    /*public function update($object) {
         $table = $this->objectInjector(get_class($object));
         $statement = "UPDATE $table SET ";
         $values="";
@@ -249,6 +249,18 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
         }
 
 
+        return $this->execute();
+    }*/
+    public function update($object) {
+        $table = $this->objectInjector(get_class($object));
+
+        $queryBuilder = new QueryBuilder();
+
+        $queryBuilder
+            ->update($table, array_keys(ReflectionUtils::getDeferredInstanceProperties($object)));
+
+        $this->query($queryBuilder->getQuery());
+        $this->paramsBinder(ReflectionUtils::getDeferredInstanceProperties($object));
         return $this->execute();
     }
     /**
