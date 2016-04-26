@@ -253,7 +253,7 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
     }*/
     public function update($object) {
         $table = $this->objectInjector(get_class($object));
-        $properties =   ReflectionUtils::getDeferredInstanceProperties($object);
+        $properties =  $this->excludeId(ReflectionUtils::getDeferredInstanceProperties($object));
         $queryBuilder = new QueryBuilder();
 
         $queryBuilder
@@ -504,6 +504,23 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
     private function bindValue ($param, $value) {
         $this->stm->bindParam($param,$value);
     }
+
+    /**
+     * Exclude 'id' or 'ID' index for update operations
+     * @param array $properties
+     * @return array
+     */
+    private function excludeId(array $properties):array {
+        $result = array();
+        foreach ($properties as $key => $property) {
+            if ($key ==='id'|| $key==='ID'){
+                continue;
+            }
+            $result[$key] = $property;
+        }
+        return $result;
+    }
+
 
     /**
      *
