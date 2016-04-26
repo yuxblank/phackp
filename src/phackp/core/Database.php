@@ -101,14 +101,21 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
      * @return object
      */
     public function find($object,$query,$params) {
-        try {
-            $table = $this->objectInjector($object);
-        } catch (Exception $e) {
-            return;
+        $table = $this->objectInjector($object);
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder
+            ->select(ReflectionUtils::getProperties($object))
+            ->from(array($table));
+
+        if ($query!==null && $params!==null) {
+            $queryBuilder
+                ->where($query);
+            $this->query($queryBuilder->getQuery());
+            $this->paramsBinder($params);
+        } else {
+            $this->query($queryBuilder->getQuery());
         }
-        $statement = "SELECT * FROM $table WHERE ".$query;
-        $this->query($statement);
-        $this->paramsBinder($params);
+
         return $this->fetchSingleObject($object);
     }
     /**
@@ -268,12 +275,16 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
      * Delete an object instance in the data-layer
      * @param object $object
      * @param int $id
+     * @return bool
      */
     public function delete($object,$id) {
         $table = $this->objectInjector($object);
-        $statement = "DELETE FROM $table WHERE id=?";
-        $this->stm = $this->pdo->prepare($statement);
-        $this->bindValue(1,$id);
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder
+            ->delete($table)
+            ->where('id=?');
+        $this->query($queryBuilder->getQuery());
+        $this->bindValue(1, $id);
         return $this->stm->execute();
     }
     /**
