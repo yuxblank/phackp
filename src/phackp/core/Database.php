@@ -128,9 +128,19 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
      */
     public function findAsAll($object, $query, $params) {
         $table = $this->objectInjector($object);
-        $this->query('SELECT * FROM ' . $table . ' WHERE '. $query);
-        $this->paramsBinder($params);
-        $this->execute();
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder
+            ->select(ReflectionUtils::getProperties($object))
+            ->from(array($table));
+
+        if ($query!==null && $params!==null) {
+            $queryBuilder
+                ->where($query);
+            $this->query($queryBuilder->getQuery());
+            $this->paramsBinder($params);
+        } else {
+            $this->query($queryBuilder->getQuery());
+        }
         return $this->stm->fetchAll(PDO::FETCH_OBJ);
     }
 
