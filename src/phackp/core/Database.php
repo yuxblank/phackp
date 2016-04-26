@@ -353,21 +353,33 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
      * The child table should contain the parent id. (e.g. tags contains post_id column)
      * @param object $object
      * @param string $target
-     * @return object[]
+     * @return array
      */
-    public function oneToMany($object, $target) {
-        try {
+/*    public function oneToMany($object, $target) {
+
             $parent = $this->objectInjector(get_class($object));
             $child = $this->objectInjector($target);
-        } catch (Exception $e) {
-            return;
-
-        }
         $query = "SELECT * FROM $child WHERE ". $parent ."_id =?";
         $this->query($query);
         $this->bindValue(1, $object->id);
 
 
+        return $this->fetchObjectSet($target);
+
+
+
+    }*/
+    public function oneToMany($object, $target) {
+        $parent = $this->objectInjector(get_class($object));
+        $child = strtolower(ReflectionUtils::stripNamespace($target));
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder
+            ->select($this->setTableToProperties(ReflectionUtils::getProperties($target),$child))
+            ->from(array($child))
+            ->where($parent.'_id =?');
+
+        $this->query($queryBuilder->getQuery());
+        $this->bindValue(1, $object->id);
         return $this->fetchObjectSet($target);
 
 

@@ -1,21 +1,21 @@
 <?php
 namespace yuxblank\phackp\core;
-/*
- * Copyright (C) 2015 yuri.blanc
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+    /*
+     * Copyright (C) 2015 yuri.blanc
+     *
+     * This program is free software: you can redistribute it and/or modify
+     * it under the terms of the GNU General Public License as published by
+     * the Free Software Foundation, either version 3 of the License, or
+     * (at your option) any later version.
+     *
+     * This program is distributed in the hope that it will be useful,
+     * but WITHOUT ANY WARRANTY; without even the implied warranty of
+     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     * GNU General Public License for more details.
+     *
+     * You should have received a copy of the GNU General Public License
+     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+     */
 
 /**
  *
@@ -23,8 +23,9 @@ namespace yuxblank\phackp\core;
  */
 abstract class Model  {
     private static $db;
+    private $instance;
     public function __construct() {
-        if (self::$db == null) {
+        if (self::$db === null) {
             self::$db = new Database();
         }
     }
@@ -36,7 +37,7 @@ abstract class Model  {
         return self::$db->_countObjects(get_called_class(),$query,$params);
     }
 
-    public final  function delete($id) {
+    public final function delete($id) {
         return self::$db->delete(get_called_class(), $id);
     }
 
