@@ -23,55 +23,84 @@ namespace yuxblank\phackp\core;
  * @author yuri.blanc
  */
 class View {
-    //private $template = TEMPLATE;
     /**
      *
      * @var array
      */
     private $var = array();
-    private $view;
+
+    private $content;
 
     /**
      * Add data to the View object specifing a name and a value,
      * set variables will be accessible with their $name in the rendered view.
-     * @param type $name Description
+     * @param string $name Description
      */
     public function renderArgs($name, $value){
         $this->var[$name] = $value;
     }
+
+    public function getArgs($name) {
+        return $this->var[$name];
+    }
+
     /**
      * // TODO conventional render()
      * Render the view. Using relative paths you can specify subfolders of view root. (e.g. blog/post = view/blog/post.php)
      * Automatically set .php extension to the view name.
      * @param string $view
      */
-    public function render($view) {
+    public function render(string $view) {
 
-        $appRoot = Application::getAppRoot();
+        $appRoot = Application::getViewRoot();
 
         if (strpos($view, "/")!==false) {
-            $path = implode("/",array_slice(explode("/", $view), 0,-1));
+            $path = implode("/", array_slice(explode("/", $view), 0, -1));
         }
 
-        $this->page_content = $this->view = $appRoot."/src/view/$view.php";
-        //$this->renderArgs("template", $this->template);
-        $this->renderArgs("page_content", $this->page_content);
+        //$this->renderArgs('PAGE_CONTENT', $appRoot."/src/view/$view.php");
+        $this->content = $appRoot.'/'.$view.".php";
         extract($this->var, EXTR_OVERWRITE);
 
         if (!$path) {
-            include $appRoot."/src/view/main.php";
+            include $appRoot."/main.php";
         } else {
-            include $appRoot."/src/view/$path/main.php";
+            include $appRoot."/$path/main.php";
         }
+
 
         /*if (!file_exists($appRoot."template/$this->template/index.php")) {
              throw new \IOException ("File not found: " . $appRoot."template/$this->template/index.php");
         }*/
 
     }
-    // good as controller function
-    public function renderJson($data,$options=null) {
-        echo json_encode($data,$options);
+
+    /**
+     * Render view hook
+     */
+
+    public function content() {
+        extract($this->var, EXTR_SKIP);
+        include $this->content;
+    }
+
+
+    /**
+     * Render an hook. To pass child variables to the hook scope use the array params
+     * with an associative array of 'variable_name' => 'variable_value'.
+     * The variable will be available in the hook view as $_varName. ('$_' prefix)
+     * @param string $hook name of the hook
+     * @param array|null $args associative array of params for the hook scope.
+     */
+    public function hook(string $hook, array $args=null) {
+        if ($args!==null) {
+            extract($args, EXTR_PREFIX_ALL,'');
+        }
+        if ($hook)
+            $path = Application::getAppRoot()  . '/src/view/' . Application::getConfig()['VIEW']['HOOKS'][$hook];
+        if (file_exists($path) ) {
+            include $path;
+        }
     }
 
 
