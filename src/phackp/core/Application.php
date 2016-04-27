@@ -77,6 +77,12 @@ class Application
         return self::getInstance()->APP_ROOT;
     }
 
+    /** Return view root dir
+     * @return mixed
+     */
+    public static function getViewRoot() {
+        return self::getInstance()->config['VIEW']['ROOT'];
+    }
     /**
      * Return the application url configured
      * @return string
