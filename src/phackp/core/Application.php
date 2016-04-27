@@ -190,8 +190,10 @@ class Application
         } else {
             $notFoundRoute = Router::getController(self::getErrorRoute(404));
             $controller = new $notFoundRoute[0]();
+            ReflectionUtils::invoke($controller, 'onBefore');
             $a = $notFoundRoute[1];
             $controller->$a();
+            ReflectionUtils::invoke($controller, 'onAfter');
         }
 
         if(self::isDebug()) {
