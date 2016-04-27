@@ -60,5 +60,11 @@ class ReflectionUtils
         return substr($classname, strrpos($classname, '\\') + 1);
     }
 
+    public static function invoke($object, string $action) {
+        if (method_exists($object,$action)){
+            $object->$action();
+        }
+    }
+
 
 }

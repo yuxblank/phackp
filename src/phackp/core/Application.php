@@ -1,5 +1,6 @@
 <?php
 namespace yuxblank\phackp\core;
+use yuxblank\phackp\utils\ReflectionUtils;
 use yuxblank\phackp\utils\UnitConversion;
 
 /**
@@ -179,8 +180,13 @@ class Application
             $httpKernel->dispatch($route, $httpKernel);
             $action = Router::getController($route['action']);
             $controller = new $action[0];
+
+            ReflectionUtils::invoke($controller, 'before');
+
             $a = $action[1];
             $controller->$a($httpKernel->getParams());
+
+            ReflectionUtils::invoke($controller, 'after');
         } else {
             $notFoundRoute = Router::getController(self::getErrorRoute(404));
             $controller = new $notFoundRoute[0]();
