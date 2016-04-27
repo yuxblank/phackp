@@ -15,11 +15,11 @@ interface EventDrivenController
      * This method will run before any other method and right after constructor.
      * @return void
      */
-    public function before();
+    public function onBefore();
     /**
      * This method will run at last.
      * @return void
      */
-    public function after();
+    public function onAfter();
 
 }
