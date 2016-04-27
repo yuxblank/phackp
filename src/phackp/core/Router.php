@@ -128,11 +128,8 @@ class Router
      * @return bool
      */
     private static function isSameContentType(array $route, HttpKernel $httpKernel):bool{
-        if($route['options']['accept'] === $httpKernel->getContentType()) {
-            return true;
-        }
-        $httpKernel->HTTPStatus(415);
-        return false;
+        return $route['options']['accept'] === $httpKernel->getContentType();
+
     }
 
 
