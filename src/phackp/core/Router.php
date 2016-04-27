@@ -27,103 +27,13 @@ namespace yuxblank\phackp\core;
 
 class Router
 {
-    protected static $routes;
+
     const WILDCARD_REGEXP = '({[aA-zZ0-9]+})';
-    /**
-     * Costructor reads the routes.json file as a stdClass();
-     */
-    private function __construct()
-    {
-        Router::$routes = Application::getInstance()->getConfig()['ROUTES'];
-        /*Router::$routes = json_decode(file_get_contents(APP_ROOT . 'config/routes.json'));*/
-    }
-
-    /**
-     * Return stdClass respresentation of routes.json
-     * @return Router
-     */
-    public static function getInstance()
-    {
-        if (Router::$routes == null) {
-            new Router();
-        }
-        return Router::$routes;
-    }
-
-    /**
-     * The method returns the route URL from a action string params pointing to the controller and action.
-     * The $action must be present in routes or it returns 404 (not found).
-     * $params if set, must contain an associative array of GET query string. (e.x. ['id' => 'number']).
-     * @static
-     * @param string $action
-     * @param mixed[] $params
-     * @return string
-     */
-    public static function go($action, $params = null, $method = null)
-    {
-
-        $route = Router::findUrl($action, $method);
-        if ($route) {
-            // case with N params
-            if (isset($params)) {
-                if (strpos($route->url, "{") || strpos($route->url, "}")) {
-                    $queryString = "";
-                    foreach ($params as $key => $value) {
-                        $queryString = $route->url;
-                        // find position of key
-                        $currentParam = "{" . $key . "}";
-                        if (strpos($queryString, $currentParam)) {
-                            $queryString = str_replace($currentParam, $value, $queryString);
-                        }
-                    }
-                    // return queryString url
-
-                    return APP_URL . $queryString;
-                } else {
-                    return APP_URL . $route->url . "?" . http_build_query($params);
-                }
-            }
-            // return url from json
-            return APP_URL . "$route->url";
-        } else {
-            // not found, return /404
-            //return APP_URL . "404";
-            http_response_code(404);
-            return APP_URL . "404";
-        }
-    }
-
-
-/*    // TODO new routing faster link
-    public function link($action, $method = null)
-    {
-        $varArgs = func_get_arg(2);
-        $route = $this->_findUrl($action, $method);
-
-
-        //TODO define a valid regexp
-        if ($varArgs && count(preg_grep('({[aA-zZ 0-9]+})',$route))>0) {
-
-            $queryString = "";
-            foreach ($varArgs as $key => $value) {
-                $queryString = $route->url;
-                // find position of key
-                $currentParam = "{" . $key . "}";
-                if (strpos($queryString, $currentParam)) {
-                    $queryString = str_replace($currentParam, $value, $queryString);
-                }
-            }
-
-
-        }
-
-
-    }*/
 
     /**
      * Get a link url without checking if the route is really defined.
      * To set params, specify the ordinal position in the link as {param}, the array must preserve params ordinal position.
-     * This is the faster way to get a real link, but will return 404 not found when the route does not exist.
+     * This is the faster way to get a real link.
      * @param string $link
      * @param array $params
      * @return string
@@ -145,144 +55,34 @@ class Router
 
     /**
      * Redirect (302) to another action from an action.
-     * @static
-     * @param string $action
-     * @param mixed[] $params
+     * @param string $url
+     * @param array|null $params
      */
-    public static function switchAction($action, $params = null)
+    public static function switchAction(string $url, array $params = null)
     {
-        $r = Router::go($action, $params);
+        $r = Router::link($url, $params);
         header("location:$r", true, 302);
     }
 
+
     /**
-     * Redirect (302) to another action from an url.
-     * @static
-     * @param string $action
-     * @param mixed[] $params
+     * External url redirect
+     * @param $url
      */
-    public static function redirect($url)
-    {
-        $action = Router::findAction($url);
-        self::switchAction($action);
-    }
 
-
-    public static function _redirect($url)
+    public static function redirect(string $url)
     {
         header("location:$url", true, 302);
     }
 
 
     /**
-     * Find the url in routes from an action. The url returned is the first of the routes list.
-     * @static
-     * @param string $action
-     * @return stdClass
+     * Find the action from httpKernel and set routed parameters if any.
+     * if the route has been found return the route.
+     * @param HttpKernel $httpKernel
+     * @return null|array
      */
-    public static function findUrl($action, $method = null)
-    {
-        foreach (Router::getInstance()->routes as $route) {
-            if (!isset($method)) {
-                if ($route->action == $action) {
-                    return $route;
-                }
-            } else {
-                if ($route->action == $action && $route->method == $method) {
-                    return $route;
-                }
-            }
-        }
-        // not found
-        http_response_code(404);
-        return null;
-    }
-
-    // TODO new routing finder
-    public function _findUrl($action, $method = null)
-    {
-        $routes = array(); // test
-
-        foreach ($routes as $uri => $route) {
-            if (null === $method) {
-                if ($route->action === $action) {
-                    return $route;
-                }
-            } else {
-                if ($route->action === $action && $route->method === $method) {
-                    return $route;
-                }
-            }
-
-        }
-        // not found
-        http_response_code(404);
-        return null;
-    }
-
-    /**
-     * Read the real URL and check if exist in routes. If the route contains ? wildcards, try to replace them with current values and check for match.
-     * if no indentical urls are found, returns 404.
-     * @static
-     * @param string $query
-     * @return stdClass
-     */
-/*    public static function findAction($query)
-    {
-        $queryArray = explode("/", $query);
-        //print_r($queryArray);
-        // check not parametered routes
-        foreach (Router::getInstance()->routes as $route) {
-            //echo "for 1";
-            if ($route->url === $query) {
-                //echo "1 is equal";
-                // replace current routes url with incoming url
-                $route->url = $query;
-                return $route;
-            } else if (preg_match(self::WILDCARD_REGEXP, $route->url)) {
-                // check parametered routes
-                $queryReplace;
-                //echo "for 2";
-                $routeArray = explode("/", $route->url);
-                //print_r($routeArray);
-                $replaceArray = array();
-                // check about size
-                if (count($queryArray) === count($routeArray)) {
-                    //create params array
-                    $paramsArray = array();
-                    for ($i = 0; $i < count($queryArray); $i++) {
-                        if ($queryArray[$i] === $routeArray[$i]) {
-                            $replaceArray[$i] = $queryArray[$i];
-                        } else if (preg_match(self::WILDCARD_REGEXP, $routeArray[$i])) {
-                            $replaceArray[$i] = $queryArray[$i];
-                            $paramsArray[str_replace(array("{", "}"), "", $routeArray[$i])] = $queryArray[$i];
-                        }
-                    }
-                    $newUrl = implode("/", $replaceArray);
-                    //echo "<br>".$newUrl;
-                    if ($newUrl === $query) {
-                        $route->url = $query;
-                        // set params array for {values} substitution
-                        $route->getParams = $paramsArray;
-                        return $route;
-                    }
-                }
-            }
-        }
-        // return 404
-        //return $route;
-        http_response_code(404);
-        return $route;
-    }*/
-
-    /**
-     * Read the url and return route if found in routes file.
-     * If route has not been found, return null
-     * @param $query (relative url)
-     * @param $method (HTTP_METHOD)
-     * @return array|null
-     */
-    public function findAction(HttpKernel $httpKernel)
+    public static function findAction(HttpKernel $httpKernel):array
     {
 
         foreach (Application::getRoutes()[$httpKernel->getMethod()] as $key => $route) {
@@ -343,7 +143,7 @@ class Router
      * @param $realParams
      * @return null|string
      */
-    private static function compareRoutes($routeParams, $realParams)
+    private static function compareRoutes(array $routeParams,array $realParams):string
     {
 
         // try checking if wildcards static params are less than the difference with real
@@ -392,7 +192,7 @@ class Router
      * @param $queryArray
      * @return array
      */
-    private static function getWildCardParams($routeParams, $queryArray)
+    private static function getWildCardParams(array $routeParams, array $queryArray):array
     {
         $params = preg_grep(self::WILDCARD_REGEXP, $routeParams);
         $getParams = array();
@@ -405,38 +205,12 @@ class Router
 
 
     /**
-     * Performs a check for a valid action and method in routes. if action and method belongs to a route returns the route.
-     * @static
-     * @param string $action
-     * @param string $method
-     * @return stdClass
-     */
-    public static function checkRoutes($action, $method)
-    {
-        foreach (Router::getInstance()->routes as $valid) {
-            /*   echo $valid->action . ' == ' . $action . '|||';
-               echo $valid->method . ' == ' . $method . '|||';*/
-            if ($valid->method == $method && $valid->action == $action) {
-                return $valid;
-            }
-        }
-    }
-
-/*    public static function getController($action)
-    {
-        $array = explode('@', $action);
-        $array[0] = 'controller\\'.$array[0];
-
-        return $array;
-    }*/
-
-    /**
      * Performs a inverse route returning returning an array with [0 => 'Controller', 1 => 'action']
      * Recreate the current application CONTROLLER namespace using the application configuration.
      * @param string $action
      * @return mixed[]
      */
-    public static function getController($action)
+    public static function getController(string $action):array
     {
         $namespace = Application::getNameSpace()['CONTROLLER'];
         $array = explode('@', $action);
