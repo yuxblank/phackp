@@ -181,12 +181,12 @@ class Application
             $action = Router::getController($route['action']);
             $controller = new $action[0];
 
-            ReflectionUtils::invoke($controller, 'before');
+            ReflectionUtils::invoke($controller, 'onBefore');
 
             $a = $action[1];
             $controller->$a($httpKernel->getParams());
 
-            ReflectionUtils::invoke($controller, 'after');
+            ReflectionUtils::invoke($controller, 'onAfter');
         } else {
             $notFoundRoute = Router::getController(self::getErrorRoute(404));
             $controller = new $notFoundRoute[0]();
