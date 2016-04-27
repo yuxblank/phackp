@@ -82,7 +82,7 @@ class Router
      * @param HttpKernel $httpKernel
      * @return null|array
      */
-    public static function findAction(HttpKernel $httpKernel):array
+    public static function findAction(HttpKernel $httpKernel)
     {
 
         foreach (Application::getRoutes()[$httpKernel->getMethod()] as $key => $route) {
@@ -143,7 +143,7 @@ class Router
      * @param $realParams
      * @return null|string
      */
-    private static function compareRoutes(array $routeParams,array $realParams):string
+    private static function compareRoutes(array $routeParams,array $realParams)
     {
 
         // try checking if wildcards static params are less than the difference with real
