@@ -45,33 +45,30 @@ class View {
     }
 
     /**
-     * // TODO conventional render()
      * Render the view. Using relative paths you can specify subfolders of view root. (e.g. blog/post = view/blog/post.php)
      * Automatically set .php extension to the view name.
      * @param string $view
      */
-    public function render(string $view) {
+    public function render(string $view=null) {
 
         $appRoot = Application::getViewRoot();
+        if ($view!==null) {
+            if (strpos($view, "/") !== false) {
+                $path = implode("/", array_slice(explode("/", $view), 0, -1));
+            }
+            $this->content = $appRoot . '/' . $view . ".php";
+            extract($this->var, EXTR_OVERWRITE);
 
-        if (strpos($view, "/")!==false) {
-            $path = implode("/", array_slice(explode("/", $view), 0, -1));
-        }
-
-        //$this->renderArgs('PAGE_CONTENT', $appRoot."/src/view/$view.php");
-        $this->content = $appRoot.'/'.$view.".php";
-        extract($this->var, EXTR_OVERWRITE);
-
-        if (!$path) {
-            include $appRoot."/main.php";
+            if (!$path) {
+                include $appRoot . "/main.php";
+            } else {
+                include $appRoot . "/$path/main.php";
+            }
         } else {
-            include $appRoot."/$path/main.php";
+            //todo conventional render()
+            $name = debug_backtrace()[1]['function'];
+
         }
-
-
-        /*if (!file_exists($appRoot."template/$this->template/index.php")) {
-             throw new \IOException ("File not found: " . $appRoot."template/$this->template/index.php");
-        }*/
 
     }
 
