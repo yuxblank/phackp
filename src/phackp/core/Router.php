@@ -40,16 +40,10 @@ class Router
      */
     public static function link(string $link, array $params =null):string {
         if ($params!==null){
-            $url = explode('/', $link);
-            $wildcards = preg_grep(self::WILDCARD_REGEXP,$url);
-            $i=0;
-            foreach ($wildcards as $key => $wildcard) {
-                $url[$key] = $params[$i];
-                $i++;
-            }
+            $url = self::fastParamBind($link,$params);
             return Application::getAppUrl().'/'.implode('/', $url);
         } else {
-            return Application::getAppUrl().'/'.$link;
+            return $link !== '/' ? Application::getAppUrl().'/'.$link : Application::getAppUrl().$link;
         }
     }
 
@@ -105,7 +99,7 @@ class Router
             $url = self::fastParamBind($link, $params);
             return Application::getAppUrl().'/'.implode('/', $url);
         } else {
-            return Application::getAppUrl().'/'.$link;
+            return $link !== '/' ? Application::getAppUrl().'/'.$link : Application::getAppUrl().$link;
         }
     }
 
@@ -132,7 +126,7 @@ class Router
             $url = $url = self::fastParamBind($link, $params);
             return Application::getAppUrl().'/'.implode('/', $url);
         } else {
-            return Application::getAppUrl().'/'.$link;
+            return $link !== '/' ? Application::getAppUrl().'/'.$link : Application::getAppUrl().$link;
         }
     }
 
