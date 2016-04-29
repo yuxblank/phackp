@@ -56,23 +56,24 @@ class Router
 
     /**
      * Search the url of a given alias. When passing the method it's faster.
-     * @param string $alias
+     * @param string $value
+     * @param String $type
      * @param string|null $method
      * @return mixed
      */
-    private static function searchAlias(string $alias, string $method = null)
+    private static function searchThroughRoutes(string $value, String $type, string $method = null)
     {
 
         if ($method !== null) {
             foreach (Application::getRoutes()[$method] as $key => $route) {
-                if (array_key_exists('alias', $route) && $route['alias'] === $alias) {
+                if (array_key_exists($type, $route) && $route[$type] === $value) {
                     return $route['url'];
                 }
             }
         } else {
             foreach (Application::getRoutes() as $key => $rest) {
                 foreach ($rest as $innerKey => $innerRoute) {
-                    if (array_key_exists('alias', $innerRoute) && $innerRoute['alias'] === $alias) {
+                    if (array_key_exists($type, $innerRoute) && $innerRoute[$type] === $value) {
                         return $innerRoute['url'];
                     }
                 }
@@ -82,6 +83,20 @@ class Router
         }
     }
 
+
+    public function action(string $action, String $method=null, array $params =null){
+        $link = self::searchThroughRoutes($action, 'action', $method);
+        if ($link === null) {
+            $link = Application::getErrorRoute(404)['url'];
+        }
+
+        if ($params!==null){
+            $url = self::fastParamBind($link, $params);
+            return Application::getAppUrl().'/'.implode('/', $url);
+        } else {
+            return Application::getAppUrl().'/'.$link;
+        }
+    }
 
     /**
      * Get the link by a given alias. This way to get links is slower but allow the developer to change urls without changing code,
@@ -97,23 +112,37 @@ class Router
 
     public static function alias (string $alias, String $method=null, array $params =null) {
 
-        $link = self::searchAlias($alias, $method);
+        $link = self::searchThroughRoutes($alias, 'alias', $method);
         if ($link === null) {
             $link = Application::getErrorRoute(404)['url'];
         }
 
         if ($params!==null){
-            $url = explode('/', $link);
-            $wildcards = preg_grep(self::WILDCARD_REGEXP,$url);
-            $i=0;
-            foreach ($wildcards as $key => $wildcard) {
-                $url[$key] = $params[$i];
-                $i++;
-            }
+            $url = $url = self::fastParamBind($link, $params);
             return Application::getAppUrl().'/'.implode('/', $url);
         } else {
             return Application::getAppUrl().'/'.$link;
         }
+    }
+
+
+    /**
+     * Process the route URI and return the url with given parameters.
+     * Use positions of Wildcards and the ordinal replace them with params
+     * @param $routeUrl
+     * @param $params
+     * @return array
+     */
+
+    private static function fastParamBind($routeUrl, $params) {
+        $url = explode('/', $routeUrl);
+        $wildcards = preg_grep(self::WILDCARD_REGEXP,$url);
+        $i=0;
+        foreach ($wildcards as $key => $wildcard) {
+            $url[$key] = $params[$i];
+            $i++;
+        }
+        return $url;
     }
 
     /**
