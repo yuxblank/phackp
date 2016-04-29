@@ -56,6 +56,28 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
 
     }
 
+
+    /**
+     * This method will return the current instance of the PDO object, already connected.
+     * If you need to directly access pdo, you can do it.
+     * @return PDO
+     */
+
+    public function getPDO() {
+        return $this->pdo;
+    }
+
+
+
+   /* public function nativeQuery(QueryBuilder $queryBuilder, array $params=null) {
+        $this->query($queryBuilder->getQuery());
+        if ($params!==null) {
+            $this->paramsBinder($params);
+        }
+
+    }*/
+
+
     /**
      * Query and return an associative array of one result.
      * @param $object

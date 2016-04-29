@@ -30,6 +30,13 @@ abstract class Model  {
         }
     }
 
+    /**
+     * @return \PDO
+     */
+    public function getPDO() {
+        return self::$db->getPDO();
+    }
+
     public final function countObjects() {
         return self::$db->countObjects(get_called_class());
     }
