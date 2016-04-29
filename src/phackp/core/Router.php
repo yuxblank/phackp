@@ -84,6 +84,17 @@ class Router
     }
 
 
+    /**
+     * Get the link by a given action. This way to get links is slower but allow the developer to change urls without changing code,
+     * referencing to urls with the action instead of a link.
+     * Passing the HTTP method will make it faster.
+     * For dynamic urls, just pass the array of parameters in ordinal position.
+     * If not found (or not defined in routes) return 404 page url.
+     * @param string $action
+     * @param String|null $method
+     * @param array|null $params
+     * @return string
+     */
     public function action(string $action, String $method=null, array $params =null){
         $link = self::searchThroughRoutes($action, 'action', $method);
         if ($link === null) {
