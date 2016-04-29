@@ -100,7 +100,7 @@ class Application
      */
     public static function getErrorRoute(int $code)
     {
-        return self::getRoutes()['ERROR'][$code]['action'];
+        return self::getRoutes()['ERROR'][$code];
     }
 
     /**
@@ -188,7 +188,7 @@ class Application
 
             ReflectionUtils::invoke($controller, 'onAfter');
         } else {
-            $notFoundRoute = Router::getController(self::getErrorRoute(404));
+            $notFoundRoute = Router::getController(self::getErrorRoute(404)['action']);
             $controller = new $notFoundRoute[0]();
             ReflectionUtils::invoke($controller, 'onBefore');
             $a = $notFoundRoute[1];

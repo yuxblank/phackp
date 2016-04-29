@@ -53,6 +53,69 @@ class Router
         }
     }
 
+
+    /**
+     * Search the url of a given alias. When passing the method it's faster.
+     * @param string $alias
+     * @param string|null $method
+     * @return mixed
+     */
+    private static function searchAlias(string $alias, string $method = null)
+    {
+
+        if ($method !== null) {
+            foreach (Application::getRoutes()[$method] as $key => $route) {
+                if (array_key_exists('alias', $route) && $route['alias'] === $alias) {
+                    return $route['url'];
+                }
+            }
+        } else {
+            foreach (Application::getRoutes() as $key => $rest) {
+                foreach ($rest as $innerKey => $innerRoute) {
+                    if (array_key_exists('alias', $innerRoute) && $innerRoute['alias'] === $alias) {
+                        return $innerRoute['url'];
+                    }
+                }
+
+
+            }
+        }
+    }
+
+
+    /**
+     * Get the link by a given alias. This way to get links is slower but allow the developer to change urls without changing code,
+     * referencing to urls with an alias instead of a link.
+     * Passing the HTTP method will make it faster.
+     * For dynamic urls, just pass the array of parameters in ordinal position.
+     * If not found (or not defined in routes) return 404 page url.
+     * @param string $alias
+     * @param String|null $method
+     * @param array|null $params
+     * @return string
+     */
+
+    public static function alias (string $alias, String $method=null, array $params =null) {
+
+        $link = self::searchAlias($alias, $method);
+        if ($link === null) {
+            $link = Application::getErrorRoute(404)['url'];
+        }
+
+        if ($params!==null){
+            $url = explode('/', $link);
+            $wildcards = preg_grep(self::WILDCARD_REGEXP,$url);
+            $i=0;
+            foreach ($wildcards as $key => $wildcard) {
+                $url[$key] = $params[$i];
+                $i++;
+            }
+            return Application::getAppUrl().'/'.implode('/', $url);
+        } else {
+            return Application::getAppUrl().'/'.$link;
+        }
+    }
+
     /**
      * Redirect (302) to another action from an action.
      * @param string $url
