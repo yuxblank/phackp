@@ -95,7 +95,7 @@ class Router
      * @param array|null $params
      * @return string
      */
-    public function action(string $action, String $method=null, array $params =null){
+    public static function action(string $action, String $method=null, array $params =null){
         $link = self::searchThroughRoutes($action, 'action', $method);
         if ($link === null) {
             $link = Application::getErrorRoute(404)['url'];
