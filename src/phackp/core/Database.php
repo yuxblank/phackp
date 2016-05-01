@@ -46,9 +46,7 @@ class Database implements ObjectRelationalMapping, ObjectsDataAccess{
         $database = Application::getDatabase();
         $dsn = $database['DRIVER'] . ':host=' . $database['HOST'] . ";dbname=" . $database['NAME'];
         try {
-            $this->pdo = new PDO($dsn, $database['USER'], $database['PSW']);
-            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
+            $this->pdo = new PDO($dsn, $database['USER'], $database['PSW'], $database['OPTIONS']);
         } catch (PDOException $ex) {
             $ex->getMessage();
 
