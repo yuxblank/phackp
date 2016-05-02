@@ -53,15 +53,6 @@ class Database{
         return $this->pdo;
     }
 
-
-    /**
-     * Return last inserted id
-     * @return int
-     */
-    public function lastInsertId() {
-        return $this->pdo->lastInsertId();
-    }
-
     public function setTableToProperties(array $properties, string $table) {
         $result = array();
         foreach ($properties as $property) {
@@ -72,31 +63,33 @@ class Database{
 
     /**
      * @param array $params
+     * @return \PDOStatement
      */
     public function paramsBinder(array $params) {
         foreach ($params as $key => $value) {
             $key++; // + 1 for bindParams
             $this->bindValue($key, $value);
         }
+        return $this->stm;
     }
+
     /**
-     * Add a prepared statements
-     * @param SQL_QUERY $statament SQL query with : placeholders
-     * @param SQL_QUERY $statament SQL query with : placeholders
-     * @param Array $params names of placeholders
-     * @param Array $params placeholders values
+     * @param $statement
+     * @return \PDOStatement
      */
     public function query($statement) {
-        $stm = $this->pdo->prepare($statement);
-        $this->stm = $stm;
+        $this->stm = $this->pdo->prepare($statement);
+        return $this->stm;
     }
     /**
      * bind a a value
      * @param mixed $param
      * @param mixed $value
+     * @return \PDOStatement
      */
     public function bindValue ($param, $value) {
         $this->stm->bindParam($param,$value);
+        return $this->stm;
     }
 
     /**
@@ -114,6 +107,7 @@ class Database{
         }
         return $result;
     }
+
 
 
     public function execute() {

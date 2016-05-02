@@ -73,7 +73,7 @@ abstract class Model  {
     }
 
     public final function lastInsertId() {
-        return $this->hackORM->getDB()->lastInsertId();
+        return $this->hackORM->getDB()->getPDO()->lastInsertId();
     }
 
     public final function nativeQuery($query, $params) {
