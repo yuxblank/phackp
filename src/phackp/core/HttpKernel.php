@@ -101,7 +101,6 @@ final class HttpKernel
         }
     }
 
-
     /**
      * Parse the request content type. If application/json serialize to array.
      * If other, parse body.
@@ -160,13 +159,14 @@ final class HttpKernel
 
         switch ($this->getMethod()) {
             case 'GET':
-                if (array_key_exists('params', $route)) {
-                    $this->setParams($route['params']);
-                }
                 // get paramets ?name=value
                 if (Application::getConfig()['INJECT_QUERY_STRING']) {
                     $this->setParams($_GET);
                 }
+                if (array_key_exists('params', $route)) {
+                    $this->setParams($route['params']);
+                }
+
                 break;
 
             case 'POST':
