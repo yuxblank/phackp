@@ -18,7 +18,7 @@ use yuxblank\phackp\utils\ReflectionUtils;
 class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
 {
 
-    protected $db;
+    private $db;
 
     public function __construct()
     {
