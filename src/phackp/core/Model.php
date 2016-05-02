@@ -22,11 +22,11 @@ namespace yuxblank\phackp\core;
  * @author yuri.blanc
  */
 abstract class Model  {
-    private static $db;
-    private $instance;
+    private  $hackORM;
+
     public function __construct() {
-        if (self::$db === null) {
-            self::$db = new Database();
+        if ($this->hackORM === null) {
+            $this->hackORM = new HackORM();
         }
     }
 
@@ -34,78 +34,72 @@ abstract class Model  {
      * @return \PDO
      */
     public function getPDO() {
-        return self::$db->getPDO();
+        return $this->hackORM->getDB()->getPDO();
     }
 
-    public final function countObjects() {
-        return self::$db->countObjects(get_called_class());
-    }
-    public final function _countObjects($query, $params) {
-        return self::$db->_countObjects(get_called_class(),$query,$params);
+    public final function countObjects($query=null, $params=null) {
+        return $this->hackORM->countObjects(get_called_class(),$query,$params);
     }
 
     public final function delete($id) {
-        return self::$db->delete(get_called_class(), $id);
+        return $this->hackORM->delete(get_called_class(), $id);
     }
 
 
     public final function find($query, $params) {
-        return self::$db->find(get_called_class(), $query, $params);
+        return $this->hackORM->find(get_called_class(), $query, $params);
     }
 
-    public final function findAll($query = null, $values = null, $current = null, $max = null, $order = null) {
-        return self::$db->findAll(get_called_class(), $query, $values, $current, $max, $order);
+    public final function findAll($query = null, $params = null) {
+        return $this->hackORM->findAll(get_called_class(), $query, $params);
     }
 
     public final function findById($id) {
-        return self::$db->findById(get_called_class(), $id);
+        return $this->hackORM->findById(get_called_class(), $id);
     }
 
     public final function findAs($query, $params=null) {
-        return self::$db->findAs(get_called_class(),$query, $params);
+        return $this->hackORM->findAs(get_called_class(),$query, $params);
     }
     public final function findAsArray($query,$params=null){
-        return self::$db->findAsArray(get_called_class(),$query, $params);
+        return $this->hackORM->findAsArray(get_called_class(),$query, $params);
     }
     public final function findAllAsArray($query,$params){
-        return self::$db->findAllAsArray(get_called_class(),$query, $params);
+        return $this->hackORM->findAllAsArray(get_called_class(),$query, $params);
     }
 
     public final function findMagicSet($query, $params) {
-        return self::$db->findAsAll(get_called_class(),$query, $params);
+        return $this->hackORM->findAsAll(get_called_class(),$query, $params);
     }
 
     public final function lastInsertId() {
-        return self::$db->lastInsertId();
+        return $this->hackORM->getDB()->lastInsertId();
     }
 
     public final function nativeQuery($query, $params) {
-        return self::$db->findAsArray(get_called_class(),$query, $params);
+        return $this->hackORM->findAsArray(get_called_class(),$query, $params);
     }
 
     public function save() {
-        return self::$db->save($this);
+        return $this->hackORM->save($this);
     }
 
     public function update() {
-        return self::$db->update($this);
+        return $this->hackORM->update($this);
     }
 
     public function oneToOne($object, $target) {
-        return self::$db->oneToOne($object, $target);
+        return $this->hackORM->oneToOne($object, $target);
     }
 
     public function oneToMany($object, $target) {
-        return self::$db->oneToMany($object, $target);
+        return $this->hackORM->oneToMany($object, $target);
     }
     public function manyToOne($object, $target) {
-        return self::$db->manyToOne($object, $target);
+        return $this->hackORM->manyToOne($object, $target);
     }
 
     public function manyToMany($object, $target) {
-        return self::$db->manyToMany($object, $target);
-    }
-    public function _manyToMany($object, $target) {
-        return self::$db->_manyToMany($object, $target);
+        return $this->hackORM->manyToMany($object, $target);
     }
 }
