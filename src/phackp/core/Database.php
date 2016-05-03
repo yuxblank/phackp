@@ -27,20 +27,32 @@ use PDO;
  */
 
 class Database{
+    private $conf;
     private $pdo;
     private $stm;
 
 
     public function __construct() {
-        $database = Application::getDatabase();
-        $dsn = $database['DRIVER'] . ':host=' . $database['HOST'] . ";dbname=" . $database['NAME'];
+        $this->conf = Application::getDatabase();
+        $dsn = $this->conf['DRIVER'] . ':host=' . $this->conf['HOST'] . ";dbname=" . $this->conf['NAME'];
         try {
-            $this->pdo = new PDO($dsn, $database['USER'], $database['PSW'], $database['OPTIONS']);
-        } catch (PDOException $ex) {
+            $this->pdo = new PDO($dsn, $this->conf['USER'], $this->conf['PSW'], $this->conf['OPTIONS']);
+        } catch (\PDOException $ex) {
             $ex->getMessage();
 
         }
 
+    }
+
+    public function __sleep()
+    {
+        return array('conf');
+
+    }
+
+    public function __wakeup()
+    {
+        $this->reconnect();
     }
 
     /**

@@ -1,21 +1,21 @@
 <?php
 namespace yuxblank\phackp\core;
-/*
- * Copyright (C) 2015 yuri.blanc
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+    /*
+     * Copyright (C) 2015 yuri.blanc
+     *
+     * This program is free software: you can redistribute it and/or modify
+     * it under the terms of the GNU General Public License as published by
+     * the Free Software Foundation, either version 3 of the License, or
+     * (at your option) any later version.
+     *
+     * This program is distributed in the hope that it will be useful,
+     * but WITHOUT ANY WARRANTY; without even the implied warranty of
+     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     * GNU General Public License for more details.
+     *
+     * You should have received a copy of the GNU General Public License
+     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+     */
 
 /**
  * Description of Security
@@ -36,7 +36,7 @@ class Session
         if (Application::getConfig()['SESSION']['USE_COOKIES']) {
             $this->cookie = Application::getConfig()['SESSION']['COOKIE'];
         }
-        $this->name =Application::getConfig()['SESSION']['NAME'];
+        $this->name = Application::getConfig()['SESSION']['NAME'];
 
 
         if (!isset($_SESSION)) {
@@ -57,6 +57,10 @@ class Session
         if (array_key_exists($name,$_SESSION)){ //&& $this->checkValidity($this->token)  ) {
             return $_SESSION[$name];
         }
+    }
+
+    public function exist($name) {
+        return array_key_exists($name, $_SESSION);
     }
 
     private function init()
@@ -104,8 +108,10 @@ class Session
     }
 
     private static function staticInit(){
-        if (session_id()===null) {
-            return session_start();
+        if (session_id()===''){
+            session_start();
+        } else {
+            return true;
         }
     }
 
@@ -119,6 +125,9 @@ class Session
         if (self::staticInit()){
             return $_SESSION[$name];
         }
+    }
+    public function _exist($name) {
+        return array_key_exists($name, $_SESSION);
     }
 
 
