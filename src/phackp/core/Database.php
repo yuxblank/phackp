@@ -27,13 +27,53 @@ use PDO;
  */
 
 class Database{
+    /**
+     * @var array Database configuration
+     */
     private $conf;
+    /**
+     * @var \PDO
+     */
     private $pdo;
+    /**
+     * @var \PDOStatement
+     */
     private $stm;
 
 
+    /**
+     * Database constructor.
+     */
     public function __construct() {
         $this->conf = Application::getDatabase();
+        $this->connect();
+
+    }
+
+    /**
+     * Save Database instance state for serialization
+     * @return array
+     */
+    public function __sleep()
+    {
+        return array('conf');
+
+    }
+
+    /**
+     * Deserialize Database class and reconnect to datasource.
+     */
+    public function __wakeup()
+    {
+        $this->connect();
+    }
+
+
+    /**
+     * Connect to database and create pdo instance
+     */
+    protected function connect(){
+
         $dsn = $this->conf['DRIVER'] . ':host=' . $this->conf['HOST'] . ";dbname=" . $this->conf['NAME'];
         try {
             $this->pdo = new PDO($dsn, $this->conf['USER'], $this->conf['PSW'], $this->conf['OPTIONS']);
@@ -42,17 +82,6 @@ class Database{
 
         }
 
-    }
-
-    public function __sleep()
-    {
-        return array('conf');
-
-    }
-
-    public function __wakeup()
-    {
-        $this->reconnect();
     }
 
     /**

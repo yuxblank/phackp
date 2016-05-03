@@ -117,7 +117,7 @@ class Session
 
     public static function _setValue($name, $object){
         if(self::staticInit()) {
-            $_SESSION['$name'] = $object;
+            $_SESSION[$name] = $object;
         }
     }
 
