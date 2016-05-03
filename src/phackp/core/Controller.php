@@ -25,46 +25,11 @@ namespace yuxblank\phackp\core;
  * @since 0.1
  */
 class Controller {
-    private static $session;
     
     public function __construct() {
         defined('pHackpRuntime') or die ('.:: pHackp runtime never initiated! - invalid access to resources ::. ');
     }
-    /**
-     * @static
-     * Return the current session object.
-     * @return Sessions
-     */
-    public static function getSessionInstance() {
-        if (self::$session == null) {
-            self::$session = new Sessions ();
-        }
-        return self::$session;
-    }
-    /**
-     * Set a new session variable with name and object content.
-     * @static
-     * @param string $name
-     * @param mixed $object
-     */
-    public static function setSession($name, $object) {
-        self::getSessionInstance()->setSession($name, $object);
-    }
-    /**
-     * Return current session objects from name.
-     * @static
-     * @param string $name
-     * @return Sessions
-     */
-    public static function getSession($name) {
-        return self::getSessionInstance()->getSession($name);
-    }
-    /**
-     * Stop the current sessions and unset all variables.
-     */
-    public static function stopSession() {
-        self::getSessionInstance()->stop();
-    }
+
 
     /**
      * Set a cookie to be used as a flash. This type of cookie is used to preserve data across request. 

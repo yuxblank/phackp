@@ -25,53 +25,28 @@ namespace yuxblank\phackp\core;
  * @author yuri.blanc
  */
 class Secure extends Controller {
-    private static $cripto;
+    private $cripto;
     public function __construct() {
         parent::__construct();
     }
-
-    public static function getSession($name) {
-        return parent::getSession($name);
-    }
-
-    public static function getSessionInstance() {
-        return parent::getSessionInstance();
-    }
-
-    public static function keep($name, $value, $expire = null) {
-        parent::keep($name, $value, $expire);
-    }
-
-    public static function renderJSON($data, $options = null) {
-        parent::renderJSON($data, $options);
-    }
-
-    public static function setSession($name, $object) {
-        parent::setSession($name, $object);
-    }
-
-    public static function stopSession() {
-        parent::stopSession();
-    }
-    
     
     /**
      * Return an instance of Crypto class.
      * @return Crypto
      */
-    private static function Crypto() {
-        if (self::$cripto == null) {
-            self::$cripto = new Crypto();
+    private function crypto() {
+        if ($this->cripto === null) {
+            $this->cripto = new Crypto();
         }
-        return self::$cripto;
+        return $this->cripto;
     }
     /**
      * Encrypt a password string 
      * @param string $password
      * @return string
      */
-    public static function encryptPassword($password) {
-        return self::Crypto()->generateHash($password);
+    public  function encryptPassword($password) {
+        return $this->crypto()->generateHash($password);
     }
     /**
      * 
@@ -79,8 +54,8 @@ class Secure extends Controller {
      * @param string $string
      * @return Crypto
      */
-    public static function comparePassword($password,$string) {
-        return self::Crypto()->checkHash($password,$string);
+    public  function comparePassword($password,$string) {
+        return $this->crypto()->checkHash($password,$string);
     }
 
    
