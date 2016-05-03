@@ -95,6 +95,7 @@ class Session
         session_unset();
     }
 
+
     private function setToken()
     {
         $size = mcrypt_get_iv_size(MCRYPT_CAST_256, MCRYPT_MODE_CFB);
@@ -110,6 +111,18 @@ class Session
     private static function staticInit(){
         if (session_id()===''){
             session_start();
+            $session = Application::getConfig()['SESSION'];
+            if ($session['LIFETIME'] !== null
+                && $session['COOKIE'] !== null
+                && $session['USE_COOKIES']) {
+                session_set_cookie_params(
+                    $session['LIFETIME'],
+                    $session['COOKIE']['PATH'],
+                    $session['COOKIE']['DOMAIN'],
+                    $session['COOKIE']['SECURE'],
+                    $session['COOKIE']['HTTP_ONLY']
+                );
+            }
         } else {
             return true;
         }
@@ -126,8 +139,16 @@ class Session
             return $_SESSION[$name];
         }
     }
+
     public function _exist($name) {
         return array_key_exists($name, $_SESSION);
+    }
+
+    public static function _stop()
+    {
+        if(session_id()!=='') {
+            session_unset();
+        }
     }
 
 

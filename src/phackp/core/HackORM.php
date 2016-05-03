@@ -1,11 +1,5 @@
 <?php
 namespace yuxblank\phackp\core;
-/**
- * Created by IntelliJ IDEA.
- * User: yuri.blanc
- * Date: 02/05/2016
- * Time: 10:50
- */
 
 use yuxblank\phackp\api\ObjectRelationalMapping;
 use yuxblank\phackp\api\ObjectsDataAccess;
@@ -14,6 +8,7 @@ use yuxblank\phackp\utils\ReflectionUtils;
 /**
  * Class HackORM
  * @package yuxblank\phackp\core
+ * @author Yuri Blanc
  */
 class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
 {
@@ -190,7 +185,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
     }
 
     /**
-     * Counts the occurrencies of a give object type
+     * Counts the occurrences of a give object type
      * @param string $object
      * @param string $query
      * @param array $params
@@ -235,6 +230,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
     /**
      * Update an object instance in the data-layer
      * @param mixed $object
+     * @return bool
      */
     public function update($object)
     {
@@ -320,6 +316,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
      * The parent table should contain the child id. (e.g. post contains tags_id column)
      * @param $object
      * @param $target
+     * @return mixed
      */
     public function manyToOne($object, $target)
     {
