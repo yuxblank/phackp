@@ -1,27 +1,12 @@
 <?php
 namespace yuxblank\phackp\core;
-//use Exception;
 use PDO;
-/*
- * Copyright (C) 2015 yuri.blanc
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 
 /**
- * This class is a API based on top of PDO. The class allow query building, Object relationship mapping and db access.
- * The class can be used as an object instance but is rather better to extends your persistent objects with Model superclass that provide better API to this class
+ * Database connection class.
+ * Use \PDO to create a connection to datasource.
+ * Provides useful query methods for interacting with databases.
+ * Also provides Serialization/Deserialization of PDO instance with ability to reconnect un-serialized objects
  * @author yuri.blanc
  * @version 0.3
  */
@@ -94,6 +79,12 @@ class Database{
         return $this->pdo;
     }
 
+    /**
+     * Bind an array of properties to a table name: table.property
+     * @param array $properties
+     * @param string $table
+     * @return array
+     */
     public function setTableToProperties(array $properties, string $table) {
         $result = array();
         foreach ($properties as $property) {
@@ -103,6 +94,7 @@ class Database{
     }
 
     /**
+     * Bind an array of parameters to a given \PDOStatement
      * @param array $params
      * @return \PDOStatement
      */
@@ -115,6 +107,7 @@ class Database{
     }
 
     /**
+     * Create a prepared statement
      * @param $statement
      * @return \PDOStatement
      */
@@ -150,35 +143,76 @@ class Database{
     }
 
 
-
+    /**
+     * Wraps \PDOStatement
+     * @see \PDOStatement->execute();
+     * @return bool
+     */
     public function execute() {
         return $this->stm->execute();
     }
+
+    /**
+     * Count rows
+     * @return string
+     */
     public function rowCount() {
         $this->execute();
         return $this->stm->fetchColumn();
     }
+
+    /**
+     * Return an array of associative arrays of fetched rows
+     * @return array
+     */
     public function resultList() {
         $this->execute();
         return $this->stm->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Return a single associative array a row
+     * @return mixed
+     */
     public function singleResult() {
         $this->execute();
         return $this->stm->fetch(PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Return the fetched row as an object
+     * @return \stdClass
+     */
     public function fetchObj() {
         $this->execute();
         return $this->stm->fetch(PDO::FETCH_OBJ);
     }
+
+    /**
+     * Returns fetched rows as an object array
+     * @return array
+     */
     public function fetchObjectSet() {
         $this->execute();
         return $this->stm->fetchAll(PDO::FETCH_OBJ);
     }
+
+    /**
+     * Fetch a single row as a given class instance
+     * @param $object
+     * @return mixed
+     */
     public function fetchSingleClass($object) {
         $this->stm->setFetchMode(PDO::FETCH_INTO, new $object());
         $this->execute();
         return $this->stm->fetch();
     }
+
+    /**
+     * Return an array of result as given class instances
+     * @param $object
+     * @return array
+     */
     public function fetchClassSet($object) {
         $this->execute();
         return $this->stm->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $object);
