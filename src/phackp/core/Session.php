@@ -28,12 +28,15 @@ class Session
     private $token;
     private $lifetime;
     private $cookie;
+    private $useCookies;
 
     public function __construct()
     {
 
         $this->lifetime = Application::getConfig()['SESSION']['LIFETIME'];
+
         if (Application::getConfig()['SESSION']['USE_COOKIES']) {
+            $this->useCookies = true;
             $this->cookie = Application::getConfig()['SESSION']['COOKIE'];
         }
         $this->name = Application::getConfig()['SESSION']['NAME'];
@@ -65,29 +68,43 @@ class Session
 
     private function init()
     {
-
         if (session_id() === '' && session_start()) {
             session_name($this->name);
-            if ($this->lifetime !== null && $this->cookie !== null && Application::getConfig()['SESSION']['USE_COOKIES']) {
-                session_set_cookie_params(
-                    $this->lifetime,
-                    $this->cookie['PATH'],
-                    $this->cookie['DOMAIN'],
-                    $this->cookie['SECURE'],
-                    $this->cookie['HTTP_ONLY']
-                );
+            if(session_get_cookie_params()===null) {
+                if ($this->lifetime !== null
+                    && $this->cookie !== null
+                    && Application::getConfig()['SESSION']['USE_COOKIES']
+                ) {
+                    session_set_cookie_params(
+                        $this->lifetime,
+                        $this->cookie['PATH'],
+                        $this->cookie['DOMAIN'],
+                        $this->cookie['SECURE'],
+                        $this->cookie['HTTP_ONLY']
+                    );
+                }
             }
         }
     }
 
-    public function checkValidity($token)
+    private function checkValidity($token)
     {
-        if ($this->getToken() === $token) {
+        if ($this->useCookies){
+            $this->sameDomain();
+        }
+
+    }
+
+
+    private function sameDomain() {
+        if ($this->cookie['DOMAIN'] === $_SERVER['HTTP_HOST']) {
             return true;
-        } else {
-            die("unvalid token");
+        }
+        else {
+            return false;
         }
     }
+
 
     public function stop()
     {
@@ -108,36 +125,37 @@ class Session
         return $this->token;
     }
 
-    private static function staticInit(){
+    private static function _init(){
         if (session_id()===''){
             session_start();
-            $session = Application::getConfig()['SESSION'];
-            if ($session['LIFETIME'] !== null
-                && $session['COOKIE'] !== null
-                && $session['USE_COOKIES']) {
-                session_set_cookie_params(
-                    $session['LIFETIME'],
-                    $session['COOKIE']['PATH'],
-                    $session['COOKIE']['DOMAIN'],
-                    $session['COOKIE']['SECURE'],
-                    $session['COOKIE']['HTTP_ONLY']
-                );
+            if (session_get_cookie_params()===null) {
+                $session = Application::getConfig()['SESSION'];
+                if ($session['LIFETIME'] !== null
+                    && $session['COOKIE'] !== null
+                    && $session['USE_COOKIES']
+                ) {
+                    session_set_cookie_params(
+                        $session['LIFETIME'],
+                        $session['COOKIE']['PATH'],
+                        $session['COOKIE']['DOMAIN'],
+                        $session['COOKIE']['SECURE'],
+                        $session['COOKIE']['HTTP_ONLY']
+                    );
+                }
             }
-        } else {
-            return true;
         }
     }
 
     public static function _setValue($name, $object){
-        if(self::staticInit()) {
-            $_SESSION[$name] = $object;
-        }
+        self::_init();
+        $_SESSION[$name] = $object;
+
     }
 
     public static function _getValue($name){
-        if (self::staticInit()){
-            return $_SESSION[$name];
-        }
+        self::_init();
+        return $_SESSION[$name];
+
     }
 
     public function _exist($name) {
