@@ -49,10 +49,7 @@ class Session
 
     public function setValue($name, $object)
     {
-        if ($this->checkValidity($this->token)) {
-            $_SESSION[$name] = $object;
-        }
-
+        $_SESSION[$name] = $object;
     }
 
     public function getValue($name)
@@ -87,7 +84,7 @@ class Session
         }
     }
 
-    private function checkValidity($token)
+    private function checkValidity()
     {
         if ($this->useCookies){
             $this->sameDomain();
@@ -126,8 +123,8 @@ class Session
     }
 
     private static function _init(){
-        if (session_id()===''){
-            session_start();
+        if (session_id()==='' && session_start()){
+
             if (session_get_cookie_params()===null) {
                 $session = Application::getConfig()['SESSION'];
                 if ($session['LIFETIME'] !== null
@@ -154,12 +151,14 @@ class Session
 
     public static function _getValue($name){
         self::_init();
-        return $_SESSION[$name];
-
+        if (isset($_SESSION[$name])){
+            return $_SESSION[$name];
+        }
+        return false;
     }
 
-    public function _exist($name) {
-        return array_key_exists($name, $_SESSION);
+    public static function _exist($name) {
+        return isset($_SESSION[$name]);
     }
 
     public static function _stop()
