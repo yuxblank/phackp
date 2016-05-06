@@ -4,10 +4,9 @@ use yuxblank\phackp\utils\ReflectionUtils;
 use yuxblank\phackp\utils\UnitConversion;
 
 /**
- * Created by IntelliJ IDEA.
- * User: yuri.blanc
- * Date: 04/04/2016
- * Time: 14:35
+ * Class Application
+ * @author Yuri Blanc
+ * @package yuxblank\phackp\core
  */
 class Application
 {

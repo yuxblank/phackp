@@ -1,14 +1,11 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: yuri.blanc
- * Date: 05/04/2016
- * Time: 14:48
- */
-
 namespace yuxblank\phackp\core;
 
-
+/**
+ * Class HttpKernel
+ * @author Yuri Blanc
+ * @package yuxblank\phackp\core
+ */
 final class HttpKernel
 {
 

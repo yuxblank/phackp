@@ -1,26 +1,10 @@
 <?php
 namespace yuxblank\phackp\core;
-/*
- * Copyright (C) 2015 yuri.blanc
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 /**
- * This class is a the PlayPHP framework controllers superclass. 
+ * This class is a the pHackp framework controllers superclass.
  * Contains all the methods and imports required for using the framework built-in controllers functions.
- * @author yuri.blanc
+ * @author Yuri Blanc
+ * @package yuxblank\phackp\core
  * @version 0.1
  * @since 0.1
  */

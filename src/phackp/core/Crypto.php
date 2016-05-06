@@ -19,9 +19,8 @@ namespace yuxblank\phackp\core;
 
 
 /**
- * Class with helper methods for string encryption, security object and tools.
- *
- * @author yuri.blanc
+ * @author Yuri Blanc
+ * @package yuxblank\phackp\core
  */
 class Crypto {
 
