@@ -68,20 +68,22 @@ class Session
 
     private function init()
     {
-        if (session_id() === '') {
-            if ($this->lifetime !== null
-                && $this->cookie !== null
-                && Application::getConfig()['SESSION']['USE_COOKIES']
-            ) {
-                session_set_cookie_params(
-                    $this->lifetime,
-                    $this->cookie['PATH'],
-                    $this->cookie['DOMAIN'],
-                    $this->cookie['SECURE'],
-                    $this->cookie['HTTP_ONLY']
-                );
+        if (!isset($_SESSION)) {
+            if (session_id() === '') {
+                if ($this->lifetime !== null
+                    && $this->cookie !== null
+                    && Application::getConfig()['SESSION']['USE_COOKIES']
+                ) {
+                    session_set_cookie_params(
+                        $this->lifetime,
+                        $this->cookie['PATH'],
+                        $this->cookie['DOMAIN'],
+                        $this->cookie['SECURE'],
+                        $this->cookie['HTTP_ONLY']
+                    );
+                }
+                session_name($this->name);
             }
-            session_name($this->name);
             session_start();
         }
     }
@@ -126,21 +128,24 @@ class Session
 
     private static function _init()
     {
-        if (session_id() === '') {
-            $session = Application::getConfig()['SESSION'];
-            if ($session['LIFETIME'] !== null
-                && $session['COOKIE'] !== null
-                && $session['USE_COOKIES']
-            ) {
-                session_set_cookie_params(
-                    $session['LIFETIME'],
-                    $session['COOKIE']['PATH'],
-                    $session['COOKIE']['DOMAIN'],
-                    $session['COOKIE']['SECURE'],
-                    $session['COOKIE']['HTTP_ONLY']
-                );
+        if (!isset($_SESSION)) {
+            if (session_id() === '') {
+                $session = Application::getConfig()['SESSION'];
+                if ($session['LIFETIME'] !== null
+                    && $session['COOKIE'] !== null
+                    && $session['USE_COOKIES']
+                ) {
+                    session_set_cookie_params(
+                        $session['LIFETIME'],
+                        $session['COOKIE']['PATH'],
+                        $session['COOKIE']['DOMAIN'],
+                        $session['COOKIE']['SECURE'],
+                        $session['COOKIE']['HTTP_ONLY']
+                    );
+                }
+                session_name(Application::getConfig()['SESSION']['NAME']);
+
             }
-            session_name(Application::getConfig()['SESSION']['NAME']);
             session_start();
         }
     }
@@ -153,11 +158,13 @@ class Session
 
     public static function _getValue($name){
         self::_init();
-        return $_SESSION[$name];
-
+        if (self::_exist($name)) {
+            return $_SESSION[$name];
+        }
+        return null;
     }
 
-    public function _exist($name) {
+    public static function _exist($name) {
         return array_key_exists($name, $_SESSION);
     }
 
