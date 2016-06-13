@@ -323,14 +323,19 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
         // todo correct query
         $parent = $this->objectInjector(get_class($object));
         $child = $this->objectInjector($target);
-
         $queryBuilder = new QueryBuilder();
         $queryBuilder
             ->select($this->db->setTableToProperties(ReflectionUtils::getProperties($target), $child))
             ->from(array($child))
-            ->innerJoin($child, 'id', $parent, $child .'_id');
-
+            ->where("id");
+        //->innerJoin($child, 'id', $parent, $child .'_id');
+        $subQueryBuilder = new QueryBuilder();
+        $subQueryBuilder
+            ->select(array($child ."_id"))
+            ->from(array($parent))
+            ->where("id=?");
         // $query = "SELECT * FROM $child WHERE id = (SELECT ". $child ."_id FROM $parent WHERE id=?)";
+        $queryBuilder->addSubQueryBuilder($subQueryBuilder);
         $this->db->query($queryBuilder->getQuery());
         $this->db->bindValue(1, $object->id);
         return $this->db->fetchSingleClass($target);
