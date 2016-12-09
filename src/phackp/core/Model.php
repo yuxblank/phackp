@@ -22,84 +22,85 @@ namespace yuxblank\phackp\core;
  * @author yuri.blanc
  */
 abstract class Model  {
-    private  $hackORM;
+    private  $ormInstance;
 
-    public function __construct() {
-        if ($this->hackORM === null) {
-            $this->hackORM = new HackORM();
+    private function getORMInstance(){
+        if ($this->ormInstance === null) {
+            $this->ormInstance = new HackORM();
         }
+        return $this->ormInstance;
     }
 
     /**
      * @return \PDO
      */
     public function getPDO() {
-        return $this->hackORM->getDB()->getPDO();
+        return $this->getORMInstance()->getDB()->getPDO();
     }
 
     public final function countObjects($query=null, $params=null) {
-        return $this->hackORM->countObjects(get_called_class(),$query,$params);
+        return $this->getORMInstance()->countObjects(get_called_class(),$query,$params);
     }
 
     public final function delete($id) {
-        return $this->hackORM->delete(get_called_class(), $id);
+        return $this->getORMInstance()->delete(get_called_class(), $id);
     }
 
 
     public final function find($query, $params) {
-        return $this->hackORM->find(get_called_class(), $query, $params);
+        return $this->getORMInstance()->find(get_called_class(), $query, $params);
     }
 
     public final function findAll($query = null, $params = null) {
-        return $this->hackORM->findAll(get_called_class(), $query, $params);
+        return $this->getORMInstance()->findAll(get_called_class(), $query, $params);
     }
 
     public final function findById($id) {
-        return $this->hackORM->findById(get_called_class(), $id);
+        return $this->getORMInstance()->findById(get_called_class(), $id);
     }
 
     public final function findAs($query, $params=null) {
-        return $this->hackORM->findAs(get_called_class(),$query, $params);
+        return $this->getORMInstance()->findAs(get_called_class(),$query, $params);
     }
     public final function findAsArray($query,$params=null){
-        return $this->hackORM->findAsArray(get_called_class(),$query, $params);
+        return $this->getORMInstance()->findAsArray(get_called_class(),$query, $params);
     }
     public final function findAllAsArray($query,$params){
-        return $this->hackORM->findAllAsArray(get_called_class(),$query, $params);
+        return $this->getORMInstance()->findAllAsArray(get_called_class(),$query, $params);
     }
 
     public final function findMagicSet($query, $params) {
-        return $this->hackORM->findAsAll(get_called_class(),$query, $params);
+        return $this->getORMInstance()->findAsAll(get_called_class(),$query, $params);
     }
 
     public final function lastInsertId() {
-        return $this->hackORM->getDB()->getPDO()->lastInsertId();
+        return $this->getORMInstance()->getDB()->getPDO()->lastInsertId();
     }
 
     public final function nativeQuery($query, $params) {
-        return $this->hackORM->findAsArray(get_called_class(),$query, $params);
+        return $this->getORMInstance()->findAsArray(get_called_class(),$query, $params);
     }
 
     public function save() {
-        return $this->hackORM->save($this);
+        return $this->getORMInstance()->save($this);
     }
 
     public function update() {
-        return $this->hackORM->update($this);
+        return $this->getORMInstance()->update($this);
     }
 
     public function oneToOne($object, $target) {
-        return $this->hackORM->oneToOne($object, $target);
+        return $this->getORMInstance()->oneToOne($object, $target);
     }
 
     public function oneToMany($object, $target) {
-        return $this->hackORM->oneToMany($object, $target);
+        return $this->getORMInstance()->oneToMany($object, $target);
     }
     public function manyToOne($object, $target) {
-        return $this->hackORM->manyToOne($object, $target);
+        return $this->getORMInstance()->manyToOne($object, $target);
     }
 
     public function manyToMany($object, $target) {
-        return $this->hackORM->manyToMany($object, $target);
+        return $this->getORMInstance()->manyToMany($object, $target);
     }
 }

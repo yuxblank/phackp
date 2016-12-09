@@ -176,13 +176,6 @@ final class HttpKernel
                 $this->setParams($this->parseContentType($body));
                 break;
 
-            case 'HEAD':
-                //rest_head($request);
-                break;
-
-            case 'OPTIONS':
-                //rest_options($request);
-                break;
             default:
                 //rest_error($request);
                 break;
