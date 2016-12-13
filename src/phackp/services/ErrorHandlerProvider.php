@@ -1,11 +1,12 @@
 <?php
-
+namespace yuxblank\phackp\services;
 /**
  * Created by IntelliJ IDEA.
  * User: TheCo
  * Date: 13/12/2016
  * Time: 22:52
  */
+
 class ErrorHandlerProvider implements \yuxblank\phackp\api\ThrowableHandler
 {
     protected $exceptions = [];

@@ -1,5 +1,5 @@
 <?php
-
+namespace yuxblank\phackp\services;
 /**
  * Created by IntelliJ IDEA.
  * User: TheCo

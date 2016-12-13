@@ -1,4 +1,5 @@
 <?php
+namespace yuxblank\phackp\api;
 /**
  * Created by IntelliJ IDEA.
  * User: TheCo
@@ -6,7 +7,7 @@
  * Time: 00:05
  */
 
-namespace yuxblank\phackp\api;
+
 
 
 interface ErrorHandlerReporter
