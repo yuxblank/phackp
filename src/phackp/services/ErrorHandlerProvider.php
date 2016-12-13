@@ -1,5 +1,7 @@
 <?php
 namespace yuxblank\phackp\services;
+use yuxblank\phackp\api\ThrowableHandler;
+
 /**
  * Created by IntelliJ IDEA.
  * User: TheCo
@@ -7,7 +9,7 @@ namespace yuxblank\phackp\services;
  * Time: 22:52
  */
 
-class ErrorHandlerProvider implements \yuxblank\phackp\api\ThrowableHandler
+class ErrorHandlerProvider implements ThrowableHandler
 {
     protected $exceptions = [];
     protected $excluded = [];

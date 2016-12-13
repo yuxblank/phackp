@@ -1,12 +1,14 @@
 <?php
 namespace yuxblank\phackp\services;
+use yuxblank\phackp\api\ErrorHandlerReporter;
+
 /**
  * Created by IntelliJ IDEA.
  * User: TheCo
  * Date: 14/12/2016
  * Time: 00:08
  */
-class HtmlErrorHandlerReporter implements \yuxblank\phackp\api\ErrorHandlerReporter
+class HtmlErrorHandlerReporter implements ErrorHandlerReporter
 {
     public function report(array $throwable)
     {
