@@ -13,5 +13,4 @@ namespace yuxblank\phackp\api;
 interface Service
 {
 
-
 }

@@ -127,7 +127,7 @@ class Application
         }
     }
 
-    public static function registerService(string $service)
+    public function registerService(string $service)
     {
         self::getInstance()->services[] = new $service;
     }
