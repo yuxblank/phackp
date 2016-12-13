@@ -1,6 +1,7 @@
 <?php
 namespace yuxblank\phackp\core;
 use PDO;
+use yuxblank\phackp\services\ErrorHandlerProvider;
 
 /**
  * Database connection class.
@@ -53,6 +54,13 @@ class Database{
         $this->connect();
     }
 
+    private function handleExeption($exception){
+        $handler = Application::getService(ErrorHandlerProvider::class);
+        if ($handler){
+            $handler->handle($exception);
+        }
+    }
+
 
     /**
      * Connect to database and create pdo instance
@@ -63,10 +71,7 @@ class Database{
         try {
             $this->pdo = new PDO($dsn, $this->conf['USER'], $this->conf['PSW'], $this->conf['OPTIONS']);
         } catch (\PDOException $ex) {
-            $handler = Application::getService(\ErrorHandlerProvider::class);
-            if ($handler){
-                $handler->handle($ex);
-            }
+          $this->handleExeption($ex);
         }
 
     }
@@ -151,7 +156,14 @@ class Database{
      * @return bool
      */
     public function execute() {
-        return $this->stm->execute();
+        $result = false;
+        try {
+            $result = $this->stm->execute();
+        } catch (\PDOException $ex){
+            $this->handleExeption($ex);
+        }
+        return $result;
+
     }
 
     /**
