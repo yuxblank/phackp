@@ -1,5 +1,6 @@
 <?php
 namespace yuxblank\phackp\core;
+use yuxblank\phackp\api\Service;
 use yuxblank\phackp\utils\ReflectionUtils;
 use yuxblank\phackp\utils\UnitConversion;
 
@@ -15,6 +16,7 @@ class Application
     protected $APP_ROOT;
     private $config;
     protected $version;
+    protected $services = [];
 
     /**
      * Application constructor.
@@ -113,6 +115,14 @@ class Application
                 return true;
                 break;
         }
+    }
+
+    public static function registerService(Service $service){
+        self::getInstance()->services[get_class($service)] = $service;
+    }
+
+    public static function getService(String $serviceName) {
+        return self::getInstance()->services[$serviceName];
     }
 
     private final function runtime () {

@@ -18,7 +18,6 @@
  */
 
 namespace yuxblank\phackp\core;
-
 /**
  * Description of Logger
  *
@@ -44,10 +43,6 @@ class Logger {
                 . "\nFile: " . $exception->getFile()
                 . "\n.::StackTrace::.\n" .$exception->getTraceAsString()
                 ."\n", 3, "logs/app.log");
-    }
-    
-    public static function appLog() {
-        
     }
 
 
