@@ -6,45 +6,27 @@
  * Date: 13/12/2016
  * Time: 22:52
  */
-class ErrorHandlerProvider implements \yuxblank\phackp\api\Service
+class ErrorHandlerProvider implements \yuxblank\phackp\api\ThrowableHandler
 {
     protected $exceptions = [];
-    protected $reportable = [];
+    protected $excluded = [];
 
-
-
-    /**
-     * @return mixed
-     */
-    public function getReportable()
+    public function handle(\Throwable $throwable)
     {
-        return $this->reportable;
+        $this->exceptions[] = $throwable;
     }
 
-    /**
-     * @param mixed $reportable
-     */
-    public function setReportable(Exception $reportable)
+    public function delegate(\yuxblank\phackp\api\ErrorHandlerReporter $errorHandlerReporter)
     {
-        $this->reportable = $reportable;
+        // todo filter exceptions
+        $errorHandlerReporter->report($this->exceptions);
+
     }
 
-    /**
-     * @param Exception $e
-     */
-    public function report(Exception $e) {
-        $this->exceptions[] = $e;
-    }
-
-    /**
-     * @return array
-     */
-    public function getReports(): array
+    public function exclude(\Throwable $throwable)
     {
-        return $this->exceptions;
+        $this->excluded[] = $throwable;
     }
-
-
 
 
 }

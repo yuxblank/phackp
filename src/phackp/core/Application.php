@@ -1,5 +1,6 @@
 <?php
 namespace yuxblank\phackp\core;
+
 use yuxblank\phackp\api\Service;
 use yuxblank\phackp\utils\ReflectionUtils;
 use yuxblank\phackp\utils\UnitConversion;
@@ -52,7 +53,8 @@ class Application
      * Return routes
      * @return array
      */
-    public static function getRoutes() {
+    public static function getRoutes()
+    {
         return self::getInstance()->config['ROUTES'];
     }
 
@@ -60,14 +62,17 @@ class Application
      * Return database configurations
      * @return array
      */
-    public static function getDatabase(){
+    public static function getDatabase()
+    {
         return self::getInstance()->config['DATABASE'];
     }
+
     /**
      * Return namespaces configured for the project
      * @return array
      */
-    public static function getNameSpace() {
+    public static function getNameSpace()
+    {
         return self::getInstance()->config['NAMESPACE'];
     }
 
@@ -75,22 +80,26 @@ class Application
      * Return the application root (__DIR__)
      * @return string
      */
-    public static function getAppRoot() {
+    public static function getAppRoot()
+    {
         return self::getInstance()->APP_ROOT;
     }
 
     /** Return view root dir
      * @return mixed
      */
-    public static function getViewRoot() {
+    public static function getViewRoot()
+    {
         return self::getInstance()->config['VIEW']['ROOT'];
     }
+
     /**
      * Return the application url configured
      * @return string
      */
 
-    public static function getAppUrl() {
+    public static function getAppUrl()
+    {
         return self::getInstance()->config['APP_URL'];
     }
 
@@ -108,28 +117,37 @@ class Application
      * Check if the application APP_MODE is set to DEBUG
      * @return bool
      */
-    public static function isDebug() {
+    public static function isDebug()
+    {
 
-        switch (self::getConfig()['APP_MODE']){
+        switch (self::getConfig()['APP_MODE']) {
             case 'DEBUG':
                 return true;
                 break;
         }
     }
 
-    public static function registerService(Service $service){
-        self::getInstance()->services[get_class($service)] = $service;
+    public static function registerService(string $service)
+    {
+        self::getInstance()->services[] = new $service;
     }
 
-    public static function getService(String $serviceName) {
-        return self::getInstance()->services[$serviceName];
+    public static function getService(string $serviceName)
+    {
+        foreach (self::getInstance()->services as $service) {
+            if ($service instanceof $serviceName) {
+                return $service;
+            }
+        }
+
+        return null;
     }
 
-    private final function runtime () {
-        $id = random_int(1,9999);
+    private final function runtime()
+    {
+        $id = random_int(1, 9999);
         define('pHackpRuntime', $id, false);
     }
-
 
 
     /**
@@ -144,7 +162,7 @@ class Application
 
         $this->APP_ROOT = $realPath;
 
-        $config = $realPath.'/config/';
+        $config = $realPath . '/config/';
 
         if (is_dir($config)) {
 
@@ -155,9 +173,9 @@ class Application
                 $tmp[] = require $file;
             }
 
-            foreach ($tmp as $key => $value ) {
+            foreach ($tmp as $key => $value) {
 
-                foreach($value as $key2 => $innervalue) {
+                foreach ($value as $key2 => $innervalue) {
 
                     $this->config[$key2] = $innervalue;
 
@@ -166,7 +184,6 @@ class Application
             }
 
         }
-
 
 
     }
@@ -185,7 +202,7 @@ class Application
         $httpKernel = new HttpKernel();
         // get the route
         $route = Router::findAction($httpKernel);
-        if ($route!==null) {
+        if ($route !== null) {
             $httpKernel->dispatch($route, $httpKernel);
             $action = Router::getController($route['action']);
             $controller = new $action[0];
@@ -205,9 +222,9 @@ class Application
             ReflectionUtils::invoke($controller, 'onAfter');
         }
 
-        if(self::isDebug()) {
+        if (self::isDebug()) {
             // Anywhere else in the script
-            echo '<p style="position: fixed; bottom:0; margin: 0 auto;"> Total execution time in seconds: ' . (microtime(true) - $time_start) . ' runtime_id: ' . pHackpRuntime .' memory peak: '. UnitConversion::byteConvert($memoryPeak)      .'</p>';
+            echo '<p style="position: fixed; bottom:0; margin: 0 auto;"> Total execution time in seconds: ' . (microtime(true) - $time_start) . ' runtime_id: ' . pHackpRuntime . ' memory peak: ' . UnitConversion::byteConvert($memoryPeak) . '</p>';
         }
     }
 

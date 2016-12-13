@@ -63,8 +63,10 @@ class Database{
         try {
             $this->pdo = new PDO($dsn, $this->conf['USER'], $this->conf['PSW'], $this->conf['OPTIONS']);
         } catch (\PDOException $ex) {
-            $ex->getMessage();
-
+            $handler = Application::getService(\ErrorHandlerProvider::class);
+            if ($handler){
+                $handler->handle($ex);
+            }
         }
 
     }
