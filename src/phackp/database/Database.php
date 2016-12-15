@@ -2,7 +2,6 @@
 namespace yuxblank\phackp\database;
 
 use PDO;
-use Symfony\Component\Console\Exception\RuntimeException;
 use yuxblank\phackp\core\Application;
 use yuxblank\phackp\services\ErrorHandlerProvider;
 
