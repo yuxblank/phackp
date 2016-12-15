@@ -203,7 +203,7 @@ class Application
         // get the route
         $route = Router::findAction($httpKernel);
         if ($route !== null) {
-            $httpKernel->dispatch($route, $httpKernel);
+            $httpKernel->dispatch($route);
             $action = Router::getController($route['action']);
             $controller = new $action[0];
 

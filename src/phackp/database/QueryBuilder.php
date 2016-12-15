@@ -1,16 +1,7 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: yuri.blanc
- * Date: 15/04/2016
- * Time: 14:08
- */
-
-namespace yuxblank\phackp\core;
-
-
+namespace yuxblank\phackp\database;
+use yuxblank\phackp\core\Application;
 use yuxblank\phackp\utils\ReflectionUtils;
-
 class QueryBuilder
 {
 
@@ -19,6 +10,7 @@ class QueryBuilder
 
     public function __construct()
     {
+
     }
 
     public function select (array $properties) {
@@ -144,8 +136,6 @@ class QueryBuilder
 
 
 
-
-
     private function resolveNamespace():string {
         return Application::getNameSpace()['MODEL'].get_class($this->object);
     }
@@ -163,36 +153,3 @@ class QueryBuilder
     }
 
 }
-
-/*
- * SELECT tag.id, tag.tag FROM tag
-         *   JOIN post_tag ON tag.id= post_tag.tag_id
-         *   JOIN post ON post_tag.post_id=post.id;
- */
-
-/*$queryBuilder = new QueryBuilder();
-$queryBuilder->select('tag', array('*'))
-    ->from(array('tag'))
-    ->join('tag', 'id','post_tag','post_id')
-    ->where('id=?');
-
-
-$queryBuilder2 = new QueryBuilder();
-$queryBuilder2->select('tag', array('*'))
-    ->from(array('tag'))
-    ->join('tag', 'id','post_tag','post_id')
-    ->where('id=?')
-    ->having('COUNT','tag.id','>1')
-    ->order(array('tag.id ASC', 'tag.count DESC'))
-    ->limit(0,10)
-    ->union()
-    ->select('x',array('*'));*/
-/*$queryBuilder3 = new QueryBuilder();
-$queryBuilder3
-    ->insert('tabella', array('id','nome'), array(1,'pippo'));*/
-/*$queryBuilder->addSubQueryBuilder($queryBuilder3);*/
-/*$queryBuilder4 = new QueryBuilder();
-$queryBuilder4
-    ->update('tabella', array('id','titolo'),array(1,'prova'));
-
-print_r($queryBuilder4);*/
