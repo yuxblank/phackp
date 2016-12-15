@@ -1,6 +1,7 @@
 <?php
 namespace yuxblank\phackp\core;
 use PDO;
+use Symfony\Component\Console\Exception\RuntimeException;
 use yuxblank\phackp\services\ErrorHandlerProvider;
 
 /**
@@ -32,7 +33,11 @@ class Database{
      */
     public function __construct() {
         $this->conf = Application::getDatabase();
-        $this->connect();
+        try {
+            $this->connect();
+        } catch (RuntimeException $ex){
+            Application::getService(ErrorHandlerProvider::class)->invoke(ErrorHandlerProvider::HANDLE, $ex);
+        }
 
     }
 
@@ -51,13 +56,10 @@ class Database{
      */
     public function __wakeup()
     {
-        $this->connect();
-    }
-
-    private function handleExeption($exception){
-        $handler = Application::getService(ErrorHandlerProvider::class);
-        if ($handler){
-            $handler->handle($exception);
+        try {
+            $this->connect();
+        } catch (\RuntimeException $ex) {
+            Application::getService(ErrorHandlerProvider::class)->invoke(ErrorHandlerProvider::HANDLE, $ex);
         }
     }
 
@@ -71,8 +73,10 @@ class Database{
         try {
             $this->pdo = new PDO($dsn, $this->conf['USER'], $this->conf['PSW'], $this->conf['OPTIONS']);
         } catch (\PDOException $ex) {
-          $this->handleExeption($ex);
+            Application::getService(ErrorHandlerProvider::class)->invoke(ErrorHandlerProvider::HANDLE, $ex);
+            throw new \RuntimeException("Cannot create instance of PDO");
         }
+
 
     }
 
@@ -119,7 +123,11 @@ class Database{
      * @return \PDOStatement
      */
     public function query($statement) {
-        $this->stm = $this->pdo->prepare($statement);
+        try {
+            $this->stm = $this->pdo->prepare($statement);
+        } catch (\PDOException $ex){
+            Application::getService(ErrorHandlerProvider::class)->invoke(ErrorHandlerProvider::HANDLE, $ex);
+        }
         return $this->stm;
     }
     /**
@@ -160,7 +168,7 @@ class Database{
         try {
             $result = $this->stm->execute();
         } catch (\PDOException $ex){
-            $this->handleExeption($ex);
+            Application::getService(ErrorHandlerProvider::class)->invoke(ErrorHandlerProvider::HANDLE, $ex);
         }
         return $result;
 

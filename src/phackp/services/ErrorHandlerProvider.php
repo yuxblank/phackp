@@ -13,6 +13,8 @@ use yuxblank\phackp\core\ServiceProvider;
 
 class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
 {
+
+    const HANDLE = "handle";
     protected $exceptions = [];
     protected $excluded = [];
 
