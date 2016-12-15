@@ -4,6 +4,7 @@ namespace yuxblank\phackp\database;
 use yuxblank\phackp\api\ObjectRelationalMapping;
 use yuxblank\phackp\api\ObjectsDataAccess;
 use yuxblank\phackp\utils\ReflectionUtils;
+use yuxblank\phackp\database\QueryBuilder;
 
 /**
  * Class HackORM
