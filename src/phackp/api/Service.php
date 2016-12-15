@@ -12,6 +12,6 @@ namespace yuxblank\phackp\api;
 
 interface Service
 {
-    public function invoke(callable $method);
+    public function invoke(string $method, $params=null);
 
 }

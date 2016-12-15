@@ -1,5 +1,6 @@
 <?php
 namespace yuxblank\phackp\core;
+
 use PDO;
 use Symfony\Component\Console\Exception\RuntimeException;
 use yuxblank\phackp\services\ErrorHandlerProvider;
@@ -12,8 +13,8 @@ use yuxblank\phackp\services\ErrorHandlerProvider;
  * @author yuri.blanc
  * @version 0.3
  */
-
-class Database{
+class Database
+{
     /**
      * @var array Database configuration
      */
@@ -31,13 +32,12 @@ class Database{
     /**
      * Database constructor.
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->conf = Application::getDatabase();
-        try {
-            $this->connect();
-        } catch (RuntimeException $ex){
-            Application::getService(ErrorHandlerProvider::class)->invoke(ErrorHandlerProvider::HANDLE, $ex);
-        }
+
+        $this->connect();
+
 
     }
 
@@ -56,25 +56,24 @@ class Database{
      */
     public function __wakeup()
     {
-        try {
-            $this->connect();
-        } catch (\RuntimeException $ex) {
-            Application::getService(ErrorHandlerProvider::class)->invoke(ErrorHandlerProvider::HANDLE, $ex);
-        }
+
+        $this->connect();
+
     }
 
 
     /**
      * Connect to database and create pdo instance
      */
-    protected function connect(){
+    protected function connect()
+    {
 
         $dsn = $this->conf['DRIVER'] . ':host=' . $this->conf['HOST'] . ";dbname=" . $this->conf['NAME'];
         try {
             $this->pdo = new PDO($dsn, $this->conf['USER'], $this->conf['PSW'], $this->conf['OPTIONS']);
         } catch (\PDOException $ex) {
             Application::getService(ErrorHandlerProvider::class)->invoke(ErrorHandlerProvider::HANDLE, $ex);
-            throw new \RuntimeException("Cannot create instance of PDO");
+            /*            throw new \RuntimeException("Cannot create instance of PDO");*/
         }
 
 
@@ -86,7 +85,8 @@ class Database{
      * @return PDO
      */
 
-    public function getPDO() {
+    public function getPDO()
+    {
         return $this->pdo;
     }
 
@@ -96,10 +96,11 @@ class Database{
      * @param string $table
      * @return array
      */
-    public function setTableToProperties(array $properties, string $table) {
+    public function setTableToProperties(array $properties, string $table)
+    {
         $result = array();
         foreach ($properties as $property) {
-            $result[] = $table.'.'.$property;
+            $result[] = $table . '.' . $property;
         }
         return $result;
     }
@@ -109,7 +110,8 @@ class Database{
      * @param array $params
      * @return \PDOStatement
      */
-    public function paramsBinder(array $params) {
+    public function paramsBinder(array $params)
+    {
         foreach ($params as $key => $value) {
             $key++; // + 1 for bindParams
             $this->bindValue($key, $value);
@@ -122,22 +124,25 @@ class Database{
      * @param $statement
      * @return \PDOStatement
      */
-    public function query($statement) {
+    public function query($statement)
+    {
         try {
             $this->stm = $this->pdo->prepare($statement);
-        } catch (\PDOException $ex){
+        } catch (\PDOException $ex) {
             Application::getService(ErrorHandlerProvider::class)->invoke(ErrorHandlerProvider::HANDLE, $ex);
         }
         return $this->stm;
     }
+
     /**
      * bind a a value
      * @param mixed $param
      * @param mixed $value
      * @return \PDOStatement
      */
-    public function bindValue ($param, $value) {
-        $this->stm->bindParam($param,$value);
+    public function bindValue($param, $value)
+    {
+        $this->stm->bindParam($param, $value);
         return $this->stm;
     }
 
@@ -146,10 +151,11 @@ class Database{
      * @param array $properties
      * @return array
      */
-    public function excludeId(array $properties):array {
+    public function excludeId(array $properties): array
+    {
         $result = array();
         foreach ($properties as $key => $property) {
-            if ($key ==='id'|| $key==='ID'){
+            if ($key === 'id' || $key === 'ID') {
                 continue;
             }
             $result[$key] = $property;
@@ -163,11 +169,12 @@ class Database{
      * @see \PDOStatement->execute();
      * @return bool
      */
-    public function execute() {
+    public function execute()
+    {
         $result = false;
         try {
             $result = $this->stm->execute();
-        } catch (\PDOException $ex){
+        } catch (\PDOException $ex) {
             Application::getService(ErrorHandlerProvider::class)->invoke(ErrorHandlerProvider::HANDLE, $ex);
         }
         return $result;
@@ -178,7 +185,8 @@ class Database{
      * Count rows
      * @return string
      */
-    public function rowCount() {
+    public function rowCount()
+    {
         $this->execute();
         return $this->stm->fetchColumn();
     }
@@ -187,7 +195,8 @@ class Database{
      * Return an array of associative arrays of fetched rows
      * @return array
      */
-    public function resultList() {
+    public function resultList()
+    {
         $this->execute();
         return $this->stm->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -196,7 +205,8 @@ class Database{
      * Return a single associative array a row
      * @return mixed
      */
-    public function singleResult() {
+    public function singleResult()
+    {
         $this->execute();
         return $this->stm->fetch(PDO::FETCH_ASSOC);
     }
@@ -205,7 +215,8 @@ class Database{
      * Return the fetched row as an object
      * @return \stdClass
      */
-    public function fetchObj() {
+    public function fetchObj()
+    {
         $this->execute();
         return $this->stm->fetch(PDO::FETCH_OBJ);
     }
@@ -214,7 +225,8 @@ class Database{
      * Returns fetched rows as an object array
      * @return array
      */
-    public function fetchObjectSet() {
+    public function fetchObjectSet()
+    {
         $this->execute();
         return $this->stm->fetchAll(PDO::FETCH_OBJ);
     }
@@ -224,7 +236,8 @@ class Database{
      * @param $object
      * @return mixed
      */
-    public function fetchSingleClass($object) {
+    public function fetchSingleClass($object)
+    {
         $this->stm->setFetchMode(PDO::FETCH_INTO, new $object());
         $this->execute();
         return $this->stm->fetch();
@@ -235,7 +248,8 @@ class Database{
      * @param $object
      * @return array
      */
-    public function fetchClassSet($object) {
+    public function fetchClassSet($object)
+    {
         $this->execute();
         return $this->stm->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $object);
     }
