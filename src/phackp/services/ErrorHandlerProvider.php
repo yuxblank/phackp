@@ -1,6 +1,8 @@
 <?php
 namespace yuxblank\phackp\services;
+use yuxblank\phackp\api\ErrorHandlerReporter;
 use yuxblank\phackp\api\ThrowableHandler;
+use yuxblank\phackp\core\ServiceProvider;
 
 /**
  * Created by IntelliJ IDEA.
@@ -9,7 +11,7 @@ use yuxblank\phackp\api\ThrowableHandler;
  * Time: 22:52
  */
 
-class ErrorHandlerProvider implements ThrowableHandler
+class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
 {
     protected $exceptions = [];
     protected $excluded = [];
@@ -19,7 +21,7 @@ class ErrorHandlerProvider implements ThrowableHandler
         $this->exceptions[] = $throwable;
     }
 
-    public function delegate(\yuxblank\phackp\api\ErrorHandlerReporter $errorHandlerReporter)
+    public function delegate(ErrorHandlerReporter $errorHandlerReporter)
     {
         // todo filter exceptions
         $errorHandlerReporter->report($this->exceptions);

@@ -23,7 +23,8 @@
       "yuxblank\\phackp\\api\\": "src/phackp/api/",
       "yuxblank\\phackp\\exceptions\\": "src/phackp/exceptions/",
       "yuxblank\\phackp\\utils\\" : "src/phackp/utils",
-      "yuxblank\\phackp\\services\\" : "src/phackp/services"
+      "yuxblank\\phackp\\services\\" : "src/phackp/services",
+      "yuxblank\\phackp\\providers\\" : "src/phackp/providers"
     }
   }
 }

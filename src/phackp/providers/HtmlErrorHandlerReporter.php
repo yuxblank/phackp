@@ -1,5 +1,5 @@
 <?php
-namespace yuxblank\phackp\services;
+namespace yuxblank\phackp\providers;
 use yuxblank\phackp\api\ErrorHandlerReporter;
 
 /**
