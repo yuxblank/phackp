@@ -21,7 +21,7 @@ abstract class ServiceProvider implements Service
     }
 
 
-    public function invoke(string $method, $params=null)
+    public function invoke(callable $method, $params=null)
     {
         if ($this->reflectionClass->hasMethod($method)){
             call_user_func($method, $params);
