@@ -2,6 +2,7 @@
 namespace yuxblank\phackp\core;
 
 use yuxblank\phackp\api\Service;
+use yuxblank\phackp\services\exceptions\ServiceInvocationException;
 use yuxblank\phackp\utils\ReflectionUtils;
 use yuxblank\phackp\utils\UnitConversion;
 
@@ -132,6 +133,12 @@ class Application
         self::getInstance()->services[] = new $service;
     }
 
+    /**
+     * @param string $serviceName
+     * @return mixed
+     * @throws ServiceInvocationException
+     */
+
     public static function getService(string $serviceName)
     {
         foreach (self::getInstance()->services as $service) {
@@ -139,8 +146,7 @@ class Application
                 return $service;
             }
         }
-
-        return new ServiceProvider();
+        throw new ServiceInvocationException($serviceName,ServiceInvocationException::REQUIRE_UNREGISTERED);
     }
 
     private final function runtime()
