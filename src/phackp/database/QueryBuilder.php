@@ -1,5 +1,6 @@
 <?php
 namespace yuxblank\phackp\database;
+
 use yuxblank\phackp\core\Application;
 use yuxblank\phackp\utils\ReflectionUtils;
 
@@ -8,11 +9,6 @@ class QueryBuilder
 
     private $query = '';
 
-
-    public function __construct()
-    {
-
-    }
 
     public function select (array $properties) {
         $this->query .= 'SELECT '

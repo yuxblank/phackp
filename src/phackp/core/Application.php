@@ -140,7 +140,7 @@ class Application
             }
         }
 
-        return null;
+        return new ServiceProvider();
     }
 
     private final function runtime()

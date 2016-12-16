@@ -11,7 +11,7 @@ namespace yuxblank\phackp\core;
 
 use yuxblank\phackp\api\Service;
 
-abstract class ServiceProvider implements Service
+class ServiceProvider implements Service
 {
     public $reflectionClass;
 
