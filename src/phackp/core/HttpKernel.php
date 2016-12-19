@@ -175,9 +175,10 @@ final class HttpKernel
                 break;
 
             case 'POST':
-                $this->setParams($this->parseContentType($_POST));
+                $this->setParams($_POST);
                 $this->setRouteParams($route);
-                break;
+
+                // if break, we cant receive body so we continue
 
             case ('PUT' || 'DELETE' || 'HEAD' || 'PATCH' || 'OPTIONS'):
                 $body = file_get_contents('php://input');
