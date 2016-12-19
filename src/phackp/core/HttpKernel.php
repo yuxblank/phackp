@@ -92,10 +92,10 @@ final class HttpKernel
      */
     public function setParams($params)
     {
-        if (!array_key_exists($this->method, $this->params)) {
-            $this->params[$this->getMethod()] = $params;
+        if ($this->params===null) {
+            $this->params = $params;
         } else {
-            $this->params[$this->getMethod()] = array_merge($this->params[$this->getMethod()], $params);
+            $this->params = array_merge($this->params, $params);
         }
     }
 
@@ -167,15 +167,13 @@ final class HttpKernel
                 if (array_key_exists('params', $route)) {
                     $this->setParams($route['params']);
                 }
-
                 break;
 
             case 'POST':
                 $this->setParams($_POST);
                 $this->setRouteParams($route);
+                break;
 
-            // TODO check about waterfall
-            // $_POST won't work with body, so we fallthrough here
             case ('PUT' || 'DELETE' || 'HEAD' || 'PATCH' || 'OPTIONS'):
                 $body = file_get_contents('php://input');
                 $this->setParams($this->parseContentType($body));
@@ -183,7 +181,6 @@ final class HttpKernel
                 break;
 
             default:
-                //rest_error($request);
                 break;
         }
     }

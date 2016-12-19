@@ -30,7 +30,7 @@ class Crypto {
     }
     
     public function checkHash($password,$string) {
-        if (sha1($string) == $password) {
+        if (sha1($string) === $password) {
             return true;
         }
     }

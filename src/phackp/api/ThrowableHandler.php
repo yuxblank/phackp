@@ -1,5 +1,6 @@
 <?php
 namespace yuxblank\phackp\api;
+
 /**
  * Created by IntelliJ IDEA.
  * User: TheCo
