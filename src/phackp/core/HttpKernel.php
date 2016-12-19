@@ -175,7 +175,7 @@ final class HttpKernel
                 break;
 
             case 'POST':
-                $this->setParams($_POST);
+                $this->setParams($this->parseContentType($_POST));
                 $this->setRouteParams($route);
                 break;
 
