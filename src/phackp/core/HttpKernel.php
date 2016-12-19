@@ -142,12 +142,17 @@ final class HttpKernel
 
     /**
      * Read the input data and return the json as an array
+     * Todo manage json errors
      * @param $jsonData
      * @return array
      */
     private function parseJson($jsonData): array
     {
-        return json_decode($jsonData, true);
+        $decode = json_decode($jsonData, true);
+        if (json_last_error() === JSON_ERROR_NONE){
+            return $decode;
+        }
+        return [];
     }
 
 
