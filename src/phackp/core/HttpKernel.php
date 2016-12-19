@@ -146,13 +146,13 @@ final class HttpKernel
      * @param $jsonData
      * @return array
      */
-    private function parseJson($jsonData): array
+    private function parseJson($jsonData)
     {
         $decode = json_decode($jsonData, true);
         if (json_last_error() === JSON_ERROR_NONE){
             return $decode;
         }
-        return [];
+        return null;
     }
 
 
