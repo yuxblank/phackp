@@ -26,9 +26,9 @@ final class HttpKernel
         }
         $this->url = $this->parseUrl();
         if (array_key_exists('QUERY_STRING', $_SERVER)) {
-            $this->queryString = '?'. $_SERVER['QUERY_STRING'];
+            $this->queryString = '?' . $_SERVER['QUERY_STRING'];
             // remove query string from internal url
-            $this->url = str_replace($this->queryString,'',$this->url);
+            $this->url = str_replace($this->queryString, '', $this->url);
             if ($this->url === '') {
                 $this->url = '/';
             }
@@ -44,7 +44,7 @@ final class HttpKernel
     {
         $path = implode('/', array_slice(explode('/', $_SERVER['SCRIPT_NAME']), 0, -1));
         $uri = substr($_SERVER['REQUEST_URI'], strlen($path));
-        $root = $uri!=='/' ? ltrim($uri, '/') : $uri;
+        $root = $uri !== '/' ? ltrim($uri, '/') : $uri;
         return $root;
         //return explode('/', parse_url($root, PHP_URL_PATH));
     }
@@ -90,7 +90,8 @@ final class HttpKernel
      * Set parameters to the request
      * @param $params
      */
-    public function setParams($params){
+    public function setParams($params)
+    {
         if (!array_key_exists($this->method, $this->params)) {
             $this->params[$this->getMethod()] = $params;
         } else {
@@ -104,19 +105,20 @@ final class HttpKernel
      * @param $body
      * @return mixed
      */
-    public function parseContentType($body) {
+    public function parseContentType($body)
+    {
 
-        switch($this->getContentType()){
+        switch ($this->getContentType()) {
             case "application/json":
                 return $this->parseJson($body);
                 break;
             case "application/x-www-form-urlencoded":
-                parse_str($body,$parsed);
+                parse_str($body, $parsed);
                 return $parsed;
                 break;
 
             default:
-                parse_str($body,$parsed);
+                parse_str($body, $parsed);
                 return $parsed;
         }
 
@@ -127,13 +129,14 @@ final class HttpKernel
      * Set http response code by given number
      * @param int $status
      */
-    public function HTTPStatus(int $status) {
+    public function HTTPStatus(int $status)
+    {
 
         http_response_code($status);
-     /*   switch($status){
-            case 415:
-                http_response_code(415);
-        }*/
+        /*   switch($status){
+               case 415:
+                   http_response_code(415);
+           }*/
 
     }
 
@@ -142,7 +145,8 @@ final class HttpKernel
      * @param $jsonData
      * @return array
      */
-    private function parseJson($jsonData):array {
+    private function parseJson($jsonData): array
+    {
         return json_decode($jsonData, true);
     }
 
@@ -168,12 +172,14 @@ final class HttpKernel
 
             case 'POST':
                 $this->setParams($_POST);
+                $this->setRouteParams($route);
 
             // TODO check about waterfall
             // $_POST won't work with body, so we fallthrough here
             case ('PUT' || 'DELETE' || 'HEAD' || 'PATCH' || 'OPTIONS'):
                 $body = file_get_contents('php://input');
                 $this->setParams($this->parseContentType($body));
+                $this->setRouteParams($route);
                 break;
 
             default:
@@ -182,6 +188,12 @@ final class HttpKernel
         }
     }
 
-
+    private function setRouteParams($route)
+    {
+        if ($this->getMethod() !== 'GET' && array_key_exists('params', $route)) {
+            $this->setParams($route['params']);
+        }
 
     }
+
+}
