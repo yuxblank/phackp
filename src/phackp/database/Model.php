@@ -34,50 +34,50 @@ abstract class Model  {
     /**
      * @return \PDO
      */
-    public function getPDO() {
+    public final function getPDO() {
         return $this->getORMInstance()->getDB()->getPDO();
     }
 
-    public final function countObjects($query=null, $params=null) {
+    public function countObjects($query=null, $params=null) {
         return $this->getORMInstance()->countObjects(get_called_class(),$query,$params);
     }
 
-    public final function delete($id) {
+    public function delete($id=null) {
         return $this->getORMInstance()->delete(get_called_class(), $id);
     }
 
 
-    public final function find($query, $params) {
+    public function find($query, $params) {
         return $this->getORMInstance()->find(get_called_class(), $query, $params);
     }
 
-    public final function findAll($query = null, $params = null) {
+    public function findAll($query = null, $params = null) {
         return $this->getORMInstance()->findAll(get_called_class(), $query, $params);
     }
 
-    public final function findById($id) {
+    public function findById($id) {
         return $this->getORMInstance()->findById(get_called_class(), $id);
     }
 
-    public final function findAs($query, $params=null) {
+    public function findAs($query, $params=null) {
         return $this->getORMInstance()->findAs(get_called_class(),$query, $params);
     }
-    public final function findAsArray($query,$params=null){
+    public function findAsArray($query,$params=null){
         return $this->getORMInstance()->findAsArray(get_called_class(),$query, $params);
     }
-    public final function findAllAsArray($query,$params){
+    public function findAllAsArray($query,$params){
         return $this->getORMInstance()->findAllAsArray(get_called_class(),$query, $params);
     }
 
-    public final function findMagicSet($query, $params) {
+    public function findMagicSet($query, $params) {
         return $this->getORMInstance()->findAsAll(get_called_class(),$query, $params);
     }
 
-    public final function lastInsertId() {
+    public function lastInsertId() {
         return $this->getORMInstance()->getDB()->getPDO()->lastInsertId();
     }
 
-    public final function nativeQuery($query, $params) {
+    public function nativeQuery($query, $params) {
         return $this->getORMInstance()->findAsArray(get_called_class(),$query, $params);
     }
 

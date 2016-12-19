@@ -259,7 +259,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
             ->delete($table)
             ->where('id=?');
         $this->db->query($queryBuilder->getQuery());
-        $this->db->bindValue(1, $id);
+        $this->db->bindValue(1, $id!=null ? $id : $object->id);
         return $this->db->execute();
     }
 
