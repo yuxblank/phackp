@@ -3,7 +3,7 @@ namespace yuxblank\phackp\services\exceptions;
 
 class ServiceInvocationException extends \Exception
 {
-    const REQUIRE_UNREGISTERED = "The service was not registered";
+    const REQUIRE_UNREGISTERED = 1;
 
     public function __construct(string $class, $code=null, \Exception $previous=null)
     {
@@ -12,7 +12,7 @@ class ServiceInvocationException extends \Exception
 
     public function __toString()
     {
-        parent::__toString();
+       return parent::__toString();
     }
 
 
