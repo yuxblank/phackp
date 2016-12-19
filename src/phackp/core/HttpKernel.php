@@ -152,7 +152,7 @@ final class HttpKernel
         if (json_last_error() === JSON_ERROR_NONE){
             return $decode;
         }
-        return null;
+        return $this->params = null;
     }
 
 
