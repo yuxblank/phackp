@@ -25,7 +25,7 @@ Actually the frameworks is on heavy development. it has been tested with Apache 
   * 0 dependecies required
   * PHP 7
   * easy extendibility (API's, Modules etc.)*
-  * Almost no configuration (No yaml, xml, ini.. Just PHP)*
+  * Almost no configuration (No yaml, xml, ini.. Just PHP)
 
 ### Routing
   * array mapped routes
@@ -35,7 +35,7 @@ Actually the frameworks is on heavy development. it has been tested with Apache 
   * parameter bound with simple tag {tag} (e.g. tag/{tag}/)
   * REST method mapping (GET,POST,DELETE,PUT)**
   * auto parameters injection to target method signature
-  * rich set of RESTful features (e.g. auto json decoding/encoding)*
+  * rich set of RESTful features (e.g. auto json decoding/encoding)
 
 ### Persistence
    * object-relational mapping engine built on top of PDO.
@@ -43,28 +43,37 @@ Actually the frameworks is on heavy development. it has been tested with Apache 
    * auto model mapping (convention-based)
    * OneToMany, ManyToOne, ManyToMany relationships between objects
    * Self reflecting methods (Abstract) (e.g. $object->save() .)
-   * dependency injection (e.g self::oneToMany($this, 'Parent') returns $Parent.)*
-   * Singleton Database instance provides one connection per execution
-   * ability to use Database standalone to preserve "is a" OOP rule. (but Model API is more productive!)*
+   * dependency injection (e.g self::oneToMany($this, 'Parent') returns $Parent.)
+   * ability to use Database class as standalone to preserve "is a" OOP rule. (but Model API is more productive!)
+   * Models can always access PDO instance when needed
    
 ### Model View Controller
   * Controller API provides all useful stuff (sessions, flash scopes, security etc...)*
   * simple API for models
   * view variables rendering from controllers (e.g $View->renderArgs("name", value) accessible from view as $name.)
   * view render specific template (e.g. $View->render("app/blogpage") .)
-  * built-in template system support template inheritance.*
+  * Configurable Hooks with scope isolation (or passed-by)
+  * built-in template system support template inheritance.
   * it's all about conventions!
 
 ### Presentation layer
   * Built-in engine for views
    * plain PHP syntax
    * template inheritance
+   * Dynamic Hook support
+   * Scope isolation (hooks)
+   
+### Services and Providers
+   * Dynamically register providers instances (non-singleton, single runtime instance beans)
+   * Reflection based invocation of interfaces methods, allowing to delegate implementation class @ runtime (eg. ErrorHandlers)
+   * Easy and effective API to extends and implements brand new providers
  
 ### PSR-4
   * use composer default autoload psr-4
   * auto mapping for project classes
   
 ### RESTful
-  * routes GET,POST,PUT,DELETE for CRUD API's
+  * Easy, simple straightforward REST API creation
+  * routes GET,POST,PUT,DELETE,OPTIONS,PATCH etc. for CRUD RESTFUL standard API's
   * automatic serialize/un-serialize json-to-array
-  * content-type filtering (via routes options)
+  * content-type filtering (via routes options)*
