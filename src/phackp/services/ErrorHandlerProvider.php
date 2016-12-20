@@ -25,7 +25,7 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
 
     public function delegate(ErrorHandlerReporter $errorHandlerReporter)
     {
-        // todo filter exceptions
+        // todo exclude exceptions
         return $errorHandlerReporter->report($this->exceptions);
 
     }
