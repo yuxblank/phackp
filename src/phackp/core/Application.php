@@ -234,7 +234,6 @@ class Application
                 die(Application::isDebug()? $e : "");
             }
 
-            $controller = new $notFoundRoute['class']();
             ReflectionUtils::invoke($controller, 'onBefore');
             $controller->{$notFoundRoute['method']}();
             ReflectionUtils::invoke($controller, 'onAfter');
