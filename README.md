@@ -29,13 +29,14 @@ Actually the frameworks is on heavy development. it has been tested with Apache 
 
 ### Routing
   * array mapped routes
-  * actions are mapped as Controller@method
+  * actions are mapped by Class and Method name for given url
   * exclusion of non-mapped routes (return configurable error routes)
   * 100% pretty urls (e.g. ...blog/title/1)
   * parameter bound with simple tag {tag} (e.g. tag/{tag}/)
   * REST method mapping (GET,POST,DELETE,PUT)**
   * auto parameters injection to target method signature
   * rich set of RESTful features (e.g. auto json decoding/encoding)
+  * GET parameters injection maps to give tag name {name} ($param['name'])
 
 ### Persistence
    * object-relational mapping engine built on top of PDO.
@@ -49,6 +50,7 @@ Actually the frameworks is on heavy development. it has been tested with Apache 
    
 ### Model View Controller
   * Controller API provides all useful stuff (sessions, flash scopes, security etc...)*
+  * controllers/models can be put in any folder/s, the classloader will do the rest
   * simple API for models
   * view variables rendering from controllers (e.g $View->renderArgs("name", value) accessible from view as $name.)
   * view render specific template (e.g. $View->render("app/blogpage") .)

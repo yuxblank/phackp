@@ -9,7 +9,6 @@
 namespace yuxblank\phackp\utils;
 
 
-use Symfony\Component\Console\Exception\CommandNotFoundException;
 use yuxblank\phackp\exceptions\ClassNotFoundException;
 
 class ReflectionUtils
