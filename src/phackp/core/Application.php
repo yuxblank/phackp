@@ -2,6 +2,8 @@
 namespace yuxblank\phackp\core;
 
 use yuxblank\phackp\api\Service;
+use yuxblank\phackp\exceptions\ClassNotFoundException;
+use yuxblank\phackp\services\ErrorHandlerProvider;
 use yuxblank\phackp\services\exceptions\ServiceInvocationException;
 use yuxblank\phackp\utils\ReflectionUtils;
 use yuxblank\phackp\utils\UnitConversion;
@@ -210,8 +212,13 @@ class Application
         $route = Router::findAction($httpKernel);
         if ($route !== null) {
             $httpKernel->dispatch($route);
-            $controller = new $route['class'];
 
+            $controller = null;
+            try {
+                $controller = ReflectionUtils::makeInstance($route['class']);
+            } catch (ClassNotFoundException $e){
+                Application::getService(ErrorHandlerProvider::class)->invoke(ErrorHandlerProvider::HANDLE, $e);
+            }
             ReflectionUtils::invoke($controller, 'onBefore');
 
             $controller->{$route['method']}($httpKernel->getParams());
@@ -219,6 +226,14 @@ class Application
             ReflectionUtils::invoke($controller, 'onAfter');
         } else {
             $notFoundRoute = self::getErrorRoute(404);
+            $controller = null;
+            try{
+                $controller = ReflectionUtils::makeInstance($notFoundRoute['class']);
+            } catch (ClassNotFoundException $e){
+                http_response_code(404);
+                die(Application::isDebug()? $e : "");
+            }
+
             $controller = new $notFoundRoute['class']();
             ReflectionUtils::invoke($controller, 'onBefore');
             $controller->{$notFoundRoute['method']}();

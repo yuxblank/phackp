@@ -9,6 +9,9 @@
 namespace yuxblank\phackp\utils;
 
 
+use Symfony\Component\Console\Exception\CommandNotFoundException;
+use yuxblank\phackp\exceptions\ClassNotFoundException;
+
 class ReflectionUtils
 {
 
@@ -48,6 +51,20 @@ class ReflectionUtils
             }
         }
         return $array;
+    }
+
+    /**
+     * @param $className
+     * @return mixed
+     * @throws ClassNotFoundException
+     */
+    public static function makeInstance($className){
+        $instance = new $className();
+        if ($instance == null){
+            throw new ClassNotFoundException($className . " not found in the classpath, please check router configuration.", ClassNotFoundException::CONTROLLER);
+        }
+
+        return $instance;
     }
 
 
