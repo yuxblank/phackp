@@ -210,21 +210,18 @@ class Application
         $route = Router::findAction($httpKernel);
         if ($route !== null) {
             $httpKernel->dispatch($route);
-            $action = Router::getController($route['action']);
-            $controller = new $action[0];
+            $controller = new $route['class'];
 
             ReflectionUtils::invoke($controller, 'onBefore');
 
-            $a = $action[1];
-            $controller->$a($httpKernel->getParams());
+            $controller->{$route['method']}($httpKernel->getParams());
 
             ReflectionUtils::invoke($controller, 'onAfter');
         } else {
-            $notFoundRoute = Router::getController(self::getErrorRoute(404)['action']);
-            $controller = new $notFoundRoute[0]();
+            $notFoundRoute = self::getErrorRoute(404);
+            $controller = new $notFoundRoute['class']();
             ReflectionUtils::invoke($controller, 'onBefore');
-            $a = $notFoundRoute[1];
-            $controller->$a();
+            $controller->{$notFoundRoute['method']}();
             ReflectionUtils::invoke($controller, 'onAfter');
         }
 

@@ -299,6 +299,7 @@ class Router
 
 
     /**
+     * @deprecated
      * Performs a inverse route returning returning an array with [0 => 'Controller', 1 => 'action']
      * Recreate the current application CONTROLLER namespace using the application configuration.
      * @param string $action
