@@ -9,7 +9,8 @@
 namespace yuxblank\phackp\exceptions;
 
 
-use Herrera\Json\Exception\Exception;
+
+use Exception;
 
 class ClassNotFoundException extends Exception
 {

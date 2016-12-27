@@ -9,6 +9,7 @@
 namespace yuxblank\phackp\utils;
 
 
+use yuxblank\phackp\core\Controller;
 use yuxblank\phackp\exceptions\ClassNotFoundException;
 
 class ReflectionUtils
@@ -80,6 +81,10 @@ class ReflectionUtils
         if (method_exists($object,$action)){
             $object->$action();
         }
+    }
+
+    public static function extendsController ($object){
+        return is_subclass_of($object,Controller::class);
     }
 
 
