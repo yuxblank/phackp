@@ -43,7 +43,8 @@ abstract class Model  {
     }
 
     public function delete($id=null) {
-        return $this->getORMInstance()->delete(get_called_class(), $id);
+        $id = $id==null ? $this->id : $id;
+        return $this->getORMInstance()->delete(get_called_class(),$id);
     }
 
 
