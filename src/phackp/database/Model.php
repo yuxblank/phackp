@@ -104,4 +104,7 @@ abstract class Model  {
     public function manyToMany($object, $target) {
         return $this->getORMInstance()->manyToMany($object, $target);
     }
+    public function _manyToMany($object, $target) {
+        return $this->getORMInstance()->_manyToMany($object, $target);
+    }
 }

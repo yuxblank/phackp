@@ -340,9 +340,10 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
         return $this->db->fetchSingleClass($target);
     }
     /**
-     * Return a collection of ojects of a N to N relationship. The table must be called $object_$target, the N/N table must contain
-     * $object_id reference. The table names uses the convetion of lowercase (@see ObjectInjector).
+     * Return a collection of objects of a N to N relationship. The table must be called $object_$target, the N/N table must contain
+     * $object_id reference. The table names uses the convention of lowercase (@see ObjectInjector).
      * Return an ArrayObject of the $target object class.
+     * * N/T Table must be called parent_child
      * @param mixed $object
      * @param string $target
      * @return array
@@ -356,6 +357,27 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
             ->select($this->db->setTableToProperties(ReflectionUtils::getProperties($target),$child))
             ->from(array($child))
             ->innerJoin($child,'id',$parent.'_'.$child,$child.'_id');
+        $this->db->query($queryBuilder->getQuery());
+        return $this->db->fetchClassSet($target);
+    }
+    /**
+     * Return a collection of objects of a N to N relationship. The table must be called $object_$target, the N/N table must contain
+     * $object_id reference. The table names uses the convention of lowercase (@see ObjectInjector).
+     * Return an ArrayObject of the $target object class.
+     * N/T Table must be called child_parent
+     * @param mixed $object
+     * @param string $target
+     * @return array
+     */
+    public function _manyToMany($object, $target)
+    {
+        $parent = $this->objectInjector(get_class($object));
+        $child = strtolower(ReflectionUtils::stripNamespace($target));
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder
+            ->select($this->db->setTableToProperties(ReflectionUtils::getProperties($target),$child))
+            ->from(array($child))
+            ->innerJoin($child,'id',$child.'_'.$parent,$child.'_id');
         $this->db->query($queryBuilder->getQuery());
         return $this->db->fetchClassSet($target);
     }
