@@ -10,9 +10,8 @@ namespace yuxblank\phackp\exceptions;
 
 
 
-use Exception;
 
-class ClassNotFoundException extends Exception
+class ClassNotFoundException extends \Exception
 {
     const CONTROLLER = 1;
     public function __construct($message, $code, \Exception $previous = null)

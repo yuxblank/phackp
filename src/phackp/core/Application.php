@@ -3,6 +3,8 @@ namespace yuxblank\phackp\core;
 
 use yuxblank\phackp\api\Service;
 use yuxblank\phackp\exceptions\ClassNotFoundException;
+use yuxblank\phackp\exceptions\ConfigurationException;
+use yuxblank\phackp\providers\HtmlErrorHandlerReporter;
 use yuxblank\phackp\services\ErrorHandlerProvider;
 use yuxblank\phackp\services\exceptions\ServiceInvocationException;
 use yuxblank\phackp\utils\ReflectionUtils;
@@ -148,7 +150,7 @@ class Application
                 return $service;
             }
         }
-        throw new ServiceInvocationException($serviceName,ServiceInvocationException::REQUIRE_UNREGISTERED);
+        throw new ServiceInvocationException($serviceName, ServiceInvocationException::REQUIRE_UNREGISTERED);
     }
 
     private final function runtime()
@@ -160,40 +162,40 @@ class Application
 
     /**
      * Bootstrap the application. Requires the root path of the application (__DIR__)
-     * Configuration files folder MUST be present at ROOT/config/.. path.
-     * @param $realPath (__DIR__)
+     * Configuration files folder is $realPath/config/.. if $configPath is not set.
+     * @param string $realPath (__DIR__) of the application root
+     * @param string $configPath override default path of configuration (e.g. when you want use a protected path outside /httpdocs)
+     * @throws ConfigurationException
      */
-    public function bootstrap(string $realPath)
+    public function bootstrap(string $realPath, string $configPath = null)
     {
 
         $this->runtime();
 
         $this->APP_ROOT = $realPath;
 
-        $config = $realPath . '/config/';
+        $config = $configPath === null ? $realPath . '/config/' : $configPath;
 
-        if (is_dir($config)) {
+        if (!is_dir($config)) {
+            throw new ConfigurationException("The configuration path does not exist: " . $configPath, ConfigurationException::INVALID_PATH);
+        }
 
-            $tmp = null;
-            $files = glob($config . '*.php');
+        $tmp = null;
+        $files = glob($config . '*.php');
 
-            foreach ($files as $file) {
-                $tmp[] = require $file;
-            }
+        foreach ($files as $file) {
+            $tmp[] = require $file;
+        }
 
-            foreach ($tmp as $key => $value) {
+        foreach ($tmp as $key => $value) {
 
-                foreach ($value as $key2 => $innervalue) {
+            foreach ($value as $key2 => $innervalue) {
 
-                    $this->config[$key2] = $innervalue;
-
-                }
+                $this->config[$key2] = $innervalue;
 
             }
 
         }
-
-
     }
 
     /**
@@ -216,7 +218,7 @@ class Application
             $controller = null;
             try {
                 $controller = ReflectionUtils::makeInstance($route['class']);
-            } catch (ClassNotFoundException $e){
+            } catch (ClassNotFoundException $e) {
                 Application::getService(ErrorHandlerProvider::class)->invoke(ErrorHandlerProvider::HANDLE, $e);
             }
             ReflectionUtils::invoke($controller, 'onBefore');
@@ -227,11 +229,11 @@ class Application
         } else {
             $notFoundRoute = self::getErrorRoute(404);
             $controller = null;
-            try{
+            try {
                 $controller = ReflectionUtils::makeInstance($notFoundRoute['class']);
-            } catch (ClassNotFoundException $e){
+            } catch (ClassNotFoundException $e) {
                 http_response_code(404);
-                die(Application::isDebug()? $e : "");
+                die(Application::isDebug() ? $e : "");
             }
 
             ReflectionUtils::invoke($controller, 'onBefore');
