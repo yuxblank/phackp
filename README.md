@@ -10,6 +10,9 @@ The framework is actually compatible with PHP7+.
 # Introduction
 pHackp aim to provide a fast and easy way to build modern and resposive websites and apps.
 It provides an Model View Controller structure for organizing your project and tries to be as far as possible "convention over configuration".
+The framework provide all basic features for develop Restful APIs, Websites and web applications. it has no dependencies and it's not a fully fledged framework as many others in PHP panorama: you get the basis to work for any kind of project (MVC, Routing, Template, Pretty URL, Database Access, Sessions, REST, Services and Providers *cache to come*) and when something is missing you just: *composer require X*. That's it!
+
+There are plenty of Frameworks wrapping the world of PHP packages, why just don't use them?
 
 # Requirements
 Actually the frameworks is on heavy development. it has been tested with Apache (need .htaccess mod_rewrite) and built-in PHP 7 server (URL rewrite by root).
