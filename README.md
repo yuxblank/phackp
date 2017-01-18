@@ -12,7 +12,7 @@ pHackp aim to provide a fast and easy way to build modern and resposive websites
 It provides an Model View Controller structure for organizing your project and tries to be as far as possible "convention over configuration".
 
 # Requirements
-Actually the frameworks is on heavy development. it has been tested with Apache and built-in PHP 7 server only. I planned to provide support for both Apahce, Ngnix and IIS.
+Actually the frameworks is on heavy development. it has been tested with Apache (need .htaccess mod_rewrite) and built-in PHP 7 server (URL rewrite by root).
 
 
 ## Features and Roadmap
@@ -26,6 +26,7 @@ Actually the frameworks is on heavy development. it has been tested with Apache 
   * PHP 7
   * easy extendibility (API's, Modules etc.)*
   * Almost no configuration (No yaml, xml, ini.. Just PHP)
+  * Great Performance, ease of use and speed of development!
 
 ### Routing
   * array mapped routes
@@ -33,20 +34,20 @@ Actually the frameworks is on heavy development. it has been tested with Apache 
   * exclusion of non-mapped routes (return configurable error routes)
   * 100% pretty urls (e.g. ...blog/title/1)
   * parameter bound with simple tag {tag} (e.g. tag/{tag}/)
-  * REST method mapping (GET,POST,DELETE,PUT)**
+  * REST method mapping (GET,POST,PUT,DELETE,HEAD,OPTIONS,PATCH)
   * auto parameters injection to target method signature
   * rich set of RESTful features (e.g. auto json decoding/encoding)
-  * GET parameters injection maps to give tag name {name} ($param['name'])
+  * GET parameters injection maps to given tag name {name} ($param['name'])
 
 ### Persistence
-   * object-relational mapping engine built on top of PDO.
+   * object-relational mapping engine built on top of PDO. (HackORM)
    * API for intuitive access
    * auto model mapping (convention-based)
    * OneToMany, ManyToOne, ManyToMany relationships between objects
    * Self reflecting methods (Abstract) (e.g. $object->save() .)
-   * dependency injection (e.g self::oneToMany($this, 'Parent') returns $Parent.)
+   * dependency injection (e.g self::oneToMany($this, 'Parent::class') returns $Parent instances.)
    * ability to use Database class as standalone to preserve "is a" OOP rule. (but Model API is more productive!)
-   * Models can always access PDO instance when needed
+   * Models can always access PDO instance when needed ($this->getPDO())
    
 ### Model View Controller
   * Controller API provides all useful stuff (sessions, flash scopes, security etc...)*
@@ -55,7 +56,7 @@ Actually the frameworks is on heavy development. it has been tested with Apache 
   * view variables rendering from controllers (e.g $View->renderArgs("name", value) accessible from view as $name.)
   * view render specific template (e.g. $View->render("app/blogpage") .)
   * Configurable Hooks with scope isolation (or passed-by)
-  * built-in template system support template inheritance.
+  * built-in template system support template inheritance. (plain php!)
   * it's all about conventions!
 
 ### Presentation layer
