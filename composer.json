@@ -1,21 +1,28 @@
 {
   "name": "yuxblank/phackp",
-  "description": "description_text",
-  "version": "0.1-alpha",
+  "description": "pHackp aim to provide a fast and easy way to build modern and responsive websites and apps. It provides an Model View Controller structure for organizing your project and tries to be as far as possible 'convention over configuration'",
+  "version": "0.2-alpha",
   "minimum-stability": "stable",
   "license": "MIT",
+  "type": "library",
+  "homepage":"http://yuxblank.github.io/phackp",
   "authors": [
     {
       "name": "Yuri Blanc",
-      "email": "yuxblank@gmail.com"
+      "email": "yuxblank@gmail.com",
+      "homepage": "http://www.yuriblanc.it",
+      "role": "Developer"
     }
   ],
+  "support": {
+    "email": "yuxblank@gmail.com"
+  },
   "require-dev": {
     "phpdocumentor/phpdocumentor": "2.*",
     "phpunit/phpunit": "5.3.*"
   },
   "require": {
-    "php": ">=5.6"
+    "php": ">=7.0"
   },
   "autoload": {
     "psr-4": {
