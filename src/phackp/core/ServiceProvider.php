@@ -13,7 +13,7 @@ use yuxblank\phackp\api\Service;
 
 class ServiceProvider implements Service
 {
-    public $reflectionClass;
+    protected $reflectionClass;
 
     public function __construct()
     {
