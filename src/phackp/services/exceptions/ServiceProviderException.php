@@ -1,7 +1,7 @@
 <?php
 namespace yuxblank\phackp\services\exceptions;
 
-class ServiceInvocationException extends \Exception
+class ServiceProviderException extends \Exception
 {
     const REQUIRE_UNREGISTERED = 1;
 

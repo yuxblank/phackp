@@ -6,7 +6,7 @@ use yuxblank\phackp\exceptions\ClassNotFoundException;
 use yuxblank\phackp\exceptions\ConfigurationException;
 use yuxblank\phackp\providers\HtmlErrorHandlerReporter;
 use yuxblank\phackp\services\ErrorHandlerProvider;
-use yuxblank\phackp\services\exceptions\ServiceInvocationException;
+use yuxblank\phackp\services\exceptions\ServiceProviderException;
 use yuxblank\phackp\utils\ReflectionUtils;
 use yuxblank\phackp\utils\UnitConversion;
 
@@ -140,17 +140,17 @@ class Application
     /**
      * @param string $serviceName
      * @return mixed
-     * @throws ServiceInvocationException
+     * @throws ServiceProviderException
      */
 
-    public static function getService(string $serviceName)
+    public static function getService(string $serviceName):ServiceProvider
     {
         foreach (self::getInstance()->services as $service) {
             if ($service instanceof $serviceName) {
                 return $service;
             }
         }
-        throw new ServiceInvocationException($serviceName, ServiceInvocationException::REQUIRE_UNREGISTERED);
+        throw new ServiceProviderException($serviceName, ServiceProviderException::REQUIRE_UNREGISTERED);
     }
 
     private final function runtime()
