@@ -256,7 +256,7 @@ class Application
                 $controller = ReflectionUtils::makeInstance($notFoundRoute['class']);
             } catch (InvocationException $e) {
                 http_response_code(404);
-                throw new InvocationException('Class ' . $route['class'] . ' not found in routes', InvocationException::ROUTER);
+                throw new InvocationException('Class ' . $notFoundRoute['class'] . ' not found in routes', InvocationException::ROUTER);
                 //die(Application::isDebug() ? $e : "");
             }
 
@@ -268,7 +268,7 @@ class Application
             try {
                 $controller->{$notFoundRoute['method']}();
             } catch (InvocationException $ex){
-                throw new InvocationException('Method '. $route['method'] .' not found for error route class ' . $reflectionClass->getName(), InvocationException::ROUTER);
+                throw new InvocationException('Method '. $notFoundRoute['method'] .' not found for error route class ' . $reflectionClass->getName(), InvocationException::ROUTER);
             }
             if ($eventDriven){
             ReflectionUtils::invoke($controller, 'onAfter');
@@ -280,7 +280,6 @@ class Application
             echo '<p style="position: fixed; bottom:0; margin: 0 auto;"> Total execution time in seconds: ' . (microtime(true) - $time_start) . ' runtime_id: ' . pHackpRuntime . ' memory peak: ' . UnitConversion::byteConvert($memoryPeak) . '</p>';
         }
     }
-
 
 }
 
