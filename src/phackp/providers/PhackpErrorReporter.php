@@ -1,5 +1,6 @@
 <?php
 namespace yuxblank\phackp\providers;
+
 use yuxblank\phackp\api\ErrorHandlerReporter;
 use yuxblank\phackp\api\EventDrivenController;
 use yuxblank\phackp\core\Application;
@@ -15,18 +16,32 @@ use yuxblank\phackp\utils\ReflectionUtils;
  */
 class PhackpErrorReporter implements ErrorHandlerReporter
 {
-    public function display(array $throwable)
+    public function fatal(array $throwable)
     {
+        $this->draw($throwable);
+    }
 
-        if (($route = Application::getErrorRoute(500))!=null){
+    public function warning(array $throwable)
+    {
+        $this->draw($throwable);
+    }
 
-          Router::doRoute($route, $throwable);
+    public function notice(array $throwable)
+    {
+        $this->draw($throwable);
+    }
 
-        } else {
-            foreach ($throwable as $ex) {
-                echo "<p>" . $ex->getMessage();
-                "</p>";
-            }
+    public function unknown(array $throwable)
+    {
+        $this->draw($throwable);
+    }
+
+
+    private function draw($throwable){
+        foreach ($throwable as $ex) {
+            echo "<p>" . $ex->getMessage();
+            "</p>";
+
         }
     }
 

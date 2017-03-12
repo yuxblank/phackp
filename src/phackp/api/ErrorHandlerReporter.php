@@ -17,6 +17,9 @@ interface ErrorHandlerReporter
      * @param array $throwable
      * @return mixed
      */
-    public function display(array $throwable);
+    public function fatal(array $throwable);
+    public function warning(array $throwable);
+    public function notice(array $throwable);
+    public function unknown(array $throwable);
 
 }
