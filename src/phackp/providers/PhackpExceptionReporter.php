@@ -11,6 +11,7 @@ namespace yuxblank\phackp\providers;
 
 use yuxblank\phackp\api\ExceptionHandlerReporter;
 use yuxblank\phackp\core\Application;
+use yuxblank\phackp\core\Router;
 
 class PhackpExceptionReporter implements ExceptionHandlerReporter
 {
