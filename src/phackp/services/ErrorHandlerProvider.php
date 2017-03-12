@@ -74,23 +74,14 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
 
             case E_USER_WARNING:
                 $this->handle(new PhackpRuntimeException("Warning " . [$errno] . $errstr, E_USER_WARNING, $this->exceptions));
-
-                $this->report();
-
                 break;
 
             case E_USER_NOTICE:
                 $this->handle(new PhackpRuntimeException("Notice" . [$errno] . $errstr, E_USER_WARNING, $this->exceptions));
-
-                $this->report();
-
                 break;
 
             default:
                 $this->handle(new PhackpRuntimeException("Unknown error type: " [$errno] . $errstr, E_USER_WARNING, $this->exceptions));
-
-                $this->report();
-
                 break;
         }
 
@@ -100,9 +91,6 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
 
     public function exceptionHandler(\Throwable $exception) {
         $this->handle($exception);
-        if (error_reporting() >= E_ALL) {
-            $this->report();
-        }
     }
 
 
