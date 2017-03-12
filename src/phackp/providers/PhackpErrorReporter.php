@@ -38,9 +38,9 @@ class PhackpErrorReporter implements ErrorHandlerReporter
 
 
     private function draw($throwable){
+        /** @var \throwable $ex */
         foreach ($throwable as $ex) {
-            echo "<p>" . $ex->getMessage();
-            "</p>";
+            echo "<p> error" . $ex->getMessage() ." on line:" . $ex->getLine(); "</p>";
 
         }
     }

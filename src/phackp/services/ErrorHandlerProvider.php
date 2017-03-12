@@ -84,22 +84,22 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
 
         switch ($errno) {
             case E_USER_ERROR:
-                $this->handle(new PhackpRuntimeException("Fatal error on line $errline in file $errfile", E_USER_ERROR, $this->exceptions));
+                $this->handle(new PhackpRuntimeException("Fatal error on line $errline in file $errfile", E_USER_ERROR));
                 $this->getErrorHandler()->fatal($this->exceptions);
                 break;
 
             case E_USER_WARNING:
-                $this->handle(new PhackpRuntimeException("Warning " . [$errno] . $errstr, E_USER_WARNING, $this->exceptions));
+                $this->handle(new PhackpRuntimeException("Warning " . [$errno] . $errstr, E_USER_WARNING));
                 $this->getErrorHandler()->warning($this->exceptions);
                 break;
 
             case E_USER_NOTICE:
-                $this->handle(new PhackpRuntimeException("Notice" . [$errno] . $errstr, E_USER_WARNING, $this->exceptions));
+                $this->handle(new PhackpRuntimeException("Notice" . [$errno] . $errstr, E_USER_NOTICE));
                 $this->getErrorHandler()->notice($this->exceptions);
                 break;
 
             default:
-                $this->handle(new PhackpRuntimeException("Unknown error type: " [$errno] . $errstr, E_USER_WARNING, $this->exceptions));
+                $this->handle(new PhackpRuntimeException("Unknown error type: " [$errno] . $errstr));
                 $this->getErrorHandler()->unknown($this->exceptions);
                 break;
         }
