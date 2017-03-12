@@ -50,7 +50,7 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
     }*/
     public function exceptionDelegate(ExceptionHandlerReporter $exceptionHandlerReporter)
     {
-        $this->errorDelegate = $exceptionHandlerReporter;
+        $this->exceptionDelegate = $exceptionHandlerReporter;
     }
 
 
