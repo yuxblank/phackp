@@ -12,6 +12,11 @@ namespace yuxblank\phackp\api;
 
 interface ErrorHandlerReporter
 {
-    public function report(array $throwable);
+    /**
+     * Define the way to represent errors and exceptions
+     * @param array $throwable
+     * @return mixed
+     */
+    public function display(array $throwable);
 
 }

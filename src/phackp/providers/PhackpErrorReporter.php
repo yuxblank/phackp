@@ -8,12 +8,12 @@ use yuxblank\phackp\api\ErrorHandlerReporter;
  * Date: 14/12/2016
  * Time: 00:08
  */
-class HtmlErrorHandlerReporter implements ErrorHandlerReporter
+class PhackpErrorReporter implements ErrorHandlerReporter
 {
-    public function report(array $throwable)
+    public function display(array $throwable)
     {
         foreach ($throwable as $ex){
-            echo $ex->getMessage();
+            echo "<p>" . $ex->getMessage(); "</p>";
         }
     }
 

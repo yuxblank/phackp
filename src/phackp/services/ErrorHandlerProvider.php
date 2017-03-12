@@ -2,7 +2,9 @@
 namespace yuxblank\phackp\services;
 use yuxblank\phackp\api\ErrorHandlerReporter;
 use yuxblank\phackp\api\ThrowableHandler;
+use yuxblank\phackp\core\Application;
 use yuxblank\phackp\core\ServiceProvider;
+use yuxblank\phackp\providers\PhackpErrorReporter;
 use yuxblank\phackp\services\exceptions\PhackpRuntimeException;
 use yuxblank\phackp\services\exceptions\ServiceProviderException;
 
@@ -44,16 +46,17 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
 
     }
 
+
     public function exclude(\Throwable $throwable)
     {
         $this->excluded[] = $throwable;
     }
 
-    private function report(){
+    private function execute(){
         if (!$this->delegate){
-            throw new ServiceProviderException(ErrorHandlerProvider::class . " delegate was not set, cannot provide report!");
+            $this->delegate(new PhackpErrorReporter()); // set default
         }
-        return $this->delegate->report($this->exceptions);
+        return $this->delegate->display($this->exceptions);
     }
 
 
@@ -69,19 +72,22 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
         switch ($errno) {
             case E_USER_ERROR:
                 $this->handle(new PhackpRuntimeException("Fatal error on line $errline in file $errfile", E_USER_ERROR, $this->exceptions));
-                $this->report();
+                $this->execute();
                 break;
 
             case E_USER_WARNING:
                 $this->handle(new PhackpRuntimeException("Warning " . [$errno] . $errstr, E_USER_WARNING, $this->exceptions));
+                $this->execute();
                 break;
 
             case E_USER_NOTICE:
                 $this->handle(new PhackpRuntimeException("Notice" . [$errno] . $errstr, E_USER_WARNING, $this->exceptions));
+                $this->execute();
                 break;
 
             default:
                 $this->handle(new PhackpRuntimeException("Unknown error type: " [$errno] . $errstr, E_USER_WARNING, $this->exceptions));
+                $this->execute();
                 break;
         }
 
@@ -91,6 +97,7 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
 
     public function exceptionHandler(\Throwable $exception) {
         $this->handle($exception);
+        $this->execute();
     }
 
 

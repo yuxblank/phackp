@@ -10,7 +10,7 @@ namespace yuxblank\phackp\utils;
 
 
 use yuxblank\phackp\core\Controller;
-use yuxblank\phackp\exceptions\ClassNotFoundException;
+use yuxblank\phackp\exceptions\InvocationException;
 
 class ReflectionUtils
 {
@@ -56,12 +56,12 @@ class ReflectionUtils
     /**
      * @param $className
      * @return mixed
-     * @throws ClassNotFoundException
+     * @throws InvocationException
      */
     public static function makeInstance($className){
         $instance = new $className();
         if ($instance == null){
-            throw new ClassNotFoundException($className . " not found in the classpath, please check router configuration.", ClassNotFoundException::CONTROLLER);
+            throw new InvocationException($className . " not found in the classpath, please check router configuration.");
         }
 
         return $instance;
@@ -78,9 +78,10 @@ class ReflectionUtils
     }
 
     public static function invoke($object, string $action) {
-        if (method_exists($object,$action)){
-            $object->$action();
+        if (!method_exists($object,$action)){
+            throw new InvocationException('Method '.$action .' not found for' . get_class($object));
         }
+        $object->$action();
     }
 
     public static function extendsController ($object){
