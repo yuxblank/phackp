@@ -53,13 +53,7 @@ class Router
         }
 
         try {
-
-            if ($params) {
-                $controller->{$route['method']}($params);
-            }
-
-            $controller->{$route['method']}();
-
+            $controller->{$route['method']}($params);
         } catch (InvocationException $ex) {
             throw new InvocationException('Method ' . $route['method'] . ' not found for route class ' . $reflectionClass->getName(), InvocationException::ROUTER);
         }
