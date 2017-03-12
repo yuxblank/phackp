@@ -6,8 +6,9 @@ require '../vendor/autoload.php';
  * Date: 10/05/2016
  * Time: 15:42
  */
-use yuxblank\phackp\core\Session;
 use yuxblank\phackp\core\Application;
+use yuxblank\phackp\core\Session;
+
 class SessionTest extends PHPUnit_Framework_TestCase
 {
 

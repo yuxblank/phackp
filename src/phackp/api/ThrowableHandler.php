@@ -16,4 +16,5 @@ interface ThrowableHandler
     public function handle(\Throwable $throwable);
     public function delegate(ErrorHandlerReporter $errorHandlerReporter);
     public function exclude(\Throwable $throwable);
+    public function errorHandler(int $errno, string $errstr, $errfile, $errline);
 }

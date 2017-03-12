@@ -7,6 +7,7 @@ require '../vendor/autoload.php';
  * Time: 12:30
  */
 use yuxblank\phackp\core\Router;
+
 class RouterTest extends PHPUnit_Framework_TestCase
 {
     const APP_URL = 'http://test.com';

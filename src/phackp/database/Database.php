@@ -72,8 +72,7 @@ class Database
         try {
             $this->pdo = new PDO($dsn, $this->conf['USER'], $this->conf['PSW'], $this->conf['OPTIONS']);
         } catch (\PDOException $ex) {
-            Application::getService(ErrorHandlerProvider::class)->invoke(ErrorHandlerProvider::HANDLE, $ex);
-            throw new \InvalidArgumentException("Cannot create instance of PDO and connect to database, please check configurations");
+            throw new \PDOException("Cannot create instance of PDO and connect to database, please check configurations");
         }
 
     }
@@ -128,7 +127,7 @@ class Database
         try {
             $this->stm = $this->pdo->prepare($statement);
         } catch (\PDOException $ex) {
-            Application::getService(ErrorHandlerProvider::class)->invoke(ErrorHandlerProvider::HANDLE, $ex);
+            throw new \PDOException($ex);
         }
         return $this->stm;
     }
@@ -174,7 +173,7 @@ class Database
         try {
             $result = $this->stm->execute();
         } catch (\PDOException $ex) {
-            Application::getService(ErrorHandlerProvider::class)->invoke(ErrorHandlerProvider::HANDLE, $ex);
+            throw new \PDOException($ex);
         }
         return $result;
 
