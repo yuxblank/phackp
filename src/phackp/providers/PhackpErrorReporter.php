@@ -42,6 +42,7 @@ class PhackpErrorReporter implements ErrorHandlerReporter
         foreach ($throwable as $ex) {
             echo "<p> error" . $ex->getMessage() ." on line:" . $ex->getLine(); "</p>";
 
+
         }
     }
 

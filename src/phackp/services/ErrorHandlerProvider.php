@@ -24,7 +24,7 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
     protected $exceptions = [];
     protected $excluded = [];
     /** @var  ErrorHandlerReporter */
-    protected $errorDelegate;
+ /*   protected $errorDelegate;*/
     /** @var  ExceptionHandlerReporter */
     protected $exceptionDelegate;
 
@@ -34,7 +34,7 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
     public function __construct()
     {
         parent::__construct();
-        set_error_handler(array($this, 'errorHandler'), E_ALL);
+       /* set_error_handler(array($this, 'errorHandler'), E_ALL);*/ // todo
         set_exception_handler(array($this, 'exceptionHandler'));
     }
 
@@ -44,10 +44,10 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
         $this->exceptions[] = $throwable;
     }
 
-    public function errorDelegate(ErrorHandlerReporter $errorHandlerReporter)
+    /*public function errorDelegate(ErrorHandlerReporter $errorHandlerReporter)
     {
         $this->errorDelegate = $errorHandlerReporter;
-    }
+    }*/
     public function exceptionDelegate(ExceptionHandlerReporter $exceptionHandlerReporter)
     {
         $this->errorDelegate = $exceptionHandlerReporter;
@@ -59,12 +59,12 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
         $this->excluded[] = $throwable;
     }
 
-    private function getErrorHandler():ErrorHandlerReporter{
+  /*  private function getErrorHandler():ErrorHandlerReporter{
         if (!$this->errorDelegate){
             $this->errorDelegate(new PhackpErrorReporter()); // set default
         }
         return $this->errorDelegate;
-    }
+    }*/
     private function getExceptionHandler():ExceptionHandlerReporter{
         if (!$this->exceptionDelegate){
             $this->exceptionDelegate(new PhackpExceptionReporter()); // set default
@@ -73,7 +73,7 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
     }
 
 
-    public function errorHandler(int $errno, string $errstr, $errfile, $errline)
+/*    public function errorHandler(int $errno, string $errstr, $errfile, $errline)
     {
         if (!(error_reporting() & $errno)) {
             // This error code is not included in error_reporting, so let it fall
@@ -104,9 +104,8 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
                 break;
         }
 
-        /* Don't execute PHP internal error handler */
         return true;
-    }
+    }*/
 
     public function exceptionHandler(\Throwable $exception) {
         $this->handle($exception);

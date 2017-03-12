@@ -14,7 +14,9 @@ namespace yuxblank\phackp\api;
 interface ThrowableHandler
 {
     public function handle(\Throwable $throwable);
-    public function errorDelegate(ErrorHandlerReporter $errorHandlerReporter);
+   /* public function errorDelegate(ErrorHandlerReporter $errorHandlerReporter);*/
     public function exclude(\Throwable $throwable);
-    public function errorHandler(int $errno, string $errstr, $errfile, $errline);
+/*    public function errorHandler(int $errno, string $errstr, $errfile, $errline);*/
+    public function exceptionDelegate(ExceptionHandlerReporter $exceptionHandlerReporter);
+    public function exceptionHandler(\Throwable $throwable);
 }
