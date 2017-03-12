@@ -1,21 +1,25 @@
 <?php
 namespace yuxblank\phackp\core;
-    /*
-     * Copyright (C) 2015 yuri.blanc
-     *
-     * This program is free software: you can redistribute it and/or modify
-     * it under the terms of the GNU General Public License as published by
-     * the Free Software Foundation, either version 3 of the License, or
-     * (at your option) any later version.
-     *
-     * This program is distributed in the hope that it will be useful,
-     * but WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-     * GNU General Public License for more details.
-     *
-     * You should have received a copy of the GNU General Public License
-     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-     */
+
+/*
+ * Copyright (C) 2015 yuri.blanc
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+use yuxblank\phackp\api\EventDrivenController;
+use yuxblank\phackp\exceptions\InvocationException;
+use yuxblank\phackp\utils\ReflectionUtils;
 
 /**
  * This class provides routing methods for index.php. Some methods can be used also externally for inverse routing and url
@@ -24,11 +28,47 @@ namespace yuxblank\phackp\core;
  * @copyright (c) 2015, Yuri Blanc
  * @since 0.1
  */
-
 class Router
 {
 
     const WILDCARD_REGEXP = '({[aA-zZ0-9]+})';
+
+
+    public static function doRoute($route, array $params = null)
+    {
+        $controller = null;
+
+        try {
+            $controller = ReflectionUtils::makeInstance($route['class']);
+        } catch (InvocationException $ex) {
+            throw new InvocationException('Class ' . $route['class'] . ' not found in routes', InvocationException::ROUTER);
+        }
+
+        $reflectionClass = new \ReflectionClass($controller);
+
+        $eventDriven = $reflectionClass->implementsInterface(EventDrivenController::class);
+
+        if ($eventDriven) {
+            ReflectionUtils::invoke($controller, 'onBefore');
+        }
+
+        try {
+
+            if ($params) {
+                $controller->{$route['method']}($params);
+            }
+
+            $controller->{$route['method']}();
+
+        } catch (InvocationException $ex) {
+            throw new InvocationException('Method ' . $route['method'] . ' not found for route class ' . $reflectionClass->getName(), InvocationException::ROUTER);
+        }
+        if ($eventDriven) {
+            ReflectionUtils::invoke($controller, 'onAfter');
+        }
+
+    }
+
 
     /**
      * Get a link url without checking if the route is really defined.
@@ -38,12 +78,13 @@ class Router
      * @param array $params
      * @return string
      */
-    public static function link(string $link, array $params =null):string {
-        if ($params!==null){
-            $url = self::fastParamBind($link,$params);
-            return Application::getAppUrl().'/'.implode('/', $url);
+    public static function link(string $link, array $params = null): string
+    {
+        if ($params !== null) {
+            $url = self::fastParamBind($link, $params);
+            return Application::getAppUrl() . '/' . implode('/', $url);
         } else {
-            return $link !== '/' ? Application::getAppUrl().'/'.$link : Application::getAppUrl().$link;
+            return $link !== '/' ? Application::getAppUrl() . '/' . $link : Application::getAppUrl() . $link;
         }
     }
 
@@ -89,17 +130,18 @@ class Router
      * @param array|null $params
      * @return string
      */
-    public static function action(string $action, String $method=null, array $params =null){
+    public static function action(string $action, String $method = null, array $params = null)
+    {
         $link = self::searchThroughRoutes($action, 'action', $method);
         if ($link === null) {
             $link = Application::getErrorRoute(404)['url'];
         }
 
-        if ($params!==null){
+        if ($params !== null) {
             $url = self::fastParamBind($link, $params);
-            return Application::getAppUrl().'/'.implode('/', $url);
+            return Application::getAppUrl() . '/' . implode('/', $url);
         } else {
-            return $link !== '/' ? Application::getAppUrl().'/'.$link : Application::getAppUrl().$link;
+            return $link !== '/' ? Application::getAppUrl() . '/' . $link : Application::getAppUrl() . $link;
         }
     }
 
@@ -115,18 +157,19 @@ class Router
      * @return string
      */
 
-    public static function alias (string $alias, String $method=null, array $params =null) {
+    public static function alias(string $alias, String $method = null, array $params = null)
+    {
 
         $link = self::searchThroughRoutes($alias, 'alias', $method);
         if ($link === null) {
             $link = Application::getErrorRoute(404)['url'];
         }
 
-        if ($params!==null){
+        if ($params !== null) {
             $url = $url = self::fastParamBind($link, $params);
-            return Application::getAppUrl().'/'.implode('/', $url);
+            return Application::getAppUrl() . '/' . implode('/', $url);
         } else {
-            return $link !== '/' ? Application::getAppUrl().'/'.$link : Application::getAppUrl().$link;
+            return $link !== '/' ? Application::getAppUrl() . '/' . $link : Application::getAppUrl() . $link;
         }
     }
 
@@ -139,10 +182,11 @@ class Router
      * @return array
      */
 
-    private static function fastParamBind($routeUrl, $params) {
+    private static function fastParamBind($routeUrl, $params)
+    {
         $url = explode('/', $routeUrl);
-        $wildcards = preg_grep(self::WILDCARD_REGEXP,$url);
-        $i=0;
+        $wildcards = preg_grep(self::WILDCARD_REGEXP, $url);
+        $i = 0;
         foreach ($wildcards as $key => $wildcard) {
             $url[$key] = $params[$i];
             $i++;
@@ -186,7 +230,7 @@ class Router
             // case without params
 
             // if options, check if the content-type is the same
-            if (array_key_exists('options', $route) && !self::isSameContentType($route,$httpKernel)){
+            if (array_key_exists('options', $route) && !self::isSameContentType($route, $httpKernel)) {
                 continue;
             }
 
@@ -197,7 +241,7 @@ class Router
             } else {
                 // find wildcard
                 if (preg_match(self::WILDCARD_REGEXP, $route['url'])) {
-                    $routeArray = preg_split('@/@',$route['url'], NULL, PREG_SPLIT_NO_EMPTY);
+                    $routeArray = preg_split('@/@', $route['url'], NULL, PREG_SPLIT_NO_EMPTY);
                     $queryArray = preg_split('@/@', $httpKernel->getUrl(), NULL, PREG_SPLIT_NO_EMPTY);
                     $url = self::compareRoutes($routeArray, $queryArray);
                     // if compare routes matched and the url has been recreated, return this route
@@ -224,7 +268,8 @@ class Router
      * @param HttpKernel $httpKernel
      * @return bool
      */
-    private static function isSameContentType(array $route, HttpKernel $httpKernel):bool{
+    private static function isSameContentType(array $route, HttpKernel $httpKernel): bool
+    {
         return $route['options']['accept'] === $httpKernel->getContentType();
 
     }
@@ -237,12 +282,12 @@ class Router
      * @param $realParams
      * @return null|string
      */
-    private static function compareRoutes(array $routeParams,array $realParams)
+    private static function compareRoutes(array $routeParams, array $realParams)
     {
 
         // try checking if wildcards static params are less than the difference with real
-        $staticParams = preg_grep(self::WILDCARD_REGEXP,$routeParams,PREG_GREP_INVERT);
-        if (count(array_diff($staticParams,$realParams))>0) {
+        $staticParams = preg_grep(self::WILDCARD_REGEXP, $routeParams, PREG_GREP_INVERT);
+        if (count(array_diff($staticParams, $realParams)) > 0) {
             return null;
         }
         // if the count of real and the count of route does not match, the route does not match
@@ -286,7 +331,7 @@ class Router
      * @param $queryArray
      * @return array
      */
-    private static function getWildCardParams(array $routeParams, array $queryArray):array
+    private static function getWildCardParams(array $routeParams, array $queryArray): array
     {
         $params = preg_grep(self::WILDCARD_REGEXP, $routeParams);
         $getParams = array();
@@ -305,11 +350,11 @@ class Router
      * @param string $action
      * @return mixed[]
      */
-    public static function getController(string $action):array
+    public static function getController(string $action): array
     {
         $namespace = Application::getNameSpace()['CONTROLLER'];
         $array = explode('@', $action);
-        $array[0] = $namespace.$array[0];
+        $array[0] = $namespace . $array[0];
         return $array;
     }
 
@@ -323,7 +368,7 @@ class Router
 
     public static function notFound()
     {
-        header('location:'.Application::getAppUrl() . '/' . Application::getErrorRoute(404)['url'], true);
+        header('location:' . Application::getAppUrl() . '/' . Application::getErrorRoute(404)['url'], true);
         exit(0);
     }
 

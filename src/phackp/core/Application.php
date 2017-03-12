@@ -222,60 +222,13 @@ class Application
         $route = Router::findAction($httpKernel);
         if ($route !== null) {
             $httpKernel->dispatch($route);
-
-            $controller = null;
-
-            try {
-                $controller = ReflectionUtils::makeInstance($route['class']);
-            } catch (InvocationException $ex) {
-                throw new InvocationException('Class ' . $route['class'] . ' not found in routes', InvocationException::ROUTER);
-            }
-
-            $reflectionClass = new \ReflectionClass($controller);
-
-            $eventDriven = $reflectionClass->implementsInterface(EventDrivenController::class);
-
-            if ($eventDriven) {
-                ReflectionUtils::invoke($controller, 'onBefore');
-            }
-
-            try {
-                $controller->{$route['method']}($httpKernel->getParams());
-            } catch (InvocationException $ex){
-                throw new InvocationException('Method '. $route['method'] .' not found for route class ' . $reflectionClass->getName(), InvocationException::ROUTER);
-            }
-            if ($eventDriven){
-                ReflectionUtils::invoke($controller, 'onAfter');
-            }
-
-
+            Router::doRoute($route, $httpKernel->getParams());
         } else {
             $notFoundRoute = self::getErrorRoute(404);
-            $controller = null;
-            try {
-                $controller = ReflectionUtils::makeInstance($notFoundRoute['class']);
-            } catch (InvocationException $e) {
-                http_response_code(404);
-                throw new InvocationException('Class ' . $notFoundRoute['class'] . ' not found in routes', InvocationException::ROUTER);
-                //die(Application::isDebug() ? $e : "");
-            }
-
-            $reflectionClass = new \ReflectionClass($controller);
-            $eventDriven = $reflectionClass->implementsInterface(EventDrivenController::class);
-            if ($eventDriven) {
-                ReflectionUtils::invoke($controller, 'onBefore');
-            }
-            try {
-                $controller->{$notFoundRoute['method']}();
-            } catch (InvocationException $ex){
-                throw new InvocationException('Method '. $notFoundRoute['method'] .' not found for error route class ' . $reflectionClass->getName(), InvocationException::ROUTER);
-            }
-            if ($eventDriven){
-            ReflectionUtils::invoke($controller, 'onAfter');
-            }
+            Router::doRoute($notFoundRoute);
         }
 
-        if (self::isDebug()) {
+        if (self::isDebug() && ($httpKernel->getContentType() === 'text/plain' || $httpKernel->getContentType() === 'text/html')) {
             // Anywhere else in the script
             echo '<p style="position: fixed; bottom:0; margin: 0 auto;"> Total execution time in seconds: ' . (microtime(true) - $time_start) . ' runtime_id: ' . pHackpRuntime . ' memory peak: ' . UnitConversion::byteConvert($memoryPeak) . '</p>';
         }
