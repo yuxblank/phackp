@@ -31,13 +31,13 @@ class Application
      */
     protected function __construct()
     {
-        // register default provider
+       /* // register default provider
         $this->services =
             [
                 ErrorHandlerProvider::class
             ];
 
-        $this->registerService($this->services);
+        $this->registerService($this->services);*/
     }
 
     /**

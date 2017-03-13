@@ -20,5 +20,6 @@ interface ServiceConfig
     public function config(array $config);
     public function getConfig():array;
     public function getParam(string $key);
+    public function getDefaults():array;
 
 }

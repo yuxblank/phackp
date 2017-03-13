@@ -41,6 +41,11 @@ class ServiceProvider implements Service
         if (!$this->config){
             $this->config = $this->invoke("defaultConfig");
         }
+
+        if (!$this->config->getConfig()){
+            $this->config->config($this->config->getDefaults());
+        }
+
         if (!$this->config->isValid()){
             throw new ServiceProviderException('The configuration is not valid for service '
                 . $this->reflectionClass->getName(), ServiceProviderException::INVALID_CONFIG);
