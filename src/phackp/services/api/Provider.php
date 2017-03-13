@@ -14,7 +14,7 @@ interface Provider extends Service
 
     /**
      * Define default ServiceConfig instance
-     * @return ServiceConfig
+     * @return array
      */
     public function defaultConfig():array;
 

@@ -123,7 +123,10 @@ class Application
      */
     public static function getErrorRoute(int $code)
     {
-        return self::getRoutes()['ERROR'][$code];
+        if (isset(self::getRoutes()['ERROR'][$code])){
+            return self::getRoutes()['ERROR'][$code];
+        }
+        return null;
     }
 
     /**
