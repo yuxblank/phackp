@@ -1,7 +1,7 @@
 <?php
 namespace yuxblank\phackp\providers;
 
-use yuxblank\phackp\api\ErrorHandlerReporter;
+use yuxblank\phackp\api\ErrorHandler;
 use yuxblank\phackp\api\EventDrivenController;
 use yuxblank\phackp\core\Application;
 use yuxblank\phackp\core\Router;
@@ -14,7 +14,7 @@ use yuxblank\phackp\utils\ReflectionUtils;
  * Date: 14/12/2016
  * Time: 00:08
  */
-class PhackpErrorReporter implements ErrorHandlerReporter
+class PhackpErrorHandler implements ErrorHandler
 {
     public function fatal(array $throwable)
     {

@@ -17,6 +17,5 @@ interface ThrowableHandler
    /* public function errorDelegate(ErrorHandlerReporter $errorHandlerReporter);*/
     public function exclude(\Throwable $throwable);
 /*    public function errorHandler(int $errno, string $errstr, $errfile, $errline);*/
-    public function exceptionDelegate(ExceptionHandlerReporter $exceptionHandlerReporter);
     public function exceptionHandler(\Throwable $throwable);
 }

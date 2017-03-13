@@ -9,13 +9,13 @@
 namespace yuxblank\phackp\providers;
 
 
-use yuxblank\phackp\api\ExceptionHandlerReporter;
+use yuxblank\phackp\api\ExceptionHandler;
 use yuxblank\phackp\core\Application;
 use yuxblank\phackp\core\Router;
 
-class PhackpExceptionReporter implements ExceptionHandlerReporter
+class PhackpExceptionHandler implements ExceptionHandler
 {
-    public function display(array $throwable)
+    public function onException(array $throwable)
     {
         if (($route = Application::getErrorRoute(500))!=null){
 

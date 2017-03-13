@@ -10,10 +10,10 @@ namespace yuxblank\phackp\api;
 
 
 
-interface ErrorHandlerReporter
+interface ErrorHandler
 {
     /**
-     * Define the way to represent errors and exceptions
+     * Those method are fired when and error is thrown
      * @param array $throwable
      * @return mixed
      */

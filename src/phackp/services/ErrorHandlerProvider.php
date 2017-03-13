@@ -1,14 +1,17 @@
 <?php
 namespace yuxblank\phackp\services;
-use yuxblank\phackp\api\ErrorHandlerReporter;
-use yuxblank\phackp\api\ExceptionHandlerReporter;
+use yuxblank\phackp\api\ErrorHandler;
+use yuxblank\phackp\api\ExceptionHandler;
 use yuxblank\phackp\api\ThrowableHandler;
 use yuxblank\phackp\core\Application;
 use yuxblank\phackp\core\ServiceProvider;
-use yuxblank\phackp\providers\PhackpErrorReporter;
-use yuxblank\phackp\providers\PhackpExceptionReporter;
+use yuxblank\phackp\exceptions\InvocationException;
+use yuxblank\phackp\providers\PhackpErrorHandler;
+use yuxblank\phackp\providers\PhackpExceptionHandler;
+use yuxblank\phackp\services\api\ServiceConfig;
 use yuxblank\phackp\services\exceptions\PhackpRuntimeException;
 use yuxblank\phackp\services\exceptions\ServiceProviderException;
+use yuxblank\phackp\utils\ReflectionUtils;
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,19 +26,26 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
     const HANDLE = "handle";
     protected $exceptions = [];
     protected $excluded = [];
-    /** @var  ErrorHandlerReporter */
+    /** @var  ErrorHandler */
  /*   protected $errorDelegate;*/
-    /** @var  ExceptionHandlerReporter */
+    /** @var  ExceptionHandler */
     protected $exceptionDelegate;
 
-    /**
-     * ErrorHandlerProvider constructor.
-     */
-    public function __construct()
+    public function config(ServiceConfig $config)
     {
-        parent::__construct();
-       /* set_error_handler(array($this, 'errorHandler'), E_ALL);*/ // todo
-        set_exception_handler(array($this, 'exceptionHandler'));
+        if ($config->isValid()){
+            /* set_error_handler(array($this, 'errorHandler'), E_ALL);*/ // todo
+            if ($config->getConfig('exception_handler_enable') === true) {
+                set_exception_handler(array($this, 'exceptionHandler'));
+            }
+            $excClazz = $config->getConfig('exception_handler_delegate');
+            try {
+                $this->exceptionDelegate = ReflectionUtils::makeInstance($excClazz);
+            } catch (InvocationException $ex){
+                throw new InvocationException('Class not found ' . $excClazz, InvocationException::SERVICE);
+            }
+        }
+
     }
 
 
@@ -43,16 +53,6 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
     {
         $this->exceptions[] = $throwable;
     }
-
-    /*public function errorDelegate(ErrorHandlerReporter $errorHandlerReporter)
-    {
-        $this->errorDelegate = $errorHandlerReporter;
-    }*/
-    public function exceptionDelegate(ExceptionHandlerReporter $exceptionHandlerReporter)
-    {
-        $this->exceptionDelegate = $exceptionHandlerReporter;
-    }
-
 
     public function exclude(\Throwable $throwable)
     {
@@ -65,12 +65,6 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
         }
         return $this->errorDelegate;
     }*/
-    private function getExceptionHandler():ExceptionHandlerReporter{
-        if (!$this->exceptionDelegate){
-            $this->exceptionDelegate(new PhackpExceptionReporter()); // set default
-        }
-        return $this->exceptionDelegate;
-    }
 
 
 /*    public function errorHandler(int $errno, string $errstr, $errfile, $errline)
@@ -109,7 +103,7 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
 
     public function exceptionHandler(\Throwable $exception) {
         $this->handle($exception);
-        $this->getExceptionHandler()->display($this->exceptions);
+        $this->exceptionDelegate->onException($this->exceptions);
     }
 
 

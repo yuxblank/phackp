@@ -1,5 +1,7 @@
 <?php
 namespace yuxblank\phackp\api;
+use yuxblank\phackp\services\api\ServiceConfig;
+
 /**
  * Created by IntelliJ IDEA.
  * User: TheCo
@@ -12,6 +14,7 @@ namespace yuxblank\phackp\api;
 
 interface Service
 {
+    public function config(ServiceConfig $config);
     public function invoke(string $method, $params=null);
 
 }

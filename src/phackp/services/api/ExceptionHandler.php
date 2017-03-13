@@ -10,13 +10,13 @@ namespace yuxblank\phackp\api;
 
 
 
-interface ExceptionHandlerReporter
+interface ExceptionHandler
 {
     /**
-     * Define the way to represent execptions
+     * This method is fired if exception occur during execution
      * @param array $throwable
      * @return mixed
      */
-    public function display(array $throwable);
+    public function onException(array $throwable);
 
 }
