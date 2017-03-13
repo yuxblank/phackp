@@ -37,6 +37,7 @@ class Application
                 ErrorHandlerProvider::class
             ];
 
+        $this->registerService($this->services);
     }
 
     /**
@@ -136,6 +137,17 @@ class Application
             case 'DEBUG':
                 return true;
                 break;
+        }
+    }
+
+    public function registerServices(array $services)
+    {
+        foreach ($services as $service) {
+            try {
+                self::getInstance()->services[] = ReflectionUtils::makeInstance($service);
+            } catch (InvocationException $ex) {
+                throw new InvocationException("Unable to make service instance", InvocationException::SERVICE);
+            }
         }
     }
 

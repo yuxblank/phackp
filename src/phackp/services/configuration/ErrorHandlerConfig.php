@@ -18,7 +18,7 @@ class ErrorHandlerConfig implements ServiceConfig
 
     public function isValid(): bool
     {
-        // TODO: Implement isValid() method.
+        return true;
     }
 
     public function config(array $config)
