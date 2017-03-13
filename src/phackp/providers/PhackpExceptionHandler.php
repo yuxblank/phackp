@@ -9,9 +9,9 @@
 namespace yuxblank\phackp\providers;
 
 
-use yuxblank\phackp\api\ExceptionHandler;
 use yuxblank\phackp\core\Application;
 use yuxblank\phackp\core\Router;
+use yuxblank\phackp\services\api\ExceptionHandler;
 
 class PhackpExceptionHandler implements ExceptionHandler
 {

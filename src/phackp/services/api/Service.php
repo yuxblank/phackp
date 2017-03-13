@@ -14,6 +14,6 @@ interface Service
 {
     public function invoke(string $method, $params=null);
     public function bootstrap();
-    public function config(ServiceConfig $config);
+    public function config(array $config);
 
 }

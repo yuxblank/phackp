@@ -1,12 +1,7 @@
 <?php
 namespace yuxblank\phackp\providers;
 
-use yuxblank\phackp\api\ErrorHandler;
-use yuxblank\phackp\api\EventDrivenController;
-use yuxblank\phackp\core\Application;
-use yuxblank\phackp\core\Router;
-use yuxblank\phackp\exceptions\InvocationException;
-use yuxblank\phackp\utils\ReflectionUtils;
+use yuxblank\phackp\services\api\ErrorHandler;
 
 /**
  * Created by IntelliJ IDEA.

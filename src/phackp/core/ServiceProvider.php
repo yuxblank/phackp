@@ -10,6 +10,7 @@ namespace yuxblank\phackp\core;
 
 
 
+use yuxblank\phackp\exceptions\InvocationException;
 use yuxblank\phackp\services\api\Provider;
 use yuxblank\phackp\services\api\Service;
 use yuxblank\phackp\services\api\ServiceConfig;
@@ -18,7 +19,7 @@ use yuxblank\phackp\services\exceptions\ServiceProviderException;
 class ServiceProvider implements Service
 {
     protected $reflectionClass;
-    /** @var  ServiceConfig */
+    /** @var  array */
     protected $config;
 
     /**
@@ -41,22 +42,33 @@ class ServiceProvider implements Service
         if (!$this->config){
             $this->config = $this->invoke("defaultConfig");
         }
-
-        if (!$this->config->getConfig()){
-            $this->config->config($this->config->getDefaults());
-        }
-
-        if (!$this->config->isValid()){
-            throw new ServiceProviderException('The configuration is not valid for service '
-                . $this->reflectionClass->getName(), ServiceProviderException::INVALID_CONFIG);
+        try {
+            if (!$this->invoke("isValidConfig")) {
+                throw new ServiceProviderException('The configuration is not valid for service '
+                    . $this->reflectionClass->getName(), ServiceProviderException::INVALID_CONFIG);
+            }
+        } catch (InvocationException $ex){
+            throw new InvocationException("The provider does not implements isValidConfig method", InvocationException::SERVICE, $ex);
         }
     }
 
 
-    public function config(ServiceConfig $config)
+    public function config(array $config)
     {
-        $this->config =  $config;
+        $this->config = $config;
     }
+
+
+    /**
+     * @param string name of the param
+     * @return array
+     */
+    public function getConfig(string $name)
+    {
+        return $this->config[$name];
+    }
+
+
 
     public final function invoke(string $method, $params=null)
     {

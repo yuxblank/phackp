@@ -28,7 +28,7 @@ class ErrorHandlerConfig implements ServiceConfig
 
     public function getConfig(): array
     {
-        return $this->getConfig();
+        return $this->config;
     }
 
 
@@ -39,10 +39,7 @@ class ErrorHandlerConfig implements ServiceConfig
 
     public function getDefaults(): array
     {
-        return [
-            'exception_handler_enable' => true,
-            'exception_handler_delegate' => PhackpExceptionHandler::class,
-        ];
+
     }
 
 

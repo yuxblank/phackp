@@ -3,6 +3,7 @@ namespace yuxblank\phackp\services;
 
 use yuxblank\phackp\core\ServiceProvider;
 use yuxblank\phackp\exceptions\InvocationException;
+use yuxblank\phackp\providers\PhackpExceptionHandler;
 use yuxblank\phackp\services\api\ServiceConfig;
 use yuxblank\phackp\services\api\ThrowableHandler;
 use yuxblank\phackp\services\configuration\ErrorHandlerConfig;
@@ -38,10 +39,10 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
     public function setup()
     {
         /* set_error_handler(array($this, 'errorHandler'), E_ALL);*/ // todo
-        if ($this->config->getParam('exception_handler_enable') === true) {
+        if ($this->getConfig('exception_handler_enable') === true) {
             set_exception_handler(array($this, 'exceptionHandler'));
         }
-        $excClazz = $this->config->getParam('exception_handler_delegate');
+        $excClazz = $this->getConfig('exception_handler_delegate');
         try {
             $this->exceptionDelegate = ReflectionUtils::makeInstance($excClazz);
         } catch (InvocationException $ex){
@@ -50,15 +51,19 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
     }
 
 
-    public function defaultConfig():ServiceConfig
+    public function defaultConfig():array
     {
-        /*return [
+        return [
             'exception_handler_enable' => true,
             'exception_handler_delegate' => PhackpExceptionHandler::class,
-        ];*/
-        return new ErrorHandlerConfig();
+        ];
+
     }
 
+    public function isValidConfig()
+    {
+        return true;
+    }
 
 
     public function handle(\Throwable $throwable)
