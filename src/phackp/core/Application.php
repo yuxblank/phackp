@@ -143,21 +143,18 @@ class Application
         }
     }
 
-    public function registerServices(array $services)
-    {
-        foreach ($services as $service) {
-            try {
-                self::getInstance()->services[] = ReflectionUtils::makeInstance($service);
-            } catch (InvocationException $ex) {
-                throw new InvocationException("Unable to make service instance", InvocationException::SERVICE);
-            }
-        }
-    }
 
-    public function registerService(string $service)
+    /**
+     * Return Service instance
+     * @param string $service
+     * @return ServiceProvider
+     */
+    public function registerService(string $service):ServiceProvider
     {
         try {
-            self::getInstance()->services[] = ReflectionUtils::makeInstance($service);
+            $instance = ReflectionUtils::makeInstance($service);
+            self::getInstance()->services[] = $instance;
+            return $instance;
         } catch (InvocationException $ex){
             throw new InvocationException("Unable to make service instance", InvocationException::SERVICE);
         }
