@@ -53,7 +53,7 @@ class ServiceProvider implements Service
     }
 
 
-    public function config(array $config)
+    public final function config(array $config)
     {
         $this->config = $config;
     }

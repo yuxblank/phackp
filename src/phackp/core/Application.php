@@ -24,6 +24,7 @@ class Application
     private $config;
     protected $version;
     protected $services = [];
+    protected $serviceConfig = [];
 
 
     /**
@@ -143,22 +144,37 @@ class Application
         }
     }
 
+    public function registerServices(array $services)
+    {
+        foreach ($services as $service) {
+            try {
+                self::getInstance()->services[] = ReflectionUtils::makeInstance($service);
+            } catch (InvocationException $ex) {
+                throw new InvocationException("Unable to make service instance", InvocationException::SERVICE);
+            }
+        }
+    }
 
-    /**
-     * Return Service instance
-     * @param string $service
-     * @return ServiceProvider
-     */
-    public function registerService(string $service):ServiceProvider
+    public function registerService(string $service, ...$options)
     {
         try {
-            $instance = ReflectionUtils::makeInstance($service);
-            self::getInstance()->services[] = $instance;
-            return $instance;
+            self::getInstance()->services[] = ReflectionUtils::makeInstance($service);
         } catch (InvocationException $ex){
             throw new InvocationException("Unable to make service instance", InvocationException::SERVICE);
         }
+        if ($options!==null){
+            self::getInstance()->serviceConfig[$service] = $options;
+        }
     }
+
+    public  function getServiceConfig(string $serviceName){
+        foreach (self::getInstance()->serviceConfig as $name => $options) {
+            if ($name === $serviceName) {
+                return $options;
+            }
+        }
+    }
+
 
     /**
      * @param string $serviceName
@@ -180,6 +196,10 @@ class Application
         /** @var \yuxblank\phackp\services\api\Provider $service */
         foreach ($this->services as $service){
             try {
+                $options = self::getInstance()->getServiceConfig(get_class($service));
+                if ($options){
+                    ReflectionUtils::invoke($service, "config");
+                }
                 ReflectionUtils::invoke($service, "bootstrap");
                 ReflectionUtils::invoke($service, "setup");
             } catch (InvocationException $ex){
