@@ -32,11 +32,6 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
     {
         parent::__construct();
 
-    }
-
-    public function bootstrap()
-    {
-
         /* set_error_handler(array($this, 'errorHandler'), E_ALL);*/ // todo
         if ($this->config->getParam('exception_handler_enable') === true) {
             set_exception_handler(array($this, 'exceptionHandler'));
@@ -47,7 +42,9 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
         } catch (InvocationException $ex){
             throw new InvocationException('Class not found ' . $excClazz, InvocationException::SERVICE);
         }
+
     }
+
 
     public function defaultConfig():array
     {

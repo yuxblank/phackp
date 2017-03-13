@@ -141,7 +141,11 @@ class Application
 
     public function registerService(string $service)
     {
-        self::getInstance()->services[] = new $service;
+        try {
+            self::getInstance()->services[] = ReflectionUtils::makeInstance($service);
+        } catch (InvocationException $ex){
+            throw new InvocationException("Unable to make service instance", InvocationException::SERVICE);
+        }
     }
 
     /**
