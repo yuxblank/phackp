@@ -65,7 +65,7 @@ class ServiceProvider implements Service
      */
     public function getConfig(string $name)
     {
-        if (isset($this->config['name'])) {
+        if (isset($this->config[$name])) {
             return $this->config[$name];
         }
         return null;
