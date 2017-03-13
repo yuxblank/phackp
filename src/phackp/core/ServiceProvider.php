@@ -11,6 +11,7 @@ namespace yuxblank\phackp\core;
 
 use yuxblank\phackp\api\Service;
 use yuxblank\phackp\services\api\ServiceConfig;
+use yuxblank\phackp\services\exceptions\ServiceProviderException;
 
 class ServiceProvider implements Service
 {
@@ -22,8 +23,18 @@ class ServiceProvider implements Service
         $this->reflectionClass = new \ReflectionClass($this);
     }
 
+    /**
+     * Set ServiceConfig impl. as default serviceConfig.
+     * If ServiceConfig->isValid() is false, throw ServiceProviderException
+     * @param ServiceConfig $config
+     * @throws ServiceProviderException
+     */
     public function config(ServiceConfig $config)
     {
+        if (!$config->isValid()){
+            throw new ServiceProviderException('The configuration is not valid for service '
+                . $this->reflectionClass->getName(), ServiceProviderException::INVALID_CONFIG);
+        }
         $this->serviceConfig = $config;
 
     }
