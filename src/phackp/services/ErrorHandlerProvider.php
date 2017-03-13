@@ -62,7 +62,7 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
 
     public function isValidConfig()
     {
-        return true;
+        return $this->getConfig("exception_handler_enable") !=null && $this->getConfig("exception_handler_delegate")!=null;
     }
 
 

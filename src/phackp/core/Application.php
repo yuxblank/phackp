@@ -195,16 +195,12 @@ class Application
     private function bootstrapProviders(){
         /** @var \yuxblank\phackp\services\api\Provider $service */
         foreach ($this->services as $service){
-            try {
                 $options = self::getInstance()->getServiceConfig(get_class($service));
                 if ($options){
-                    ReflectionUtils::invoke($service, "config");
+                    $service->config($options);
                 }
-                ReflectionUtils::invoke($service, "bootstrap");
-                ReflectionUtils::invoke($service, "setup");
-            } catch (InvocationException $ex){
-                throw new InvocationException("Error when tring to bootstrap provider", get_class($service), InvocationException::SERVICE, $ex);
-            }
+                $service->bootstrap();
+                $service->setup();
         }
     }
 
