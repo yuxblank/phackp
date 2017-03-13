@@ -31,21 +31,21 @@ class ServiceProvider implements Service
         if (!$this->reflectionClass->implementsInterface(Provider::class)){
             throw new ServiceProviderException("The ServiceProvider " . $this->reflectionClass->getName() . " does not implements " . Provider::class, ServiceProviderException::NOT_A_PROVIDER);
         }
+
     }
 
 
-    public function bootstrap()
+    public final function bootstrap()
     {
+
         if (!$this->config){
             $this->config = $this->invoke("defaultConfig");
-            return;
         }
         if (!$this->config->isValid()){
             throw new ServiceProviderException('The configuration is not valid for service '
                 . $this->reflectionClass->getName(), ServiceProviderException::INVALID_CONFIG);
         }
     }
-
 
 
     public function config(ServiceConfig $config)

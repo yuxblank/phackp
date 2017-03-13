@@ -164,10 +164,15 @@ class Application
         throw new ServiceProviderException($serviceName, ServiceProviderException::REQUIRE_UNREGISTERED);
     }
 
-    private function bootstrapServices(){
-        /** @var \yuxblank\phackp\services\api\Service $service */
+    private function bootstrapProviders(){
+        /** @var \yuxblank\phackp\services\api\Provider $service */
         foreach ($this->services as $service){
-            $service->bootstrap();
+            try {
+                ReflectionUtils::invoke($service, "bootstrap");
+                ReflectionUtils::invoke($service, "setup");
+            } catch (InvocationException $ex){
+                throw new InvocationException("Error when tring to bootstrap provider", get_class($service), InvocationException::SERVICE, $ex);
+            }
         }
     }
 
@@ -227,7 +232,7 @@ class Application
             $time_start = microtime(true);
             $memoryPeak = memory_get_peak_usage(true);
         }
-        $this->bootstrapServices();
+        $this->bootstrapProviders();
         // get the httpKernel
         $httpKernel = new HttpKernel();
         // get the route

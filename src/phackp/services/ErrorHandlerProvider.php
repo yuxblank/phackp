@@ -3,8 +3,9 @@ namespace yuxblank\phackp\services;
 
 use yuxblank\phackp\core\ServiceProvider;
 use yuxblank\phackp\exceptions\InvocationException;
-use yuxblank\phackp\providers\PhackpExceptionHandler;
+use yuxblank\phackp\services\api\ServiceConfig;
 use yuxblank\phackp\services\api\ThrowableHandler;
+use yuxblank\phackp\services\configuration\ErrorHandlerConfig;
 use yuxblank\phackp\utils\ReflectionUtils;
 
 /**
@@ -32,6 +33,10 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
     {
         parent::__construct();
 
+    }
+
+    public function setup()
+    {
         /* set_error_handler(array($this, 'errorHandler'), E_ALL);*/ // todo
         if ($this->config->getParam('exception_handler_enable') === true) {
             set_exception_handler(array($this, 'exceptionHandler'));
@@ -42,16 +47,16 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
         } catch (InvocationException $ex){
             throw new InvocationException('Class not found ' . $excClazz, InvocationException::SERVICE);
         }
-
     }
 
 
-    public function defaultConfig():array
+    public function defaultConfig():ServiceConfig
     {
-        return [
+        /*return [
             'exception_handler_enable' => true,
             'exception_handler_delegate' => PhackpExceptionHandler::class,
-        ];
+        ];*/
+        return new ErrorHandlerConfig();
     }
 
 

@@ -9,13 +9,19 @@
 namespace yuxblank\phackp\services\api;
 
 
-interface Provider
+interface Provider extends Service
 {
-    public function defaultConfig():array;
+
     /**
-     * Set ServiceConfig impl. as default serviceConfig.
-     * If ServiceConfig->isValid() is false, throw ServiceProviderException
-     * @param ServiceConfig $config
+     * Define default ServiceConfig instance
+     * @return ServiceConfig
      */
+    public function defaultConfig():ServiceConfig;
+
+    /**
+     * Invoked right after constructor, here you can setup the Provider status based on configurations
+     * @return mixed
+     */
+    public function setup();
 
 }
