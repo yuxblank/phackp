@@ -10,16 +10,23 @@ namespace yuxblank\phackp\core;
 
 
 use yuxblank\phackp\api\Service;
+use yuxblank\phackp\services\api\ServiceConfig;
 
 class ServiceProvider implements Service
 {
     protected $reflectionClass;
+    protected $serviceConfig;
 
     public function __construct()
     {
         $this->reflectionClass = new \ReflectionClass($this);
     }
 
+    public function config(ServiceConfig $config)
+    {
+        $this->serviceConfig = $config;
+
+    }
 
     public function invoke(string $method, $params=null)
     {
