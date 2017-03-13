@@ -9,7 +9,8 @@
 namespace yuxblank\phackp\core;
 
 
-use yuxblank\phackp\api\Service;
+
+use yuxblank\phackp\services\api\Service;
 use yuxblank\phackp\services\api\ServiceConfig;
 use yuxblank\phackp\services\exceptions\ServiceProviderException;
 
