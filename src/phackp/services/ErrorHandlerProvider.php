@@ -3,7 +3,7 @@ namespace yuxblank\phackp\services;
 
 use yuxblank\phackp\core\ServiceProvider;
 use yuxblank\phackp\exceptions\InvocationException;
-use yuxblank\phackp\services\api\ServiceConfig;
+use yuxblank\phackp\providers\PhackpExceptionHandler;
 use yuxblank\phackp\services\api\ThrowableHandler;
 use yuxblank\phackp\utils\ReflectionUtils;
 
@@ -25,22 +25,38 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
     /** @var  ExceptionHandler */
     protected $exceptionDelegate;
 
-    public function config(ServiceConfig $config)
+    /**
+     * ErrorHandlerProvider constructor.
+     */
+    public function __construct()
     {
-        if ($config->isValid()){
-            /* set_error_handler(array($this, 'errorHandler'), E_ALL);*/ // todo
-            if ($config->getConfig('exception_handler_enable') === true) {
-                set_exception_handler(array($this, 'exceptionHandler'));
-            }
-            $excClazz = $config->getConfig('exception_handler_delegate');
-            try {
-                $this->exceptionDelegate = ReflectionUtils::makeInstance($excClazz);
-            } catch (InvocationException $ex){
-                throw new InvocationException('Class not found ' . $excClazz, InvocationException::SERVICE);
-            }
-        }
+        parent::__construct();
 
     }
+
+    public function bootstrap()
+    {
+
+        /* set_error_handler(array($this, 'errorHandler'), E_ALL);*/ // todo
+        if ($this->config->getParam('exception_handler_enable') === true) {
+            set_exception_handler(array($this, 'exceptionHandler'));
+        }
+        $excClazz = $this->config->getParam('exception_handler_delegate');
+        try {
+            $this->exceptionDelegate = ReflectionUtils::makeInstance($excClazz);
+        } catch (InvocationException $ex){
+            throw new InvocationException('Class not found ' . $excClazz, InvocationException::SERVICE);
+        }
+    }
+
+    public function defaultConfig():array
+    {
+        return [
+            'exception_handler_enable' => true,
+            'exception_handler_delegate' => PhackpExceptionHandler::class,
+        ];
+    }
+
 
 
     public function handle(\Throwable $throwable)

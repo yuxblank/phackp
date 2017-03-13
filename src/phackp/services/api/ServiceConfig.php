@@ -18,7 +18,7 @@ interface ServiceConfig
      */
     public function isValid():bool;
     public function config(array $config);
-    public function getConfig(string $key);
-    public function getDefaults():array;
+    public function getConfig():array;
+    public function getParam(string $key);
 
 }

@@ -26,7 +26,13 @@ class ErrorHandlerConfig implements ServiceConfig
         $this->config = $config;
     }
 
-    public function getConfig(string $key)
+    public function getConfig(): array
+    {
+        return $this->getConfig();
+    }
+
+
+    public function getParam(string $key)
     {
         return $this->config[$key];
     }

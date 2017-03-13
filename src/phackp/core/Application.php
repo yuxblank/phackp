@@ -160,6 +160,13 @@ class Application
         throw new ServiceProviderException($serviceName, ServiceProviderException::REQUIRE_UNREGISTERED);
     }
 
+    private function bootstrapServices(){
+        /** @var \yuxblank\phackp\services\api\Service $service */
+        foreach ($this->services as $service){
+            $service->bootstrap();
+        }
+    }
+
     private final function runtime()
     {
         $id = random_int(1, 9999);
@@ -216,6 +223,7 @@ class Application
             $time_start = microtime(true);
             $memoryPeak = memory_get_peak_usage(true);
         }
+        $this->bootstrapServices();
         // get the httpKernel
         $httpKernel = new HttpKernel();
         // get the route

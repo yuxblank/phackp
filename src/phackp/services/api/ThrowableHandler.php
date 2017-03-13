@@ -11,7 +11,7 @@ namespace yuxblank\phackp\services\api;
 
 
 
-interface ThrowableHandler
+interface ThrowableHandler extends Provider
 {
     public function handle(\Throwable $throwable);
    /* public function errorDelegate(ErrorHandlerReporter $errorHandlerReporter);*/
