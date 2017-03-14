@@ -4,11 +4,10 @@ namespace yuxblank\phackp\services;
 use yuxblank\phackp\core\ServiceProvider;
 use yuxblank\phackp\exceptions\InvocationException;
 use yuxblank\phackp\providers\PhackpExceptionHandler;
+use yuxblank\phackp\services\api\AutoBootService;
 use yuxblank\phackp\services\api\ErrorHandler;
 use yuxblank\phackp\services\api\ExceptionHandler;
-use yuxblank\phackp\services\api\ServiceConfig;
 use yuxblank\phackp\services\api\ThrowableHandler;
-use yuxblank\phackp\services\configuration\ErrorHandlerConfig;
 use yuxblank\phackp\services\exceptions\ServiceProviderException;
 use yuxblank\phackp\utils\ReflectionUtils;
 
@@ -18,7 +17,7 @@ use yuxblank\phackp\utils\ReflectionUtils;
  * Date: 13/12/2016
  * Time: 22:52
  */
-class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler
+class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler, AutoBootService
 {
 
     const HANDLE = "handle";

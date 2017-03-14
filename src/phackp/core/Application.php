@@ -6,6 +6,7 @@ use yuxblank\phackp\api\Service;
 use yuxblank\phackp\exceptions\InvocationException;
 use yuxblank\phackp\exceptions\ConfigurationException;
 use yuxblank\phackp\providers\HtmlErrorHandlerReporter;
+use yuxblank\phackp\services\api\AutoBootService;
 use yuxblank\phackp\services\ErrorHandlerProvider;
 use yuxblank\phackp\services\exceptions\ServiceProviderException;
 use yuxblank\phackp\utils\ReflectionUtils;
@@ -144,22 +145,21 @@ class Application
         }
     }
 
-    public function registerServices(array $services)
-    {
-        foreach ($services as $service) {
-                self::getInstance()->services[] = $service;
-        }
-    }
-
-    public function registerService(string $service, ...$options)
+    public function registerService(string $service,bool $bootOnStartup, array $config=null)
     {
         try {
-            self::getInstance()->services[] = ReflectionUtils::makeInstance($service);
+            self::getInstance()->services[] =  $service;
         } catch (InvocationException $ex){
             throw new InvocationException("Unable to make service instance", InvocationException::SERVICE);
         }
-        if ($options!==null){
-            self::getInstance()->serviceConfig[$service] = $options;
+        if ($config!==null){
+            self::getInstance()->serviceConfig[$service] = $config;
+        }
+        if ($bootOnStartup){
+            $serviceInstance = self::getInstance()->getService($service);
+            if (!class_implements($serviceInstance, AutoBootService::class)){
+                throw new ServiceProviderException('Service ' . $service . 'does not implements ' . AutoBootService::class, ServiceProviderException::NOT_AUTO_BOOT);
+            }
         }
     }
 
