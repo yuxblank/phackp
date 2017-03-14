@@ -13,7 +13,6 @@ namespace yuxblank\phackp\services\api;
 interface Service
 {
     public function invoke(string $method, $params=null);
-    public function bootstrap();
-    public function config(array $config);
+
 
 }

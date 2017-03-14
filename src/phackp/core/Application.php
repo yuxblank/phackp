@@ -147,11 +147,7 @@ class Application
     public function registerServices(array $services)
     {
         foreach ($services as $service) {
-            try {
-                self::getInstance()->services[] = ReflectionUtils::makeInstance($service);
-            } catch (InvocationException $ex) {
-                throw new InvocationException("Unable to make service instance", InvocationException::SERVICE);
-            }
+                self::getInstance()->services[] = $service;
         }
     }
 
@@ -173,18 +169,44 @@ class Application
                 return $options;
             }
         }
+        return null;
     }
 
 
     /**
+     * Retrive the instance from the container.
+     * Eventually makes an instance of the ServiceProvider if was never bootstrapped
      * @param string $serviceName
      * @return mixed|ServiceProvider
-     * @throws ServiceProviderException
+     * @throws \yuxblank\phackp\services\exceptions\ServiceProviderException
+     * @throws \yuxblank\phackp\exceptions\InvocationException
      */
 
     public static function getService(string $serviceName): ServiceProvider
     {
-        foreach (self::getInstance()->services as $service) {
+        foreach (self::getInstance()->services as $key => $service) {
+            if (!is_object($service) && $service === $serviceName){
+                try {
+                    // bootstrap with config
+                    if (self::getInstance()->getServiceConfig($serviceName) !== null){
+                        self::getInstance()->services[$key] = new $service(self::getInstance()->getServiceConfig($serviceName));
+                    } else {
+                        // no config
+                        self::getInstance()->services[$key] = new $service();
+                    }
+                    if (!is_subclass_of(self::getInstance()->services[$key], ServiceProvider::class)){
+                        throw new ServiceProviderException('Class ' . get_class($service) .  ' is not a subclass of '.
+                            ServiceProvider::class, ServiceProviderException::NOT_A_PROVIDER);
+                    }
+
+                    // do run bootstrap on Provider implementation
+                    self::getInstance()->services[$key]->bootstrap();
+
+
+                } catch (InvocationException $ex){
+                    throw new InvocationException('Unable to make service instance', InvocationException::SERVICE,$ex);
+                }
+            }
             if ($service instanceof $serviceName) {
                 return $service;
             }
@@ -192,17 +214,17 @@ class Application
         throw new ServiceProviderException($serviceName, ServiceProviderException::REQUIRE_UNREGISTERED);
     }
 
-    private function bootstrapProviders(){
-        /** @var \yuxblank\phackp\services\api\Provider $service */
-        foreach ($this->services as $service){
-                $options = self::getInstance()->getServiceConfig(get_class($service));
-                if ($options){
-                    $service->config($options);
-                }
-                $service->bootstrap();
-                $service->setup();
-        }
-    }
+//    private function bootstrapProviders(){
+//        /** @var \yuxblank\phackp\services\api\Provider $service */
+//        foreach ($this->services as $service){
+//                $options = self::getInstance()->getServiceConfig(get_class($service));
+//                if ($options){
+//                    $service->config($options);
+//                }
+//                $service->bootstrap();
+//                $service->setup();
+//        }
+//    }
 
     private final function runtime()
     {
@@ -260,7 +282,7 @@ class Application
             $time_start = microtime(true);
             $memoryPeak = memory_get_peak_usage(true);
         }
-        $this->bootstrapProviders();
+
         // get the httpKernel
         $httpKernel = new HttpKernel();
         // get the route

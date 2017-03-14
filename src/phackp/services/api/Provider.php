@@ -22,9 +22,10 @@ interface Provider extends Service
      * Invoked right after constructor, here you can setup the Provider status based on configurations
      * @return mixed
      */
-    public function setup();
-
+    public function bootstrap();
 
     public function isValidConfig();
+
+
 
 }
