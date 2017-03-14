@@ -17,9 +17,14 @@ use yuxblank\phackp\utils\ReflectionUtils;
  * Date: 13/12/2016
  * Time: 22:52
  */
+
+/**
+ * Class ErrorHandlerProvider
+ * This provider Handle PHP errors and exceptions events and broadcast them to the Handler delegate.
+ * @package yuxblank\phackp\services
+ */
 class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler, AutoBootService
 {
-
     const HANDLE = "handle";
     protected $exceptions = [];
     protected $excluded = [];
@@ -51,7 +56,7 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler, 
                     .' provided in configuration does not implements ' . ExceptionHandler::class, ServiceProviderException::INVALID_CONFIG);
             }
         } catch (InvocationException $ex) {
-            throw new InvocationException('Class not found ' . $excClazz, InvocationException::SERVICE);
+            throw new InvocationException('Class not found ' . $excClazz, InvocationException::SERVICE, $ex);
         }
     }
 

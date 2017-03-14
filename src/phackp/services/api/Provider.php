@@ -7,13 +7,18 @@
  */
 
 namespace yuxblank\phackp\services\api;
-
-
+/**
+ * Interface Provider
+ * Interface required by any ServiceProvider implementation
+ * @package yuxblank\phackp\services\api
+ */
 interface Provider extends Service
 {
 
     /**
-     * Define default ServiceConfig instance
+     * Define default configuration of the provider.
+     * Must be an array.
+     * If the user does not provide a config on ServiceProvider registration, this will be used as config. (must pass isValidConfig!)
      * @return array
      */
     public function defaultConfig():array;
@@ -24,7 +29,14 @@ interface Provider extends Service
      */
     public function bootstrap();
 
-    public function isValidConfig();
+    /**
+     * Define when a configuration is valid for the Provider.
+     * Since providers are configurable, it's responsibility of the developer to diagnose bad configurations.
+     * Return true if the configuration passed satisfy requirements.
+     * If false, ServiceProviderException is thrown by ServiceProvider
+     * @return mixed
+     */
+    public function isValidConfig():bool;
 
 
 

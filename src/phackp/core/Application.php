@@ -174,7 +174,7 @@ class Application
 
 
     /**
-     * Retrive the instance from the container.
+     * Retrieve the instance from the container.
      * Eventually makes an instance of the ServiceProvider if was never bootstrapped
      * @param string $serviceName
      * @return mixed|ServiceProvider
@@ -213,18 +213,6 @@ class Application
         }
         throw new ServiceProviderException($serviceName, ServiceProviderException::REQUIRE_UNREGISTERED);
     }
-
-//    private function bootstrapProviders(){
-//        /** @var \yuxblank\phackp\services\api\Provider $service */
-//        foreach ($this->services as $service){
-//                $options = self::getInstance()->getServiceConfig(get_class($service));
-//                if ($options){
-//                    $service->config($options);
-//                }
-//                $service->bootstrap();
-//                $service->setup();
-//        }
-//    }
 
     private final function runtime()
     {

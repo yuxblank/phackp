@@ -41,7 +41,7 @@ class Router
         try {
             $controller = ReflectionUtils::makeInstance($route['class']);
         } catch (InvocationException $ex) {
-            throw new InvocationException('Class ' . $route['class'] . ' not found in routes', InvocationException::ROUTER);
+            throw new InvocationException('Class ' . $route['class'] . ' not found in routes', InvocationException::ROUTER, $ex);
         }
 
         $reflectionClass = new \ReflectionClass($controller);
@@ -55,7 +55,7 @@ class Router
         try {
             $controller->{$route['method']}($params);
         } catch (InvocationException $ex) {
-            throw new InvocationException('Method ' . $route['method'] . ' not found for route class ' . $reflectionClass->getName(), InvocationException::ROUTER);
+            throw new InvocationException('Method ' . $route['method'] . ' not found for route class ' . $reflectionClass->getName(), InvocationException::ROUTER, $ex);
         }
         if ($eventDriven) {
             ReflectionUtils::invoke($controller, 'onAfter');

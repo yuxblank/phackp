@@ -7,19 +7,37 @@ namespace yuxblank\phackp\services\api;
  * Time: 00:05
  */
 
-
-
-
+/**
+ * Interface ErrorHandler
+ * Required to implement an error HandlerProvider delegate
+ * @package yuxblank\phackp\services\api
+ */
 interface ErrorHandler
 {
+
     /**
-     * Those method are fired when and error is thrown
+     * Fired on fatal error
      * @param array $throwable
      * @return mixed
      */
     public function fatal(array $throwable);
+    /**
+     * Fired on warning
+     * @param array $throwable
+     * @return mixed
+     */
     public function warning(array $throwable);
+    /**
+     * Fired on notice messages
+     * @param array $throwable
+     * @return mixed
+     */
     public function notice(array $throwable);
+    /**
+     * Fired on fatal|unknown error
+     * @param array $throwable
+     * @return mixed
+     */
     public function unknown(array $throwable);
 
 }

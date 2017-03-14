@@ -11,8 +11,14 @@ namespace yuxblank\phackp\services\exceptions;
 
 use Exception;
 
+/**
+ * Class PhackpRuntimeException
+ * Runtime exception thrown by pHackp framework
+ * @package yuxblank\phackp\services\exceptions
+ */
 class PhackpRuntimeException extends \RuntimeException
 {
+    const CONTAINER_ERROR = 999;
     public function __construct($message = "", $code = 0, Exception $previous = null)
     {
         parent::__construct($message, $code, $previous);

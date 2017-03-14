@@ -8,7 +8,10 @@
 
 namespace yuxblank\phackp\services\api;
 
-
+/**
+ * Interface AutoBootService is required for ServiceProviders that are booted on startup
+ * @package yuxblank\phackp\services\api
+ */
 interface AutoBootService
 {
 
