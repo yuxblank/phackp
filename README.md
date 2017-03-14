@@ -8,7 +8,7 @@ the framework might change in ways that make alpha/beta releases un-compatible w
 The framework is actually compatible with PHP7+.
 
 # Introduction
-pHackp aim to provide a fast and easy way to build modern and resposive websites and apps.
+pHackp aim to provide a fast and easy way to build modern and responsive websites and apps.
 It provides an Model View Controller structure for organizing your project and tries to be as far as possible "convention over configuration".
 The framework provide all basic features for develop Restful APIs, Websites and web applications. it has no dependencies and it's not a fully fledged framework as many others in PHP panorama: you get the basis to work for any kind of project (MVC, Routing, Template, Pretty URL, Database Access, Sessions, REST, Services and Providers *cache to come*) and when something is missing you just: *composer require X*. That's it!
 
@@ -23,15 +23,17 @@ Actually the frameworks is on heavy development. it has been tested with Apache 
 
 ### Main features
   * Small footprint
+  * Polymorphic
   * Totally object oriented
-  * Easy to use
-  * 0 dependecies required
-  * PHP 7
-  * easy extendibility (API's, Modules etc.)*
+  * Easy to use & intuitive
+  * 0 dependencies required
+  * PHP 7+
+  * easy extensibility (ServiceProviders etc.)*
   * Almost no configuration (No yaml, xml, ini.. Just PHP)
   * Great Performance, ease of use and speed of development!
 
 ### Routing
+  * Routing is made by code, no server configuration rules generation or requirement (just mod_require to index.php)
   * array mapped routes
   * actions are mapped by Class and Method name for given url
   * exclusion of non-mapped routes (return configurable error routes)
@@ -72,7 +74,12 @@ Actually the frameworks is on heavy development. it has been tested with Apache 
 ### Services and Providers
    * Dynamically register providers instances (non-singleton, single runtime instance beans)
    * Reflection based invocation of interfaces methods, allowing to delegate implementation class @ runtime (eg. ErrorHandlers)
-   * Easy and effective API to extends and implements brand new providers
+   * Easy and effective API to extends and implements brand new providers or delegates
+   * Both Eager and Lazy provider instantiation
+   * Configurable, extensible and fully integrated into framework container
+   * Ready to use ServiceProviders
+     * ErrorHandler (Provide PHP error and exception handling overrides)
+   
  
 ### PSR-4
   * use composer default autoload psr-4
@@ -83,3 +90,4 @@ Actually the frameworks is on heavy development. it has been tested with Apache 
   * routes GET,POST,PUT,DELETE,OPTIONS,PATCH etc. for CRUD RESTFUL standard API's
   * automatic serialize/un-serialize json-to-array
   * content-type filtering (via routes options)*
+  * Ready to use CORS filter*
