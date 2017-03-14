@@ -145,7 +145,7 @@ class Application
         }
     }
 
-    public function registerService(string $service,bool $bootOnStartup, array $config=null)
+    public function registerService(string $service,bool $bootOnStartup=null, array $config=null)
     {
         try {
             self::getInstance()->services[] =  $service;
