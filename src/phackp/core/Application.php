@@ -208,7 +208,7 @@ class Application
                 }
             }
             if (self::getInstance()->services[$key] instanceof $serviceName) {
-                return $service;
+                return self::getInstance()->services[$key];
             }
         }
         throw new ServiceProviderException($serviceName, ServiceProviderException::REQUIRE_UNREGISTERED);
