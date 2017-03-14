@@ -207,7 +207,7 @@ class Application
                     throw new InvocationException('Unable to make service instance', InvocationException::SERVICE,$ex);
                 }
             }
-            if ($service instanceof $serviceName) {
+            if (self::getInstance()->services[$key] instanceof $serviceName) {
                 return $service;
             }
         }

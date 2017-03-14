@@ -27,6 +27,9 @@ class ServiceProvider implements Service
      */
     public function __construct(array $config=null)
     {
+        // before everything
+        $this->reflectionClass = new \ReflectionClass($this);
+
         // set default provider config
         $this->config = $this->invoke("defaultConfig");
 
@@ -35,7 +38,7 @@ class ServiceProvider implements Service
             $this->config = array_replace($this->config, $config);
         }
 
-        $this->reflectionClass = new \ReflectionClass($this);
+
         if (!$this->reflectionClass->implementsInterface(Provider::class)){
             throw new ServiceProviderException("The ServiceProvider " . $this->reflectionClass->getName() . " does not implements " . Provider::class, ServiceProviderException::NOT_A_PROVIDER);
         }
