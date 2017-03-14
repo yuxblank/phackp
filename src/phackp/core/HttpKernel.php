@@ -218,7 +218,7 @@ final class HttpKernel
             header('Access-Control-Max-Age: 86400');    // cache for 1 day
         }
 
-        if ($this->method == 'OPTIONS') {
+        if ($this->getMethod() === 'OPTIONS') {
 
             if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']))
                 // may also be using PUT, PATCH, HEAD etc
