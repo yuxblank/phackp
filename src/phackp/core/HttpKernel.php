@@ -163,9 +163,9 @@ final class HttpKernel
     public function dispatch(array $route)
     {
 
-        if (Application::getConfig()['CORS_FILTER']){
+       /* if (Application::getConfig()['CORS_FILTER']){
             $this->CORSFilter();
-        }
+        }*/
 
         switch ($this->getMethod()) {
             case 'GET':
