@@ -17,6 +17,7 @@ namespace yuxblank\phackp\core;
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+use Psr\Http\Message\ServerRequestInterface;
 use yuxblank\phackp\api\EventDrivenController;
 use yuxblank\phackp\exceptions\InvocationException;
 use yuxblank\phackp\utils\ReflectionUtils;
@@ -31,15 +32,27 @@ use yuxblank\phackp\utils\ReflectionUtils;
 class Router
 {
 
+    private $routes;
+
     const WILDCARD_REGEXP = '({[aA-zZ0-9]+})';
 
+    /**
+     * Router constructor.
+     * @param $routes
+     */
+    public function __construct($routes)
+    {
+        $this->routes = $routes;
+    }
 
-    public static function doRoute($route, array $params = null)
+
+    public static function doRoute($route, ServerRequestInterface $serverRequest=null)
     {
         $controller = null;
+        $clazz = $route['class'];
 
         try {
-            $controller = ReflectionUtils::makeInstance($route['class']);
+            $controller = new $clazz($serverRequest);
         } catch (InvocationException $ex) {
             throw new InvocationException('Class ' . $route['class'] . ' not found in routes', InvocationException::ROUTER, $ex);
         }
@@ -53,7 +66,7 @@ class Router
         }
 
         try {
-            $controller->{$route['method']}($params);
+            $controller->{$route['method']}([]);
         } catch (InvocationException $ex) {
             throw new InvocationException('Method ' . $route['method'] . ' not found for route class ' . $reflectionClass->getName(), InvocationException::ROUTER, $ex);
         }
@@ -217,26 +230,26 @@ class Router
      * @param HttpKernel $httpKernel
      * @return null|array
      */
-    public static function findAction(HttpKernel $httpKernel)
+    public function findAction(HttpKernel $httpKernel)
     {
 
-        foreach (Application::getRoutes()[$httpKernel->getMethod()] as $key => $route) {
+        foreach ($this->routes[$httpKernel->getRequest()->getMethod()] as $key => $route) {
             // case without params
 
-            // if options, check if the content-type is the same
+      /*      // if options, check if the content-type is the same
             if (array_key_exists('options', $route) && !self::isSameContentType($route, $httpKernel)) {
                 continue;
-            }
+            }*/
 
             // if the url is the same static route, just return!
-            if ($route['url'] === $httpKernel->getUrl()) {
+            if ($route['url'] === $httpKernel->getRequest()->getUri()->getPath()) {
                 return $route;
 
             } else {
                 // find wildcard
                 if (preg_match(self::WILDCARD_REGEXP, $route['url'])) {
                     $routeArray = preg_split('@/@', $route['url'], NULL, PREG_SPLIT_NO_EMPTY);
-                    $queryArray = preg_split('@/@', $httpKernel->getUrl(), NULL, PREG_SPLIT_NO_EMPTY);
+                    $queryArray = preg_split('@/@',$httpKernel->getRequest()->getUri()->getPath(), NULL, PREG_SPLIT_NO_EMPTY);
                     $url = self::compareRoutes($routeArray, $queryArray);
                     // if compare routes matched and the url has been recreated, return this route
                     if ($url !== null) {

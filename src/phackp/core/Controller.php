@@ -9,8 +9,11 @@ namespace yuxblank\phackp\core;
  * @since 0.1
  */
 class Controller {
-    
-    public function __construct() {
+
+    protected $request;
+
+    public function __construct(ServerRequestInterface $request=null) {
+        $this->request = $request;
         defined('pHackpRuntime') or die ('.:: pHackp runtime never initiated! - invalid access to resources ::. ');
     }
 

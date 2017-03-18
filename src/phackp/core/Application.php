@@ -274,10 +274,14 @@ class Application
         // get the httpKernel
         $httpKernel = new HttpKernel();
         // get the route
-        $route = Router::findAction($httpKernel);
+
+
+        $router = new Router($this->config['ROUTES']);
+
+        $route = $router->findAction($httpKernel);
         if ($route !== null) {
-            $httpKernel->dispatch($route);
-            Router::doRoute($route, $httpKernel->getParams());
+
+            Router::doRoute($route, $httpKernel->getRequest());
         } else {
             $notFoundRoute = self::getErrorRoute(404);
             Router::doRoute($notFoundRoute);
@@ -288,6 +292,7 @@ class Application
             echo '<p style="position: fixed; bottom:0; margin: 0 auto;"> Total execution time in seconds: ' . (microtime(true) - $time_start) . ' runtime_id: ' . pHackpRuntime . ' memory peak: ' . UnitConversion::byteConvert($memoryPeak) . '</p>';
         }
     }
+
 
 }
 
