@@ -1,8 +1,8 @@
 {
   "name": "yuxblank/phackp",
   "description": "pHackp aim to provide a fast and easy way to build modern and responsive websites and apps. It provides an Model View Controller structure for organizing your project and tries to be as far as possible 'convention over configuration'",
-  "version": "0.2-alpha",
-  "minimum-stability": "stable",
+  "version": "0.3-alpha",
+  "minimum-stability": "alpha",
   "license": "MIT",
   "type": "library",
   "homepage":"http://yuxblank.github.io/phackp",
