@@ -262,6 +262,7 @@ class Application
     /**
      * Where fun starts!
      * @throws \yuxblank\phackp\exceptions\InvocationException
+     * @throws \InvalidArgumentException
      */
     public function run()
     {
@@ -272,19 +273,17 @@ class Application
         }
 
         // get the httpKernel
+
         $httpKernel = new HttpKernel();
         // get the route
-
-
-        $router = new Router($this->config['ROUTES']);
+        $router = new Router(self::getRoutes());
 
         $route = $router->findAction($httpKernel);
         if ($route !== null) {
-
-            Router::doRoute($route, $httpKernel->getRequest());
+            Router::doRoute($route,$httpKernel->getParams(), $httpKernel->getRequest());
         } else {
             $notFoundRoute = self::getErrorRoute(404);
-            Router::doRoute($notFoundRoute);
+            Router::doRoute($notFoundRoute, null, $httpKernel->getRequest());
         }
 
         if (self::isDebug() && ($httpKernel->getContentType() === 'text/plain' || $httpKernel->getContentType() === 'text/html')) {

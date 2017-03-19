@@ -46,7 +46,7 @@ class Router
     }
 
 
-    public static function doRoute($route, ServerRequestInterface $serverRequest=null)
+    public static function doRoute($route,array $params=null, ServerRequestInterface $serverRequest=null)
     {
         $controller = null;
         $clazz = $route['class'];
@@ -66,7 +66,7 @@ class Router
         }
 
         try {
-            $controller->{$route['method']}([]);
+            $controller->{$route['method']}($params);
         } catch (InvocationException $ex) {
             throw new InvocationException('Method ' . $route['method'] . ' not found for route class ' . $reflectionClass->getName(), InvocationException::ROUTER, $ex);
         }

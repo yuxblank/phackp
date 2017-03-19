@@ -1,5 +1,7 @@
 <?php
 namespace yuxblank\phackp\core;
+use Psr\Http\Message\ServerRequestInterface;
+
 /**
  * This class is a the pHackp framework controllers superclass.
  * Contains all the methods and imports required for using the framework built-in controllers functions.
