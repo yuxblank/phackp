@@ -280,7 +280,7 @@ class Application
 
         $route = $router->findAction($httpKernel);
         if ($route !== null) {
-            Router::doRoute($route,$httpKernel->getParams(), $httpKernel->getRequest());
+            Router::doRoute($route,$httpKernel->parseBody($route), $httpKernel->getRequest());
         } else {
             $notFoundRoute = self::getErrorRoute(404);
             Router::doRoute($notFoundRoute, null, $httpKernel->getRequest());

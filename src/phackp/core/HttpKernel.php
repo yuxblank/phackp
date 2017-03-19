@@ -38,19 +38,18 @@ final class HttpKernel
      * Set parameters to the request
      * @param $params
      */
-    public function setParams($params)
+    public function parseParams($params)
     {
-        if ($this->params===null) {
-            $this->params = $params;
-        } else {
-            $this->params = array_merge($this->params, $params);
+        if ($params===null) {
+            return $params;
         }
+        return array_merge($this->params, $params);
     }
 
-    private function setRouteParams($route)
+    private function parseRouteParams($route)
     {
         if ($this->getRequest()->getMethod() !== 'GET' && array_key_exists('params', $route)) {
-            $this->setParams($route['params']);
+            return $this->parseParams($route['params']);
         }
     }
 
@@ -58,7 +57,7 @@ final class HttpKernel
     /**
      * @return RequestInterface
      */
-    public function getRequest(): RequestInterface
+    public function getRequest(): ServerRequestInterface
     {
         return $this->request;
     }
@@ -109,35 +108,35 @@ final class HttpKernel
     /**
      * Dispatch HTTP request and parameters to the current HttpKernel instance.
      * @param array $route (the current route object)
+     * @return array
      * @throws \RuntimeException
      */
-    public function parse(array $route)
+    public function parseBody(array $route):array
     {
-        /* if (Application::getConfig()['CORS_FILTER']){
-             $this->CORSFilter();
-         }*/
+        $parsed  = [];
         switch ($this->request->getMethod()) {
             case 'GET':
                 // get paramets ?name=value
                 if (Application::getConfig()['INJECT_QUERY_STRING']) {
-                    $this->setParams($_GET);
+                    $parsed[]= $this->parseParams($this->getRequest()->getQueryParams());
                 }
                 if (array_key_exists('params', $route)) {
-                    $this->setParams($route['params']);
+                    $parsed[] = $this->parseParams($route['params']);
                 }
                 break;
             case 'POST':
-                $this->setParams($this->parseContentType($this->getRequest()->getBody()->getContents())); // todo refactor to read streams
-                $this->setRouteParams($route);
+                $parsed[] =  $this->parseParams($this->parseContentType($this->getRequest()->getBody()->getContents())); // todo refactor to read streams
+                $parsed[]=  $this->parseRouteParams($route);
             // if break, we cant receive body so we continue
             case ('PUT' || 'DELETE' || 'HEAD' || 'PATCH' || 'OPTIONS'):
                 $body = $this->getRequest()->getBody()->getContents(); // todo refactor to read streams
-                $this->setParams($this->parseContentType($body));
-                $this->setRouteParams($route);
+                $parsed[]= $this->parseParams($this->parseContentType($body));
+                $parsed[]= $this->parseRouteParams($route);
                 break;
             default:
                 break;
         }
+        return $parsed;
     }
 
 }
