@@ -1,6 +1,7 @@
 <?php
 namespace yuxblank\phackp\core;
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response\JsonResponse;
 
 /**
  * This class is a the pHackp framework controllers superclass.
@@ -15,8 +16,9 @@ class Controller {
     protected $request;
 
     public function __construct(ServerRequestInterface $request=null) {
-        $this->request = $request;
         defined('pHackpRuntime') or die ('.:: pHackp runtime never initiated! - invalid access to resources ::. ');
+        $this->request = $request;
+
     }
 
 
@@ -36,14 +38,16 @@ class Controller {
         setcookie($name, $value, $expire);
     
     }
-     /**
-     * 
+
+    /**
+     *
      * @param array $data
      * @param 3const $options
+     * @return JsonResponse
+     * @throws \InvalidArgumentException
      */
-    public static function renderJSON($data, $options=null) {
-        header('Content-Type: application/json');
-        echo json_encode($data, $options);
+    public static function renderJSON($data, $options=null):JsonResponse {
+        return new JsonResponse($data);
     }
 
 

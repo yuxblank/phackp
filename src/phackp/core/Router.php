@@ -46,7 +46,7 @@ class Router
     }
 
 
-    public static function doRoute($route,array $params=null, ServerRequestInterface $serverRequest=null)
+    public static function doRoute($route, array $params = null, ServerRequestInterface $serverRequest = null)
     {
         $controller = null;
         $clazz = $route['class'];
@@ -57,22 +57,14 @@ class Router
             throw new InvocationException('Class ' . $route['class'] . ' not found in routes', InvocationException::ROUTER, $ex);
         }
 
-        $reflectionClass = new \ReflectionClass($controller);
-
-        $eventDriven = $reflectionClass->implementsInterface(EventDrivenController::class);
-
-        if ($eventDriven) {
-            ReflectionUtils::invoke($controller, 'onBefore');
-        }
-
+        ReflectionUtils::invoke($controller, 'onBefore');
         try {
             $controller->{$route['method']}($params);
         } catch (InvocationException $ex) {
-            throw new InvocationException('Method ' . $route['method'] . ' not found for route class ' . $reflectionClass->getName(), InvocationException::ROUTER, $ex);
+            throw new InvocationException('Method ' . $route['method'] . ' not found for route class ' . $clazz, InvocationException::ROUTER, $ex);
         }
-        if ($eventDriven) {
-            ReflectionUtils::invoke($controller, 'onAfter');
-        }
+        ReflectionUtils::invoke($controller, 'onAfter');
+
 
     }
 

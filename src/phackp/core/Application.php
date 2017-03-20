@@ -1,15 +1,12 @@
 <?php
 namespace yuxblank\phackp\core;
 
-use yuxblank\phackp\api\EventDrivenController;
 use yuxblank\phackp\api\Service;
-use yuxblank\phackp\exceptions\InvocationException;
 use yuxblank\phackp\exceptions\ConfigurationException;
+use yuxblank\phackp\exceptions\InvocationException;
 use yuxblank\phackp\providers\HtmlErrorHandlerReporter;
 use yuxblank\phackp\services\api\AutoBootService;
-use yuxblank\phackp\services\ErrorHandlerProvider;
 use yuxblank\phackp\services\exceptions\ServiceProviderException;
-use yuxblank\phackp\utils\ReflectionUtils;
 use yuxblank\phackp\utils\UnitConversion;
 
 /**
@@ -263,6 +260,7 @@ class Application
      * Where fun starts!
      * @throws \yuxblank\phackp\exceptions\InvocationException
      * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function run()
     {
@@ -279,8 +277,9 @@ class Application
         $router = new Router(self::getRoutes());
 
         $route = $router->findAction($httpKernel);
+        $httpKernel->parseBody($route);
         if ($route !== null) {
-            Router::doRoute($route,$httpKernel->parseBody($route), $httpKernel->getRequest());
+            Router::doRoute($route,$httpKernel->getParams(), $httpKernel->getRequest());
         } else {
             $notFoundRoute = self::getErrorRoute(404);
             Router::doRoute($notFoundRoute, null, $httpKernel->getRequest());

@@ -58,7 +58,7 @@ final class HttpKernel
     /**
      * @return RequestInterface
      */
-    public function getRequest(): RequestInterface
+    public function getRequest(): ServerRequestInterface
     {
         return $this->request;
     }
@@ -117,7 +117,7 @@ final class HttpKernel
             case 'GET':
                 // get paramets ?name=value
                 if (Application::getConfig()['INJECT_QUERY_STRING']) {
-                    $this->setParams($_GET);
+                    $this->setParams($this->getRequest()->getQueryParams());
                 }
                 if (array_key_exists('params', $route)) {
                     $this->setParams($route['params']);
