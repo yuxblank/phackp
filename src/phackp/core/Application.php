@@ -1,6 +1,7 @@
 <?php
 namespace yuxblank\phackp\core;
 
+use Psr\Container\ContainerInterface;
 use yuxblank\phackp\exceptions\ConfigurationException;
 use yuxblank\phackp\exceptions\InvocationException;
 use yuxblank\phackp\services\api\AutoBootService;
@@ -13,7 +14,7 @@ use yuxblank\phackp\utils\UnitConversion;
  * @author Yuri Blanc
  * @package yuxblank\phackp\core
  */
-class Application
+class Application implements ContainerInterface
 {
 
     protected static $instance;
@@ -21,6 +22,8 @@ class Application
     private $config;
     protected $version;
     protected $services = [];
+    protected $instances = [];
+    protected $singletons = [];
     protected $serviceConfig = [];
 
 
@@ -168,6 +171,29 @@ class Application
         return null;
     }
 
+    public function get($id)
+    {
+        if (array_key_exists($id, $this->instances)) {
+            return $this->instances[$id];
+        } else if (array_key_exists($id, $this->singletons)) {
+            return $this->singletons[$id];
+        }
+
+        // todo thrown ContainerExceptionInterface
+    }
+
+    public function has($id)
+    {
+        return array_key_exists($id, $this->instances) || array_key_exists($id, $this->singletons);
+    }
+
+    public function addInstance(string $id, $instance) {
+        $this->instances[$id] = $instance;
+    }
+    public function addSingleton($instance){
+        $this->singletons[get_class($instance)] = $instance;
+    }
+
 
     /**
      * Retrieve the instance from the container.
@@ -277,12 +303,20 @@ class Application
 
         $route = $router->findAction($httpKernel);
 
+        if (!is_subclass_of($route['class'], Controller::class)){
+            throw new InvocationException('Class ' . $route['class'] . ' is not a controller, extend '. Controller::class .' is required by controllers', InvocationException::ROUTER);
+        }
+
+
         if ($route !== null) {
             try {
-                $clazz = new $route['class']($httpKernel->getRequest(), $router);
+                $clazz = new $route['class']($httpKernel->getRequest());
+                $this->addSingleton($router);
             } catch (InvocationException $e) {
                 throw new InvocationException('Class ' . $route['class'] . ' not found in routes', InvocationException::ROUTER, $e);
             }
+
+
             $httpKernel->parseBody($route);
             ReflectionUtils::invoke($clazz, 'onBefore');
             $clazz->{$route['method']}($httpKernel->getParams());

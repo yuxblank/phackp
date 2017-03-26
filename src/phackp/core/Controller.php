@@ -16,10 +16,11 @@ class Controller {
     protected $request;
     protected $router;
 
-    public function __construct(ServerRequestInterface $request=null, Router $router=null) {
+    public function __construct(ServerRequestInterface $request=null) {
         defined('pHackpRuntime') or die ('.:: pHackp runtime never initiated! - invalid access to resources ::. ');
+
         $this->request = $request;
-        $this->router = $router;
+        $this->router = Application::getInstance()->get(Router::class);
 
     }
 
