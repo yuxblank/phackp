@@ -1,12 +1,11 @@
 <?php
 namespace yuxblank\phackp\core;
 
-use yuxblank\phackp\api\Service;
 use yuxblank\phackp\exceptions\ConfigurationException;
 use yuxblank\phackp\exceptions\InvocationException;
-use yuxblank\phackp\providers\HtmlErrorHandlerReporter;
 use yuxblank\phackp\services\api\AutoBootService;
 use yuxblank\phackp\services\exceptions\ServiceProviderException;
+use yuxblank\phackp\utils\ReflectionUtils;
 use yuxblank\phackp\utils\UnitConversion;
 
 /**
@@ -277,15 +276,24 @@ class Application
         $router = new Router(self::getRoutes());
 
         $route = $router->findAction($httpKernel);
+
         if ($route !== null) {
-
-            $clazz = new $route['class']($httpKernel->getRequest(), $router);
-
+            try {
+                $clazz = new $route['class']($httpKernel->getRequest(), $router);
+            } catch (InvocationException $e) {
+                throw new InvocationException('Class ' . $route['class'] . ' not found in routes', InvocationException::ROUTER, $e);
+            }
             $httpKernel->parseBody($route);
-            Router::doRoute($route, $httpKernel->getParams());
+            ReflectionUtils::invoke($clazz, 'onBefore');
+            $clazz->{$route['method']}($httpKernel->getParams());
+            ReflectionUtils::invoke($clazz, 'onAfter');
+
         } else {
             $notFoundRoute = self::getErrorRoute(404);
-            Router::doRoute($notFoundRoute);
+            $clazz = new $notFoundRoute['class']($httpKernel->getRequest(), $router);
+            ReflectionUtils::invoke($clazz, 'onBefore');
+            $clazz->{$notFoundRoute['method']}($httpKernel->getParams());
+            ReflectionUtils::invoke($clazz, 'onAfter');
         }
 
         if (self::isDebug() && ($httpKernel->getContentType() === 'text/plain' || $httpKernel->getContentType() === 'text/html')) {
