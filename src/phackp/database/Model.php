@@ -29,9 +29,8 @@ abstract class Model
 
     /**
      * Model constructor.
-     * @param $ormInstance
      */
-    public function __construct($ormInstance)
+    public function __construct()
     {
         if ($this->ormInstance===null) {
             $this->ormInstance = new HackORM();
