@@ -197,7 +197,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
      */
     public function persist($object)
     {
-        $table = $this->objectInjector(get_class($object));
+        $table = $this->objectInjector($object);
         $queryBuilder = new QueryBuilder();
         $queryBuilder
             ->insert($table, ReflectionUtils::getInstanceProperties($object));
@@ -213,7 +213,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
      */
     public function merge($object)
     {
-        $table = $this->objectInjector(get_class($object));
+        $table = $this->objectInjector($object);
         $properties = $this->db->excludeId(ReflectionUtils::getDeferredInstanceProperties($object));
         $queryBuilder = new QueryBuilder();
 
@@ -254,7 +254,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
      */
     public function oneToOne($object, $target)
     {
-        $parent = $this->objectInjector(get_class($object));
+        $parent = $this->objectInjector($object);
         $child = $this->objectInjector($target);
         $queryBuilder = new QueryBuilder();
         $queryBuilder
@@ -277,7 +277,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
      */
     public function oneToMany($object, $target)
     {
-        $parent = $this->objectInjector(get_class($object));
+        $parent = $this->objectInjector($object);
         $child = strtolower(ReflectionUtils::stripNamespace($target));
         $queryBuilder = new QueryBuilder();
         $queryBuilder
@@ -301,7 +301,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
     public function manyToOne($object, $target)
     {
         // todo correct query
-        $parent = $this->objectInjector(get_class($object));
+        $parent = $this->objectInjector($object);
         $child = $this->objectInjector($target);
         $queryBuilder = new QueryBuilder();
         $queryBuilder
@@ -332,7 +332,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
      */
     public function manyToMany($object, $target)
     {
-        $parent = $this->objectInjector(get_class($object));
+        $parent = $this->objectInjector($object);
         $child = strtolower(ReflectionUtils::stripNamespace($target));
         $queryBuilder = new QueryBuilder();
         $queryBuilder
@@ -354,7 +354,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
      */
     public function _manyToMany($object, $target)
     {
-        $parent = $this->objectInjector(get_class($object));
+        $parent = $this->objectInjector($object);
         $child = strtolower(ReflectionUtils::stripNamespace($target));
         $queryBuilder = new QueryBuilder();
         $queryBuilder
@@ -368,6 +368,9 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
 
     private function objectInjector($object)
     {
+        if (is_string($object)){
+            return strtolower(ReflectionUtils::stripNamespace($object));
+        }
         return strtolower(ReflectionUtils::stripNamespace(get_class($object)));
     }
 
