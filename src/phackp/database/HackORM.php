@@ -2,6 +2,8 @@
 
 namespace yuxblank\phackp\database;
 use yuxblank\phackp\core\Application;
+use yuxblank\phackp\database\api\ObjectRelationalMapping;
+use yuxblank\phackp\database\api\ObjectsDataAccess;
 use yuxblank\phackp\utils\ReflectionUtils;
 
 /**

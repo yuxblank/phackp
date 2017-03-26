@@ -281,7 +281,8 @@ class Application
 
             $clazz = new $route['class']($httpKernel->getRequest(), $router);
 
-            Router::doRoute($route, $httpKernel->getRequest());
+            $httpKernel->parseBody($route);
+            Router::doRoute($route, $httpKernel->getParams());
         } else {
             $notFoundRoute = self::getErrorRoute(404);
             Router::doRoute($notFoundRoute);

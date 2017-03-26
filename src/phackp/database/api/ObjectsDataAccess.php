@@ -6,7 +6,7 @@
  * Time: 17:28
  */
 
-namespace yuxblank\phackp\database;
+namespace yuxblank\phackp\database\api;
 
 
 interface ObjectsDataAccess
