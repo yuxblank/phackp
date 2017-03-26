@@ -52,84 +52,84 @@ abstract class Model
     /**
      * @return \PDO
      */
-    protected final function getPDO(): \PDO
+    public final function getPDO(): \PDO
     {
         return $this->getOrmInstance()->getDB()->getPDO();
     }
 
-    protected function count(string $query = null, ...$params)
+    public function count(string $query = null, ...$params)
     {
         return $this->getOrmInstance()->countObjects($this, $query, $params);
     }
 
-    protected function delete($id = null)
+    public function delete($id = null)
     {
         $id = $id == null ? $this->id : $id;
         return $this->getOrmInstance()->remove($this, $id);
     }
 
 
-    protected function find(string $query, ...$params)
+    public function find(string $query, ...$params)
     {
         return $this->getOrmInstance()->search($this, $query, $params);
     }
 
-    protected function findAll(string $query = null, ...$params)
+    public function findAll(string $query = null, ...$params)
     {
         return $this->getOrmInstance()->searchAll($this, $query, $params);
     }
 
-    protected function findById($id)
+    public function findById($id)
     {
         return $this->getOrmInstance()->searchByKey($this, $id);
     }
 
-    protected function findAsArray(string $query, ...$params)
+    public function findAsArray(string $query, ...$params)
     {
         return $this->getOrmInstance()->_searchAll($this, $query, $params);
     }
 
-    protected function findAllAsArray(string $query = null, ...$params)
+    public function findAllAsArray(string $query = null, ...$params)
     {
         return $this->getOrmInstance()->_searchAll($this, $query, $params);
     }
 
-    protected function lastInsertId()
+    public function lastInsertId()
     {
         return $this->getOrmInstance()->getDB()->getPDO()->lastInsertId();
     }
 
-    protected function save()
+    public function save()
     {
         return $this->getOrmInstance()->persist($this);
     }
 
-    protected function update()
+    public function update()
     {
         return $this->getOrmInstance()->merge($this);
     }
 
-    protected function belongsTo(string $target)
+    public function belongsTo(string $target)
     {
         return $this->getOrmInstance()->oneToOne($this, $target);
     }
 
-    protected function hasMany(string $target)
+    public function hasMany(string $target)
     {
         return $this->getOrmInstance()->oneToMany($this, $target);
     }
 
-    protected function HasOne(string $target)
+    public function HasOne(string $target)
     {
         return $this->getOrmInstance()->manyToOne($this, $target);
     }
 
-    protected function hasManyThrough(string $target)
+    public function hasManyThrough(string $target)
     {
         return $this->getOrmInstance()->manyToMany($this, $target);
     }
 
-    protected function _hasManyThrough(string $target)
+    public function _hasManyThrough(string $target)
     {
         return $this->getOrmInstance()->_manyToMany($this,  $target);
     }
