@@ -22,91 +22,115 @@ namespace yuxblank\phackp\database;
      *
      * @author yuri.blanc
      */
-abstract class Model extends HackORM
+abstract class Model
 {
+    /** @var HackORM  */
+    private $ormInstance;
+
+    /**
+     * Model constructor.
+     * @param $ormInstance
+     */
+    public function __construct($ormInstance)
+    {
+        if ($this->ormInstance===null) {
+            $this->ormInstance = new HackORM();
+        }
+    }
+
+    /**
+     * @return HackORM
+     */
+    private function getOrmInstance(): HackORM
+    {
+        return $this->ormInstance;
+    }
+
+
+
 
     /**
      * @return \PDO
      */
-    public final function getPDO(): \PDO
+    protected final function getPDO(): \PDO
     {
-        return $this->getDB()->getPDO();
+        return $this->getOrmInstance()->getDB()->getPDO();
     }
 
-    public function count(string $query = null, ...$params)
+    protected function count(string $query = null, ...$params)
     {
-        return $this->countObjects($this, $query, $params);
+        return $this->getOrmInstance()->countObjects($this, $query, $params);
     }
 
-    public function delete($id = null)
+    protected function delete($id = null)
     {
         $id = $id == null ? $this->id : $id;
-        return $this->remove($this, $id);
+        return $this->getOrmInstance()->remove($this, $id);
     }
 
 
-    public function find(string $query, ...$params)
+    protected function find(string $query, ...$params)
     {
-        return $this->search($this, $query, $params);
+        return $this->getOrmInstance()->search($this, $query, $params);
     }
 
-    public function findAll(string $query = null, ...$params)
+    protected function findAll(string $query = null, ...$params)
     {
-        return $this->searchAll($this, $query, $params);
+        return $this->getOrmInstance()->searchAll($this, $query, $params);
     }
 
-    public function findById($id)
+    protected function findById($id)
     {
-        return $this->searchByKey($this, $id);
+        return $this->getOrmInstance()->searchByKey($this, $id);
     }
 
-    public function findAsArray(string $query, ...$params)
+    protected function findAsArray(string $query, ...$params)
     {
-        return $this->_searchAll($this, $query, $params);
+        return $this->getOrmInstance()->_searchAll($this, $query, $params);
     }
 
-    public function findAllAsArray(string $query = null, ...$params)
+    protected function findAllAsArray(string $query = null, ...$params)
     {
-        return $this->_searchAll($this, $query, $params);
+        return $this->getOrmInstance()->_searchAll($this, $query, $params);
     }
 
-    public function lastInsertId()
+    protected function lastInsertId()
     {
-        return $this->getDB()->getPDO()->lastInsertId();
+        return $this->getOrmInstance()->getDB()->getPDO()->lastInsertId();
     }
 
-    public function save()
+    protected function save()
     {
-        return $this->persist($this);
+        return $this->getOrmInstance()->persist($this);
     }
 
-    public function update()
+    protected function update()
     {
-        return $this->merge($this);
+        return $this->getOrmInstance()->merge($this);
     }
 
-    public function belongsTo(string $target)
+    protected function belongsTo(string $target)
     {
-        return $this->oneToOne($this, $target);
+        return $this->getOrmInstance()->oneToOne($this, $target);
     }
 
-    public function hasMany(string $target)
+    protected function hasMany(string $target)
     {
-        return $this->oneToMany($this, $target);
+        return $this->getOrmInstance()->oneToMany($this, $target);
     }
 
-    public function HasOne(string $target)
+    protected function HasOne(string $target)
     {
-        return $this->manyToOne($this, $target);
+        return $this->getOrmInstance()->manyToOne($this, $target);
     }
 
-    public function hasManyThrough(string $target)
+    protected function hasManyThrough(string $target)
     {
-        return $this->manyToMany($this, $target);
+        return $this->getOrmInstance()->manyToMany($this, $target);
     }
 
-    public function _hasManyThrough(string $target)
+    protected function _hasManyThrough(string $target)
     {
-        return $this->_manyToMany($this,  $target);
+        return $this->getOrmInstance()->_manyToMany($this,  $target);
     }
 }
