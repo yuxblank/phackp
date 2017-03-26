@@ -1,7 +1,6 @@
 <?php
+
 namespace yuxblank\phackp\database;
-use yuxblank\phackp\api\ObjectRelationalMapping;
-use yuxblank\phackp\api\ObjectsDataAccess;
 use yuxblank\phackp\core\Application;
 use yuxblank\phackp\utils\ReflectionUtils;
 
@@ -10,14 +9,14 @@ use yuxblank\phackp\utils\ReflectionUtils;
  * @package yuxblank\phackp\core
  * @author Yuri Blanc
  */
-class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
+abstract class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
 {
 
     private $db;
 
     public function __construct()
     {
-        if ($this->db===null) {
+        if ($this->db === null) {
             $this->db = new Database();
         }
     }
@@ -26,7 +25,8 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
     /**
      * @return Database
      */
-    public function getDB() {
+    public function getDB()
+    {
         return $this->db;
     }
 
@@ -37,15 +37,15 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
      * @param $params
      * @return mixed
      */
-    public function findAsArray($object, $query, $params)
+    public function _search($object, string $query = null, ...$params): array
     {
         $table = $this->objectInjector($object);
         $queryBuilder = new QueryBuilder();
         $queryBuilder
             ->select(ReflectionUtils::getProperties($object))
-            ->from(array($table))
-            ->where($query);
-        $this->db->query($queryBuilder->getQuery());
+            ->from(array($table));
+        $query = $query === null ? $queryBuilder->getQuery() : $queryBuilder->getQuery() . ' ' . $query;
+        $this->db->query($query);
         $this->db->paramsBinder($params);
         $this->db->execute();
         return $this->db->singleResult();
@@ -58,15 +58,15 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
      * @param $params
      * @return mixed
      */
-    public function findAllAsArray($object, $query, $params)
+    public function _searchAll($object, string $query = null, ...$params): array
     {
         $table = $this->objectInjector($object);
         $queryBuilder = new QueryBuilder();
         $queryBuilder
             ->select(ReflectionUtils::getProperties($object))
-            ->from(array($table))
-            ->where($query);
-        $this->db->query($queryBuilder->getQuery());
+            ->from(array($table));
+        $query = $query === null ? $queryBuilder->getQuery() : $queryBuilder->getQuery() . ' ' . $query;
+        $this->db->query($query);
         $this->db->paramsBinder($params);
         $this->db->execute();
         return $this->db->resultList();
@@ -74,6 +74,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
 
     /**
      * Returns a stdClass representation of the target table.
+     * @deprecated
      * @param mixed $object
      * @param string $query
      * @param mixed[] $params
@@ -86,19 +87,16 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
         $queryBuilder
             ->select(ReflectionUtils::getProperties($object))
             ->from(array($table));
+        $query = $query === null ? $queryBuilder->getQuery() : $queryBuilder->getQuery() . ' ' . $query;
+        $this->db->query($query);
+        $this->db->paramsBinder($params);
 
-        if ($query!==null && $params!==null) {
-            $queryBuilder
-                ->where($query);
-            $this->db->query($queryBuilder->getQuery());
-            $this->db->paramsBinder($params);
-        } else {
-            $this->db->query($queryBuilder->getQuery());
-        }
         return $this->db->fetchObj();
     }
+
     /**
-     * Returns an array of stdClass representation of the target table.ù
+     * Returns an array of stdClass representation of the target table.
+     * @deprecated
      * @param mixed $object
      * @param string $query
      * @param mixed[] $params
@@ -111,26 +109,21 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
         $queryBuilder
             ->select(ReflectionUtils::getProperties($object))
             ->from(array($table));
+        $query = $query === null ? $queryBuilder->getQuery() : $queryBuilder->getQuery() . ' ' . $query;
+        $this->db->query($query);
+        $this->db->paramsBinder($params);
 
-        if ($query!==null && $params!==null) {
-            $queryBuilder
-                ->where($query);
-            $this->db->query($queryBuilder->getQuery());
-            $this->db->paramsBinder($params);
-        } else {
-            $this->db->query($queryBuilder->getQuery());
-        }
         return $this->db->fetchObjectSet();
     }
 
     /**
      * Find an object instance using the table id. Table primary key must be called id.
      * @param mixed $object
-     * @param int    $id
+     * @param int $id
      * @return mixed Object instance
      **/
 
-    public function findById($object, $id)
+    public function searchByKey($object, $id)
     {
         $queryBuilder = new QueryBuilder();
         $queryBuilder
@@ -138,7 +131,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
             ->from(array($this->objectInjector($object)))
             ->where('id=?');
         $this->db->query($queryBuilder->getQuery());
-        $this->db->bindValue(1,$id);
+        $this->db->bindValue(1, $id);
         return $this->db->fetchSingleClass($object);
     }
 
@@ -150,7 +143,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
      * @param mixed[] $params array with all params data non assoc.
      * @return mixed
      */
-    public function find($object, $query, $params)
+    public function search($object, string $query, ...$params)
     {
         $table = $this->objectInjector($object);
         $queryBuilder = new QueryBuilder();
@@ -158,29 +151,21 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
             ->select(ReflectionUtils::getProperties($object))
             ->from(array($table));
 
-        if ($query!==null && $params!==null) {
-            $queryBuilder
-                ->where($query);
-            $this->db->query($queryBuilder->getQuery());
-            $this->db->paramsBinder($params);
-        } else {
-            $this->db->query($queryBuilder->getQuery());
-        }
-
+        $query = $query === null ? $queryBuilder->getQuery() : $queryBuilder->getQuery() . ' ' . $query;
+        $this->db->query($query);
+        $this->db->paramsBinder($params);
         return $this->db->fetchSingleClass($object);
     }
 
-    public function findAll($object, $query=null, $params=null)
+    public function searchAll($object, string $query = null, ...$params): array
     {
         $queryBuilder = new QueryBuilder();
         $queryBuilder
             ->select(ReflectionUtils::getProperties($object))
             ->from(array($this->objectInjector($object)));
-        $isQuery = $query!==null ? $queryBuilder->where($query) : false;
-        $this->db->query($queryBuilder->getQuery());
-        if ($isQuery) {
-            $this->db->paramsBinder($params);
-        }
+        $query = $query === null ? $queryBuilder->getQuery() : $queryBuilder->getQuery() . ' ' . $query;
+        $this->db->query($query);
+        $this->db->paramsBinder($params);
         return $this->db->fetchClassSet($object);
     }
 
@@ -191,23 +176,15 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
      * @param array $params
      * @return int
      */
-    public function countObjects($object, $query = null, $params = null)
+    public function countObjects($object, string $query = null, ...$params): int
     {
         $queryBuilder = new QueryBuilder();
         $queryBuilder
             ->select(array(' COUNT(*) '))
             ->from(array($this->objectInjector($object)));
 
-        if ($query !== null) {
-            $queryBuilder->where($query);
-            $this->db->query($queryBuilder->getQuery());
-            if ($params !== null) {
-                $this->db->paramsBinder($params);
-            }
-        } else {
-            $this->db->query($queryBuilder->getQuery());
-        }
-
+        $query = $query === null ? $queryBuilder->getQuery() : $queryBuilder->getQuery() . ' ' . $query;
+        $this->db->query($query);
         return $this->db->rowCount();
     }
 
@@ -216,7 +193,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
      * @param mixed $object
      * @return mixed
      */
-    public function save($object)
+    public function persist($object)
     {
         $table = $this->objectInjector(get_class($object));
         $queryBuilder = new QueryBuilder();
@@ -232,10 +209,10 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
      * @param mixed $object
      * @return bool
      */
-    public function update($object)
+    public function merge($object)
     {
         $table = $this->objectInjector(get_class($object));
-        $properties =  $this->db->excludeId(ReflectionUtils::getDeferredInstanceProperties($object));
+        $properties = $this->db->excludeId(ReflectionUtils::getDeferredInstanceProperties($object));
         $queryBuilder = new QueryBuilder();
 
         $queryBuilder
@@ -243,16 +220,17 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
             ->where('id=?');
         $this->db->query($queryBuilder->getQuery());
         $this->db->paramsBinder(array_values($properties));
-        $this->db->bindValue(count($properties)+1, $object->id);
+        $this->db->bindValue(count($properties) + 1, $object->id);
         return $this->db->execute();
     }
+
     /**
      * Delete an object instance in the data-layer
      * @param mixed $object
      * @param int $id
      * @return bool
      */
-    public function delete($object, $id)
+    public function remove($object, $id = null)
     {
         $table = $this->objectInjector($object);
         $queryBuilder = new QueryBuilder();
@@ -260,7 +238,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
             ->delete($table)
             ->where('id=?');
         $this->db->query($queryBuilder->getQuery());
-        $this->db->bindValue(1, $id!=null ? $id : $object->id);
+        $this->db->bindValue(1, $id != null ? $id : $object->id);
         return $this->db->execute();
     }
 
@@ -280,11 +258,11 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
         $queryBuilder
             ->select($this->db->setTableToProperties(ReflectionUtils::getProperties($target), $child))
             ->from(array($child))
-            ->innerJoin($child,$parent.'_id',$parent,'id')
-            ->where($parent.'.id=?');
+            ->innerJoin($child, $parent . '_id', $parent, 'id')
+            ->where($parent . '.id=?');
         $this->db->query($queryBuilder->getQuery());
-        $this->db->bindValue(1,$object->id);
-        return $this->db->fetchClassSet($this->objectRelocator($child));
+        $this->db->bindValue(1, $object->id);
+        return $this->db->fetchClassSet($object);
     }
 
     /**
@@ -301,16 +279,16 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
         $child = strtolower(ReflectionUtils::stripNamespace($target));
         $queryBuilder = new QueryBuilder();
         $queryBuilder
-            ->select($this->db->setTableToProperties(ReflectionUtils::getProperties($target),$child))
+            ->select($this->db->setTableToProperties(ReflectionUtils::getProperties($target), $child))
             ->from(array($child))
-            ->where($parent.'_id =?');
+            ->where($parent . '_id =?');
         $this->db->query($queryBuilder->getQuery());
         $this->db->bindValue(1, $object->id);
         return $this->db->fetchClassSet($target);
     }
 
     /**
-     * * Create N-1 relationship from two objects. Returns an array of target objects of the relationship.
+     * * Create N-1 relationship from two objects. Returns a single target   of the relationship.
      * Is the inverse of oneToMany
      * e.g. (Posts() N <=> 1 Tags())
      * The parent table should contain the child id. (e.g. post contains tags_id column)
@@ -331,7 +309,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
         //->innerJoin($child, 'id', $parent, $child .'_id');
         $subQueryBuilder = new QueryBuilder();
         $subQueryBuilder
-            ->select(array($child ."_id"))
+            ->select(array($child . "_id"))
             ->from(array($parent))
             ->where("id=?");
         // $query = "SELECT * FROM $child WHERE id = (SELECT ". $child ."_id FROM $parent WHERE id=?)";
@@ -340,6 +318,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
         $this->db->bindValue(1, $object->id);
         return $this->db->fetchSingleClass($target);
     }
+
     /**
      * Return a collection of objects of a N to N relationship. The table must be called $object_$target, the N/N table must contain
      * $object_id reference. The table names uses the convention of lowercase (@see ObjectInjector).
@@ -355,12 +334,13 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
         $child = strtolower(ReflectionUtils::stripNamespace($target));
         $queryBuilder = new QueryBuilder();
         $queryBuilder
-            ->select($this->db->setTableToProperties(ReflectionUtils::getProperties($target),$child))
+            ->select($this->db->setTableToProperties(ReflectionUtils::getProperties($target), $child))
             ->from(array($child))
-            ->innerJoin($child,'id',$parent.'_'.$child,$child.'_id');
+            ->innerJoin($child, 'id', $parent . '_' . $child, $child . '_id');
         $this->db->query($queryBuilder->getQuery());
         return $this->db->fetchClassSet($target);
     }
+
     /**
      * Return a collection of objects of a N to N relationship. The table must be called $object_$target, the N/N table must contain
      * $object_id reference. The table names uses the convention of lowercase (@see ObjectInjector).
@@ -376,20 +356,22 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
         $child = strtolower(ReflectionUtils::stripNamespace($target));
         $queryBuilder = new QueryBuilder();
         $queryBuilder
-            ->select($this->db->setTableToProperties(ReflectionUtils::getProperties($target),$child))
+            ->select($this->db->setTableToProperties(ReflectionUtils::getProperties($target), $child))
             ->from(array($child))
-            ->innerJoin($child,'id',$child.'_'.$parent,$child.'_id');
+            ->innerJoin($child, 'id', $child . '_' . $parent, $child . '_id');
         $this->db->query($queryBuilder->getQuery());
         return $this->db->fetchClassSet($target);
     }
 
 
-    private function objectInjector($object) {
-        return strtolower(ReflectionUtils::stripNamespace($object));
+    private function objectInjector($object)
+    {
+        return strtolower(ReflectionUtils::stripNamespace(get_class($object)));
     }
 
-    private function objectRelocator($object) {
-        return Application::getNameSpace()['MODEL'].$object;
+    private function objectRelocator($object)
+    {
+        return Application::getNameSpace()['MODEL'] . $object;
     }
 
 

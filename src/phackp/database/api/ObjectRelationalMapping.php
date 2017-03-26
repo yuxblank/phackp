@@ -6,14 +6,18 @@
  * Time: 17:42
  */
 
-namespace yuxblank\phackp\api;
+namespace yuxblank\phackp\database;
 
 
 interface ObjectRelationalMapping
 {
+    /** Belongs to */
     public function oneToOne($a,$b);
+    /** has_many */
     public function oneToMany($a,$b);
+    /** Has one */
     public function manyToOne($a,$b);
+    /** Has Many Through */
     public function manyToMany($a,$b);
 
 }

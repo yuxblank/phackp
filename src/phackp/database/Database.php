@@ -248,6 +248,9 @@ class Database
      */
     public function fetchClassSet($object)
     {
+        if (is_object($object)){
+            $object = get_class($object);
+        }
         $this->execute();
         return $this->stm->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $object);
     }

@@ -256,11 +256,11 @@ class Application
         }
     }
 
+
     /**
      * Where fun starts!
      * @throws \yuxblank\phackp\exceptions\InvocationException
      * @throws \InvalidArgumentException
-     * @throws \RuntimeException
      */
     public function run()
     {
@@ -277,12 +277,14 @@ class Application
         $router = new Router(self::getRoutes());
 
         $route = $router->findAction($httpKernel);
-        $httpKernel->parseBody($route);
         if ($route !== null) {
-            Router::doRoute($route,$httpKernel->getParams(), $httpKernel->getRequest());
+
+            $clazz = new $route['class']($httpKernel->getRequest(), $router);
+
+            Router::doRoute($route, $httpKernel->getRequest());
         } else {
             $notFoundRoute = self::getErrorRoute(404);
-            Router::doRoute($notFoundRoute, null, $httpKernel->getRequest());
+            Router::doRoute($notFoundRoute);
         }
 
         if (self::isDebug() && ($httpKernel->getContentType() === 'text/plain' || $httpKernel->getContentType() === 'text/html')) {

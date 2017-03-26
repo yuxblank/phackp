@@ -21,6 +21,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use yuxblank\phackp\api\EventDrivenController;
 use yuxblank\phackp\exceptions\InvocationException;
 use yuxblank\phackp\utils\ReflectionUtils;
+use Zend\Diactoros\Server;
 
 /**
  * This class provides routing methods for index.php. Some methods can be used also externally for inverse routing and url
@@ -46,10 +47,11 @@ class Router
     }
 
 
-    public static function doRoute($route, array $params = null, ServerRequestInterface $serverRequest = null)
+    public static function doRoute($route, array $params = null, ServerRequestInterface $serverRequest = null):Server
     {
         $controller = null;
         $clazz = $route['class'];
+
 
         try {
             $controller = new $clazz($serverRequest);

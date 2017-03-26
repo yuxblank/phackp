@@ -14,10 +14,12 @@ use Zend\Diactoros\Response\JsonResponse;
 class Controller {
 
     protected $request;
+    protected $router;
 
-    public function __construct(ServerRequestInterface $request=null) {
+    public function __construct(ServerRequestInterface $request=null, Router $router=null) {
         defined('pHackpRuntime') or die ('.:: pHackp runtime never initiated! - invalid access to resources ::. ');
         $this->request = $request;
+        $this->router = $router;
 
     }
 
@@ -49,6 +51,7 @@ class Controller {
     public static function renderJSON($data, $options=null):JsonResponse {
         return new JsonResponse($data);
     }
+
 
 
 
