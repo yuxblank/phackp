@@ -47,7 +47,7 @@ class Router
     }
 
 
-    public static function doRoute($route, array $params = null, ServerRequestInterface $serverRequest = null):Server
+    public static function doRoute($route, array $params = null, ServerRequestInterface $serverRequest = null)
     {
         $controller = null;
         $clazz = $route['class'];
