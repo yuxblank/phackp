@@ -77,12 +77,12 @@ abstract class Model extends HackORM
 
     public function save()
     {
-        return $this->save($this);
+        return $this->persist($this);
     }
 
     public function update()
     {
-        return $this->update($this);
+        return $this->merge($this);
     }
 
     public function belongsTo(string $target)

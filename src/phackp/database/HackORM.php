@@ -11,7 +11,7 @@ use yuxblank\phackp\utils\ReflectionUtils;
  * @package yuxblank\phackp\core
  * @author Yuri Blanc
  */
-abstract class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
+class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
 {
 
     private $db;
