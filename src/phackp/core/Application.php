@@ -6,6 +6,8 @@ use DI\Container;
 use DI\ContainerBuilder;
 use DI\NotFoundException;
 use function DI\object;
+use yuxblank\phackp\database\Database;
+use yuxblank\phackp\database\HackORM;
 use yuxblank\phackp\exceptions\ConfigurationException;
 use yuxblank\phackp\exceptions\InvocationException;
 use yuxblank\phackp\services\api\AutoBootService;
@@ -29,7 +31,6 @@ class Application
     protected $serviceConfig = [];
     /** @var  Container */
     private $container;
-    private $frameworkDependencies = [];
 
 
 
@@ -268,17 +269,20 @@ class Application
             }
         }
         */
+        $containerBuilder->addDefinitions($this->getFrameworkDependecies());
+        $containerBuilder->useAutowiring(true);
+        $containerBuilder->useAnnotations(true);
         $this->container = $containerBuilder->build();
     }
 
-    private function setFrameworkDependecies(){
-
-        $this->frameworkDependencies =
+    private function getFrameworkDependecies(){
+        return
         [
-            Router::class => object(Router::class)
-
+            Router::class => object(Router::class),
+            Database::class => function(){
+                return new Database($this->container->get('database'));
+            }
         ];
-
 
     }
 

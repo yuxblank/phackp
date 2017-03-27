@@ -14,13 +14,15 @@ use yuxblank\phackp\utils\ReflectionUtils;
 class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
 {
 
+    /**
+     * @Inject
+     * @var Database
+     */
     private $db;
 
     public function __construct()
     {
-        if ($this->db === null) {
-            $this->db = new Database();
-        }
+
     }
 
 

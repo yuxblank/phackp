@@ -24,7 +24,9 @@ namespace yuxblank\phackp\database;
      */
 abstract class Model
 {
-    /** @var HackORM  */
+    /**
+     * @Inject
+     * @var HackORM  */
     private $ormInstance;
 
     /**
@@ -32,9 +34,7 @@ abstract class Model
      */
     public function __construct()
     {
-        if ($this->ormInstance===null) {
-            $this->ormInstance = new HackORM();
-        }
+
     }
 
     /**
