@@ -305,7 +305,7 @@ class Application
         $httpKernel = new HttpKernel();
 
         /** @var Router $router */
-        $router = $this->container->make(Router::class, $this->container->get('ROUTES'));
+        $router = $this->container->make(Router::class, ['routes' =>$this->container->get('ROUTES')]);
 
         $route = $router->findAction($httpKernel);
 
@@ -321,7 +321,8 @@ class Application
                 }
                 /** Make the controller class */
                 $clazz = $this->container->make($route['class'], [
-                    'request' => $httpKernel->getRequest()
+                    'request' => $httpKernel->getRequest(),
+                    'router' => $router
                 ]);
 
             } catch (NotFoundException $e) {
