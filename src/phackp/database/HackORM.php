@@ -20,9 +20,9 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
      */
     private $db;
 
-    public function __construct()
+    public function __construct(Database $database)
     {
-
+        $this->db = $database;
     }
 
 

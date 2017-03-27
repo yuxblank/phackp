@@ -17,8 +17,9 @@ namespace yuxblank\phackp\database;
      * You should have received a copy of the GNU General Public License
      * along with this program.  If not, see <http://www.gnu.org/licenses/>.
      */
+use yuxblank\phackp\core\Application;
 
-    /**
+/**
      *
      * @author yuri.blanc
      */
@@ -30,11 +31,17 @@ abstract class Model
     private $ormInstance;
 
     /**
-     * Model constructor.
+     * Model constructor is private, use Class::Make() to get an instance
      */
-    public function __construct()
-    {
+    private function __construct(){}
 
+    /**
+     * Facade for making an instance of the model
+     * @return Model
+     * @throws \Psr\Container\ContainerExceptionInterface
+     */
+    public static function make():Model{
+        return Application::getInstance()->container()->get(get_called_class());
     }
 
     /**

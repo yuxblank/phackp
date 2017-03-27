@@ -5,7 +5,7 @@ namespace yuxblank\phackp\core;
 use DI\Container;
 use DI\ContainerBuilder;
 use DI\NotFoundException;
-use function DI\object;
+use Psr\Container\ContainerInterface;
 use yuxblank\phackp\database\Database;
 use yuxblank\phackp\database\HackORM;
 use yuxblank\phackp\exceptions\ConfigurationException;
@@ -14,6 +14,7 @@ use yuxblank\phackp\services\api\AutoBootService;
 use yuxblank\phackp\services\exceptions\ServiceProviderException;
 use yuxblank\phackp\utils\ReflectionUtils;
 use yuxblank\phackp\utils\UnitConversion;
+use function DI\object;
 
 /**
  * Class Application
@@ -24,7 +25,7 @@ class Application
 {
 
     protected static $instance;
-    protected $APP_ROOT;
+    public static $ROOT;
     private $config;
     protected $version;
     protected $services = [];
@@ -61,81 +62,29 @@ class Application
         return self::$instance;
     }
 
+
+    public function container():ContainerInterface
+    {
+        return $this->container;
+    }
+
     /**
      * Return the entire array of configurations.
      * @return array
+     * @throws \InvalidArgumentException
+     * @throws \DI\NotFoundException
+     * @throws \DI\DependencyException
      */
-    public static function getConfig()
+    public static function getConfig(string $name, string $key=null)
     {
-        return self::getInstance()->config;
-    }
+        $config =  self::getInstance()->container->get($name);
 
-    /**
-     * Return routes
-     * @return array
-     */
-    public static function getRoutes()
-    {
-        return self::getInstance()->config['ROUTES'];
-    }
-
-    /**
-     * Return database configurations
-     * @return array
-     */
-    public static function getDatabase()
-    {
-        return self::getInstance()->config['DATABASE'];
-    }
-
-    /**
-     * Return namespaces configured for the project
-     * @return array
-     */
-    public static function getNameSpace()
-    {
-        return self::getInstance()->config['NAMESPACE'];
-    }
-
-    /**
-     * Return the application root (__DIR__)
-     * @return string
-     */
-    public static function getAppRoot()
-    {
-        return self::getInstance()->APP_ROOT;
-    }
-
-    /** Return view root dir
-     * @return mixed
-     */
-    public static function getViewRoot()
-    {
-        return self::getInstance()->config['VIEW']['ROOT'];
-    }
-
-    /**
-     * Return the application url configured
-     * @return string
-     */
-
-    public static function getAppUrl()
-    {
-        return self::getInstance()->config['APP_URL'];
-    }
-
-    /**
-     * Return the action for the given error code from routes.
-     * @param int $code
-     * @return mixed
-     */
-    public static function getErrorRoute(int $code)
-    {
-        if (isset(self::getRoutes()['ERROR'][$code])) {
-            return self::getRoutes()['ERROR'][$code];
+        if($key && array_key_exists($key,$config)){
+            return $config[$key];
         }
-        return null;
+        return $config;
     }
+
 
     /**
      * Check if the application APP_MODE is set to DEBUG
@@ -144,7 +93,7 @@ class Application
     public static function isDebug()
     {
 
-        switch (self::getConfig()['APP_MODE']) {
+        switch (self::getConfig("app.globals", 'APP_MODE')) {
             case 'DEBUG':
                 return true;
                 break;
@@ -178,6 +127,14 @@ class Application
         }
         return null;
     }
+
+
+    public static function getErrorRoute(int $error){
+        if (array_key_exists($error, self::getConfig('route', 'ERROR'))){
+            return self::getConfig('route', 'ERROR')[$error];
+        }
+    }
+
 
 
     /**
@@ -244,7 +201,7 @@ class Application
 
         $this->runtime();
 
-        $this->APP_ROOT = $realPath;
+        self::$ROOT = $realPath;
 
         $config = $configPath === null ? $realPath . '/config/' : $configPath;
 
@@ -269,20 +226,24 @@ class Application
             }
         }
         */
-        $containerBuilder->addDefinitions($this->getFrameworkDependecies());
+        $containerBuilder->addDefinitions($this->frameworkDI());
         $containerBuilder->useAutowiring(true);
         $containerBuilder->useAnnotations(true);
         $this->container = $containerBuilder->build();
     }
 
-    private function getFrameworkDependecies(){
+    private function frameworkDI(){
         return
-        [
-            Router::class => object(Router::class),
-            Database::class => function(){
-                return new Database($this->container->get('database'));
-            }
-        ];
+            [
+                Router::class => object(Router::class),
+                Database::class => function(){
+                    return new Database($this->container->get('database'));
+                },
+                HackORM::class => object(HackORM::class),
+                View::class => function(){
+                    return new View($this->container->get('app.view'));
+                }
+            ];
 
     }
 
@@ -291,6 +252,8 @@ class Application
      * Where fun starts!
      * @throws \yuxblank\phackp\exceptions\InvocationException
      * @throws \InvalidArgumentException
+     * @throws \DI\DependencyException
+     * @throws \DI\NotFoundException
      */
     public function run()
     {
@@ -305,7 +268,7 @@ class Application
         $httpKernel = new HttpKernel();
 
         /** @var Router $router */
-        $router = $this->container->make(Router::class, ['routes' =>$this->container->get('ROUTES')]);
+        $router = $this->container->make(Router::class, ['routes' =>$this->container->get('routes')]);
 
         $route = $router->findAction($httpKernel);
 

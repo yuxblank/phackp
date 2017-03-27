@@ -32,9 +32,9 @@ class Database
     /**
      * Database constructor.
      */
-    public function __construct()
+    public function __construct(array $config)
     {
-        $this->conf = Application::getDatabase();
+        $this->conf = $config;
 
         $this->connect();
 

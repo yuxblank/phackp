@@ -31,6 +31,21 @@ class View {
 
     private $content;
 
+    protected $viewConfig;
+    protected $appConfig;
+
+    /**
+     * View constructor.
+     * @param array $var
+     */
+    public function __construct(array $viewConfig, array $appConfig)
+    {
+        $this->viewConfig = $viewConfig;
+        $this->appConfig = $appConfig;
+
+    }
+
+
     /**
      * Add data to the View object specifing a name and a value,
      * set variables will be accessible with their $name in the rendered view.
@@ -51,7 +66,7 @@ class View {
      */
     public function render(string $view=null) {
 
-        $appRoot = Application::getViewRoot();
+        $appRoot = $this->viewConfig['ROOT'];
         if ($view!==null) {
             if (strpos($view, "/") !== false) {
                 $path = implode("/", array_slice(explode("/", $view), 0, -1));
@@ -94,7 +109,7 @@ class View {
             extract($args, EXTR_PREFIX_ALL,'');
         }
         if ($hook)
-            $path = Application::getAppRoot()  . '/src/view/' . Application::getConfig()['VIEW']['HOOKS'][$hook];
+            $path = Application::$ROOT  . '/src/view/' . $this->viewConfig['HOOKS'][$hook];
         if (file_exists($path) ) {
             include $path;
         }
