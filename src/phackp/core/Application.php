@@ -1,7 +1,11 @@
 <?php
+
 namespace yuxblank\phackp\core;
 
-use Psr\Container\ContainerInterface;
+use DI\Container;
+use DI\ContainerBuilder;
+use DI\NotFoundException;
+use function DI\object;
 use yuxblank\phackp\exceptions\ConfigurationException;
 use yuxblank\phackp\exceptions\InvocationException;
 use yuxblank\phackp\services\api\AutoBootService;
@@ -14,7 +18,7 @@ use yuxblank\phackp\utils\UnitConversion;
  * @author Yuri Blanc
  * @package yuxblank\phackp\core
  */
-class Application implements ContainerInterface
+class Application
 {
 
     protected static $instance;
@@ -22,9 +26,11 @@ class Application implements ContainerInterface
     private $config;
     protected $version;
     protected $services = [];
-    protected $instances = [];
-    protected $singletons = [];
     protected $serviceConfig = [];
+    /** @var  Container */
+    private $container;
+    private $frameworkDependencies = [];
+
 
 
     /**
@@ -32,13 +38,13 @@ class Application implements ContainerInterface
      */
     protected function __construct()
     {
-       /* // register default provider
-        $this->services =
-            [
-                ErrorHandlerProvider::class
-            ];
+        /* // register default provider
+         $this->services =
+             [
+                 ErrorHandlerProvider::class
+             ];
 
-        $this->registerService($this->services);*/
+         $this->registerService($this->services);*/
     }
 
     /**
@@ -124,7 +130,7 @@ class Application implements ContainerInterface
      */
     public static function getErrorRoute(int $code)
     {
-        if (isset(self::getRoutes()['ERROR'][$code])){
+        if (isset(self::getRoutes()['ERROR'][$code])) {
             return self::getRoutes()['ERROR'][$code];
         }
         return null;
@@ -144,54 +150,32 @@ class Application implements ContainerInterface
         }
     }
 
-    public function registerService(string $service,bool $bootOnStartup=null, array $config=null)
+    public function registerService(string $service, bool $bootOnStartup = null, array $config = null)
     {
         try {
-            self::getInstance()->services[] =  $service;
-        } catch (InvocationException $ex){
+            self::getInstance()->services[] = $service;
+        } catch (InvocationException $ex) {
             throw new InvocationException("Unable to make service instance", InvocationException::SERVICE);
         }
-        if ($config!==null){
+        if ($config !== null) {
             self::getInstance()->serviceConfig[$service] = $config;
         }
-        if ($bootOnStartup){
+        if ($bootOnStartup) {
             $serviceInstance = self::getInstance()->getService($service);
-            if (!class_implements($serviceInstance, AutoBootService::class)){
+            if (!class_implements($serviceInstance, AutoBootService::class)) {
                 throw new ServiceProviderException('Service ' . $service . 'does not implements ' . AutoBootService::class, ServiceProviderException::NOT_AUTO_BOOT);
             }
         }
     }
 
-    public  function getServiceConfig(string $serviceName){
+    public function getServiceConfig(string $serviceName)
+    {
         foreach (self::getInstance()->serviceConfig as $name => $options) {
             if ($name === $serviceName) {
                 return $options;
             }
         }
         return null;
-    }
-
-    public function get($id)
-    {
-        if (array_key_exists($id, $this->instances)) {
-            return $this->instances[$id];
-        } else if (array_key_exists($id, $this->singletons)) {
-            return $this->singletons[$id];
-        }
-
-        // todo thrown ContainerExceptionInterface
-    }
-
-    public function has($id)
-    {
-        return array_key_exists($id, $this->instances) || array_key_exists($id, $this->singletons);
-    }
-
-    public function addInstance(string $id, $instance) {
-        $this->instances[$id] = $instance;
-    }
-    public function addSingleton($instance){
-        $this->singletons[get_class($instance)] = $instance;
     }
 
 
@@ -207,17 +191,17 @@ class Application implements ContainerInterface
     public static function getService(string $serviceName): ServiceProvider
     {
         foreach (self::getInstance()->services as $key => $service) {
-            if (!is_object($service) && $service === $serviceName){
+            if (!is_object($service) && $service === $serviceName) {
                 try {
                     // bootstrap with config
-                    if (self::getInstance()->getServiceConfig($serviceName) !== null){
+                    if (self::getInstance()->getServiceConfig($serviceName) !== null) {
                         self::getInstance()->services[$key] = new $service(self::getInstance()->getServiceConfig($serviceName));
                     } else {
                         // no config
                         self::getInstance()->services[$key] = new $service();
                     }
-                    if (!is_subclass_of(self::getInstance()->services[$key], ServiceProvider::class)){
-                        throw new ServiceProviderException('Class ' . get_class($service) .  ' is not a subclass of '.
+                    if (!is_subclass_of(self::getInstance()->services[$key], ServiceProvider::class)) {
+                        throw new ServiceProviderException('Class ' . get_class($service) . ' is not a subclass of ' .
                             ServiceProvider::class, ServiceProviderException::NOT_A_PROVIDER);
                     }
 
@@ -225,8 +209,8 @@ class Application implements ContainerInterface
                     self::getInstance()->services[$key]->bootstrap();
 
 
-                } catch (InvocationException $ex){
-                    throw new InvocationException('Unable to make service instance', InvocationException::SERVICE,$ex);
+                } catch (InvocationException $ex) {
+                    throw new InvocationException('Unable to make service instance', InvocationException::SERVICE, $ex);
                 }
             }
             if (self::getInstance()->services[$key] instanceof $serviceName) {
@@ -253,6 +237,10 @@ class Application implements ContainerInterface
     public function bootstrap(string $realPath, string $configPath = null)
     {
 
+
+        $containerBuilder = new ContainerBuilder();
+
+
         $this->runtime();
 
         $this->APP_ROOT = $realPath;
@@ -267,9 +255,10 @@ class Application implements ContainerInterface
         $files = glob($config . '*.php');
 
         foreach ($files as $file) {
-            $tmp[] = require $file;
+            $containerBuilder->addDefinitions($file);
         }
 
+        /*
         foreach ($tmp as $key => $value) {
 
             foreach ($value as $key2 => $innervalue) {
@@ -277,8 +266,20 @@ class Application implements ContainerInterface
                 $this->config[$key2] = $innervalue;
 
             }
-
         }
+        */
+        $this->container = $containerBuilder->build();
+    }
+
+    private function setFrameworkDependecies(){
+
+        $this->frameworkDependencies =
+        [
+            Router::class => object(Router::class)
+
+        ];
+
+
     }
 
 
@@ -298,21 +299,28 @@ class Application implements ContainerInterface
         // get the httpKernel
 
         $httpKernel = new HttpKernel();
-        // get the route
-        $router = new Router(self::getRoutes());
+
+        /** @var Router $router */
+        $router = $this->container->make(Router::class, $this->container->get('ROUTES'));
 
         $route = $router->findAction($httpKernel);
 
-        if (!is_subclass_of($route['class'], Controller::class)){
-            throw new InvocationException('Class ' . $route['class'] . ' is not a controller, extend '. Controller::class .' is required by controllers', InvocationException::ROUTER);
+        if (!is_subclass_of($route['class'], Controller::class)) {
+            throw new InvocationException('Class ' . $route['class'] . ' is not a controller, extend ' . Controller::class . ' is required by controllers', InvocationException::ROUTER);
         }
 
-
         if ($route !== null) {
+            $clazz = null;
             try {
-                $clazz = new $route['class']($httpKernel->getRequest());
-                $this->addSingleton($router);
-            } catch (InvocationException $e) {
+                if (!$this->container->has($route['class'])) {
+                    $this->container->set($route['class'], $route['class']);
+                }
+                /** Make the controller class */
+                $clazz = $this->container->make($route['class'], [
+                    'request' => $httpKernel->getRequest()
+                ]);
+
+            } catch (NotFoundException $e) {
                 throw new InvocationException('Class ' . $route['class'] . ' not found in routes', InvocationException::ROUTER, $e);
             }
 
