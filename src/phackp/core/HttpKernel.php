@@ -2,7 +2,6 @@
 namespace yuxblank\phackp\core;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Server;
 use Zend\Diactoros\ServerRequestFactory;
 
 /**

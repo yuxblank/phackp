@@ -232,17 +232,24 @@ class Application
         $this->container = $containerBuilder->build();
     }
 
+    /**
+     * Framework DI factories
+     * @return array
+     */
     private function frameworkDI(){
         return
             [
-                Router::class => object(Router::class),
+                Router::class => function (){
+                    return new Router(['routes' => $this->container->get('routes')]);
+                },
                 Database::class => function(){
                     return new Database($this->container->get('database'));
                 },
                 HackORM::class => object(HackORM::class),
                 View::class => function(){
-                    return new View($this->container->get('app.view'));
-                }
+                    return new View(
+                        array_merge($this->container->get('app.view'), $this->container->get('app.globals'), ['APP_ROOT'=>self::$ROOT]));
+                },
             ];
 
     }
@@ -268,7 +275,7 @@ class Application
         $httpKernel = new HttpKernel();
 
         /** @var Router $router */
-        $router = $this->container->make(Router::class, ['routes' =>$this->container->get('routes')]);
+        $router = $this->container->make(Router::class);
 
         $route = $router->findAction($httpKernel);
 

@@ -32,16 +32,14 @@ class View {
     private $content;
 
     protected $viewConfig;
-    protected $appConfig;
 
     /**
      * View constructor.
      * @param array $var
      */
-    public function __construct(array $viewConfig, array $appConfig)
+    public function __construct(array $viewConfig)
     {
         $this->viewConfig = $viewConfig;
-        $this->appConfig = $appConfig;
 
     }
 

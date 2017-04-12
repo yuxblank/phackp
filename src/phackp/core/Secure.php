@@ -27,7 +27,7 @@ namespace yuxblank\phackp\core;
 class Secure extends Controller {
     private $cripto;
     public function __construct() {
-        parent::__construct();
+        parent::__construct($this->request, $this->router);
     }
     
     /**
