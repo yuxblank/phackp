@@ -5,6 +5,7 @@ namespace yuxblank\phackp\core;
 use DI\Container;
 use DI\ContainerBuilder;
 use DI\NotFoundException;
+use function foo\func;
 use Psr\Container\ContainerInterface;
 use yuxblank\phackp\database\Database;
 use yuxblank\phackp\database\HackORM;
@@ -250,6 +251,9 @@ class Application
                     return new View(
                         array_merge($this->container->get('app.view'), $this->container->get('app.globals'), ['APP_ROOT'=>self::$ROOT]));
                 },
+                Session::class => function(){
+                    return new Session($this->container->get('app.session'));
+                }
             ];
 
     }

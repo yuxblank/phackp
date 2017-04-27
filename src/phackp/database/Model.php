@@ -53,8 +53,6 @@ abstract class Model
     }
 
 
-
-
     /**
      * @return \PDO
      */

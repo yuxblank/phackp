@@ -12,15 +12,14 @@ class Session
     private $lifetime;
     private $cookie;
     private $useCookies;
-
-    public function __construct()
+    public function __construct(array $config)
     {
-        $this->lifetime = Application::getConfig()['SESSION']['LIFETIME'];
-        if (Application::getConfig()['SESSION']['USE_COOKIES']) {
+        $this->lifetime = $config['LIFETIME'];
+        if ($config['USE_COOKIES']) {
             $this->useCookies = true;
-            $this->cookie = Application::getConfig()['SESSION']['COOKIE'];
+            $this->cookie = $config['COOKIE'];
         }
-        $this->name = Application::getConfig()['SESSION']['NAME'];
+        $this->name = $config['NAME'];
         if (!isset($_SESSION)) {
             $this->init();
         }
@@ -40,18 +39,18 @@ class Session
 
     public function exist($name)
     {
-        return isset($_SESSION['$name']);
+        return isset($_SESSION[$name]);
     }
 
     private function init()
     {
         session_name($this->name);
         session_start();
-        if (Application::getConfig()['SESSION']['USE_COOKIES']) {
+        if ($this->useCookies) {
             setcookie(
-                Application::getConfig()['SESSION']['NAME'],
+                $this->name,
                 session_id(),
-                time() + Application::getConfig()['SESSION']['LIFETIME'],
+                time() + $this->lifetime,
                 '/',
                 $this->cookie['DOMAIN'],
                 $this->cookie['SECURE'],
@@ -95,56 +94,6 @@ class Session
     public function getToken()
     {
         return $this->token;
-    }
-
-    private static function _init()
-    {
-        if (!isset($_SESSION)) {
-            session_name(Application::getConfig()['SESSION']['NAME']);
-            session_start();
-            if (Application::getConfig()['SESSION']['USE_COOKIES']) {
-                setcookie(
-                    Application::getConfig()['SESSION']['NAME'],
-                    session_id(),
-                    time() + Application::getConfig()['SESSION']['LIFETIME'],
-                    '/',
-                    Application::getConfig()['SESSION']['COOKIE']['DOMAIN'],
-                    Application::getConfig()['SESSION']['COOKIE']['SECURE'],
-                    Application::getConfig()['SESSION']['COOKIE']['HTTP_ONLY']
-                );
-            }
-        }
-    }
-
-    public static function _setValue($name, $object)
-    {
-        self::_init();
-        $_SESSION[$name] = $object;
-
-    }
-
-    public static function _getValue($name)
-    {
-        self::_init();
-        if (self::_exist($name)) {
-            return $_SESSION[$name];
-        }
-
-    }
-
-    public static function _exist($name)
-    {
-        return isset($_SESSION[$name]);
-    }
-
-    public static function _stop()
-    {
-        session_unset();
-    }
-
-    public static function regenerate()
-    {
-        session_regenerate_id(true);
     }
 
 

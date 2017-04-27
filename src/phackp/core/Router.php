@@ -345,22 +345,6 @@ class Router
 
 
     /**
-     * @deprecated
-     * Performs a inverse route returning returning an array with [0 => 'Controller', 1 => 'action']
-     * Recreate the current application CONTROLLER namespace using the application configuration.
-     * @param string $action
-     * @return mixed[]
-     */
-    public static function getController(string $action): array
-    {
-        $namespace = Application::getNameSpace()['CONTROLLER'];
-        $array = explode('@', $action);
-        $array[0] = $namespace . $array[0];
-        return $array;
-    }
-
-
-    /**
      * Performs a 404 not found
      * @static
      * @param string $action
