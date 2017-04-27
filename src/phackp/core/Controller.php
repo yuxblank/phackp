@@ -15,16 +15,22 @@ class Controller {
 
     protected $request;
     protected $router;
+    /**
+     * @Inject
+     * @var Session
+     */
     protected $session;
+    /**
+     * @Inject
+     * @var View
+     */
     protected $view;
 
-    public function __construct(ServerRequestInterface $request, Router $router, Session $session, View $view) {
+    public function __construct(ServerRequestInterface $request, Router $router) {
         defined('pHackpRuntime') or die ('.:: pHackp runtime never initiated! - invalid access to resources ::. ');
 
         $this->request = $request;
         $this->router = $router;
-        $this->session = $session;
-        $this->view = $view;
     }
 
 
