@@ -34,16 +34,18 @@ class Router
 {
 
     private $routes;
-
+    private $appGlobals;
     const WILDCARD_REGEXP = '({[aA-zZ0-9]+})';
+
 
     /**
      * Router constructor.
      * @param $routes
      */
-    public function __construct($routes)
+    public function __construct($routes, $appGlobals)
     {
         $this->routes = $routes;
+        $this->appGlobals = $appGlobals;
     }
 
 
@@ -79,13 +81,13 @@ class Router
      * @param array $params
      * @return string
      */
-    public static function link(string $link, array $params = null): string
+    public function link(string $link, array $params = null): string
     {
         if ($params !== null) {
-            $url = self::fastParamBind($link, $params);
-            return Application::getAppUrl() . '/' . implode('/', $url);
+            $url = $this->fastParamBind($link, $params);
+            return $this->appGlobals['APP_URL'] . '/' . implode('/', $url);
         } else {
-            return $link !== '/' ? Application::getAppUrl() . '/' . $link : Application::getAppUrl() . $link;
+            return $link !== '/' ? $this->appGlobals['APP_URL']. '/' . $link : $this->appGlobals['APP_URL']. $link;
         }
     }
 
@@ -97,17 +99,17 @@ class Router
      * @param string|null $method
      * @return mixed
      */
-    private static function searchThroughRoutes(string $value, String $type, string $method = null)
+    private function searchThroughRoutes(string $value, String $type, string $method = null)
     {
 
         if ($method !== null) {
-            foreach (Application::getRoutes()[$method] as $key => $route) {
+            foreach ($this->routes[$method] as $key => $route) {
                 if (array_key_exists($type, $route) && $route[$type] === $value) {
                     return $route['url'];
                 }
             }
         } else {
-            foreach (Application::getRoutes() as $key => $rest) {
+            foreach ($this->routes as $key => $rest) {
                 foreach ($rest as $innerKey => $innerRoute) {
                     if (array_key_exists($type, $innerRoute) && $innerRoute[$type] === $value) {
                         return $innerRoute['url'];
@@ -131,18 +133,18 @@ class Router
      * @param array|null $params
      * @return string
      */
-    public static function action(string $action, String $method = null, array $params = null)
+    public function action(string $action, String $method = null, array $params = null)
     {
-        $link = self::searchThroughRoutes($action, 'action', $method);
+        $link = $this->searchThroughRoutes($action, 'action', $method);
         if ($link === null) {
             $link = Application::getErrorRoute(404)['url'];
         }
 
         if ($params !== null) {
-            $url = self::fastParamBind($link, $params);
-            return Application::getAppUrl() . '/' . implode('/', $url);
+            $url = $this->fastParamBind($link, $params);
+            return $this->appGlobals['APP_URL'] . '/' . implode('/', $url);
         } else {
-            return $link !== '/' ? Application::getAppUrl() . '/' . $link : Application::getAppUrl() . $link;
+            return $link !== '/' ? $this->appGlobals['APP_URL'] . '/' . $link : $this->appGlobals['APP_URL'] . $link;
         }
     }
 
@@ -158,7 +160,7 @@ class Router
      * @return string
      */
 
-    public static function alias(string $alias, String $method = null, array $params = null)
+    public function alias(string $alias, String $method = null, array $params = null)
     {
 
         $link = self::searchThroughRoutes($alias, 'alias', $method);
@@ -168,9 +170,9 @@ class Router
 
         if ($params !== null) {
             $url = $url = self::fastParamBind($link, $params);
-            return Application::getAppUrl() . '/' . implode('/', $url);
+            return $this->appGlobals['APP_URL'] . '/' . implode('/', $url);
         } else {
-            return $link !== '/' ? Application::getAppUrl() . '/' . $link : Application::getAppUrl() . $link;
+            return $link !== '/' ? $this->appGlobals['APP_URL'] . '/' . $link : $this->appGlobals['APP_URL']. $link;
         }
     }
 
@@ -183,7 +185,7 @@ class Router
      * @return array
      */
 
-    private static function fastParamBind($routeUrl, $params)
+    private function fastParamBind($routeUrl, $params)
     {
         $url = explode('/', $routeUrl);
         $wildcards = preg_grep(self::WILDCARD_REGEXP, $url);
@@ -200,7 +202,7 @@ class Router
      * @param string $url
      * @param array|null $params
      */
-    public static function switchAction(string $url, array $params = null)
+    public function switchAction(string $url, array $params = null)
     {
         $r = Router::link($url, $params);
         header("location:$r", true, 302);
@@ -212,7 +214,7 @@ class Router
      * @param $url
      */
 
-    public static function redirect(string $url)
+    public function redirect(string $url)
     {
         header("location:$url", true, 302);
     }
@@ -230,10 +232,10 @@ class Router
         foreach ($this->routes[$httpKernel->getRequest()->getMethod()] as $key => $route) {
             // case without params
 
-      /*      // if options, check if the content-type is the same
-            if (array_key_exists('options', $route) && !self::isSameContentType($route, $httpKernel)) {
-                continue;
-            }*/
+            /*      // if options, check if the content-type is the same
+                  if (array_key_exists('options', $route) && !self::isSameContentType($route, $httpKernel)) {
+                      continue;
+                  }*/
 
             // if the url is the same static route, just return!
             if ($route['url'] === $httpKernel->getRequest()->getUri()->getPath()) {
@@ -247,7 +249,6 @@ class Router
                     $url = self::compareRoutes($routeArray, $queryArray);
                     // if compare routes matched and the url has been recreated, return this route
                     if ($url !== null) {
-                        $route['params'] = array();
                         $route['params'] = self::getWildCardParams($routeArray, $queryArray);
                         return $route;
                     } else {
@@ -269,7 +270,7 @@ class Router
      * @param HttpKernel $httpKernel
      * @return bool
      */
-    private static function isSameContentType(array $route, HttpKernel $httpKernel): bool
+    private function isSameContentType(array $route, HttpKernel $httpKernel): bool
     {
         return $route['options']['accept'] === $httpKernel->getContentType();
 
@@ -283,7 +284,7 @@ class Router
      * @param $realParams
      * @return null|string
      */
-    private static function compareRoutes(array $routeParams, array $realParams)
+    private function compareRoutes(array $routeParams, array $realParams)
     {
 
         // try checking if wildcards static params are less than the difference with real
@@ -332,7 +333,7 @@ class Router
      * @param $queryArray
      * @return array
      */
-    private static function getWildCardParams(array $routeParams, array $queryArray): array
+    private function getWildCardParams(array $routeParams, array $queryArray): array
     {
         $params = preg_grep(self::WILDCARD_REGEXP, $routeParams);
         $getParams = array();
@@ -351,17 +352,13 @@ class Router
      * @param string $method
      */
 
-    public static function notFound()
+    public  function notFound()
     {
-        header('location:' . Application::getAppUrl() . '/' . Application::getErrorRoute(404)['url'], true);
+        header('location:' . $this->appGlobals['APP_URL']. '/' . Application::getErrorRoute(404)['url'], true);
         exit(0);
     }
 
 
-    public static function methodNotAllowed()
-    {
-
-    }
 
 
 }

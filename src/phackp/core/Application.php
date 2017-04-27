@@ -241,7 +241,7 @@ class Application
         return
             [
                 Router::class => function (){
-                    return new Router($this->container->get('routes'));
+                    return new Router($this->container->get('routes'), $this->container->get('app.globals'));
                 },
                 Database::class => function(){
                     return new Database($this->container->get('database'));
@@ -249,7 +249,7 @@ class Application
                 HackORM::class => object(HackORM::class),
                 View::class => function(){
                     return new View(
-                        array_merge($this->container->get('app.view'), $this->container->get('app.globals'), ['APP_ROOT'=>self::$ROOT]));
+                        array_merge($this->container->get('app.view'), $this->container->get('app.globals'), ['APP_ROOT'=>self::$ROOT]), $this->container->get(Router::class));
                 },
                 Session::class => function(){
                     return new Session($this->container->get('app.session'));

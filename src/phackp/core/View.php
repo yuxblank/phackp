@@ -30,16 +30,17 @@ class View {
     private $var = array();
 
     private $content;
-
+    protected $router;
     protected $viewConfig;
 
     /**
      * View constructor.
      * @param array $var
      */
-    public function __construct(array $viewConfig)
+    public function __construct(array $viewConfig, Router $router)
     {
         $this->viewConfig = $viewConfig;
+        $this->router = $router;
 
     }
 
@@ -64,14 +65,14 @@ class View {
      */
     public function render(string $view=null) {
 
+
         $appRoot = $this->viewConfig['ROOT'];
         if ($view!==null) {
             if (strpos($view, "/") !== false) {
                 $path = implode("/", array_slice(explode("/", $view), 0, -1));
             }
             $this->content = $appRoot . '/' . $view . ".php";
-            extract($this->var, EXTR_OVERWRITE);
-
+            extract(array_merge($this->var, $this->viewConfig),EXTR_OVERWRITE);
             if (!$path) {
                 include $appRoot . "/main.php";
             } else {
