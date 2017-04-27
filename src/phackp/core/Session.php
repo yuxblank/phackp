@@ -20,9 +20,6 @@ class Session
             $this->cookie = $config['COOKIE'];
         }
         $this->name = $config['NAME'];
-        if (!isset($_SESSION)) {
-            $this->init();
-        }
     }
 
     public function setValue($name, $object)
@@ -42,7 +39,7 @@ class Session
         return isset($_SESSION[$name]);
     }
 
-    private function init()
+    public function init()
     {
         session_name($this->name);
         session_start();

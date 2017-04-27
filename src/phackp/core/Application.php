@@ -241,7 +241,7 @@ class Application
         return
             [
                 Router::class => function (){
-                    return new Router(['routes' => $this->container->get('routes')]);
+                    return new Router($this->container->get('routes'));
                 },
                 Database::class => function(){
                     return new Database($this->container->get('database'));
