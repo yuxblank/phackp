@@ -31,11 +31,6 @@ abstract class Model
     private $ormInstance;
 
     /**
-     * Model constructor is private, use Class::Make() to get an instance
-     */
-    private function __construct(){}
-
-    /**
      * Facade for making an instance of the model
      * @return Model
      * @throws \Psr\Container\ContainerExceptionInterface
