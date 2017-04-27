@@ -253,6 +253,9 @@ class Application
                 },
                 Session::class => function(){
                     return new Session($this->container->get('app.session'));
+                },
+                HttpKernel::class => function() {
+                    return new HttpKernel($this->container->get('app.http'));
                 }
             ];
 
@@ -276,7 +279,7 @@ class Application
 
         // get the httpKernel
 
-        $httpKernel = new HttpKernel();
+        $httpKernel = $this->container->make(HttpKernel::class);
 
         /** @var Router $router */
         $router = $this->container->make(Router::class);

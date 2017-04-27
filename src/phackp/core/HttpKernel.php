@@ -14,15 +14,16 @@ final class HttpKernel
     /** @var  ServerRequestInterface */
     private $request;
     private $params;
+    private $config;
 
     /**
      * HttpKernel constructor. When i run it capture all the information about the request and parse the url.
-     * @throws \InvalidArgumentException
+     * @param array $config
      */
-    public function __construct()
+    public function __construct(array $config)
     {
+        $this->config = $config;
         $this->request = ServerRequestFactory::fromGlobals();
-
     }
 
     /**
@@ -116,7 +117,7 @@ final class HttpKernel
         switch ($this->request->getMethod()) {
             case 'GET':
                 // get paramets ?name=value
-                if (Application::getConfig()['INJECT_QUERY_STRING']) {
+                if ($this->config['INJECT_QUERY_STRING']) {
                     $this->setParams($this->getRequest()->getQueryParams());
                 }
                 if (array_key_exists('params', $route)) {
