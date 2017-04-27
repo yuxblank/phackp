@@ -19,6 +19,7 @@ namespace yuxblank\phackp\core;
 
 
 /**
+ * @deprecated
  * @author Yuri Blanc
  * @package yuxblank\phackp\core
  */

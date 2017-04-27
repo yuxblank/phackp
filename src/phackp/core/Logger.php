@@ -20,7 +20,7 @@
 namespace yuxblank\phackp\core;
 /**
  * Description of Logger
- *
+ * @deprecated
  * @author yuri.blanc
  */
 class Logger {
