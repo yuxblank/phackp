@@ -130,14 +130,6 @@ class Application
     }
 
 
-    public static function getErrorRoute(int $error){
-        if (array_key_exists($error, self::getConfig('routes', 'ERROR'))){
-            return self::getConfig('routes', 'ERROR')[$error];
-        }
-    }
-
-
-
     /**
      * Retrieve the instance from the container.
      * Eventually makes an instance of the ServiceProvider if was never bootstrapped
@@ -314,7 +306,7 @@ class Application
             ReflectionUtils::invoke($clazz, 'onAfter');
 
         } else {
-            $notFoundRoute = self::getErrorRoute(404);
+            $notFoundRoute = $this->container->get(Router::class)->getErrorRoute(404);
             $clazz = new $notFoundRoute['class']($httpKernel->getRequest(), $router);
             ReflectionUtils::invoke($clazz, 'onBefore');
             $clazz->{$notFoundRoute['method']}($httpKernel->getParams());

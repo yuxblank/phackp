@@ -360,5 +360,12 @@ class Router
         exit(0);
     }
 
+    public function getErrorRoute(int $code){
+         if (isset($this->routes['ERROR'][$code])){
+             return $this->routes['ERROR'][$code];
+         }
+         return null;
+    }
+
 
 }
