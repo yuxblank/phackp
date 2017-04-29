@@ -131,8 +131,8 @@ class Application
 
 
     public static function getErrorRoute(int $error){
-        if (array_key_exists($error, self::getConfig('route', 'ERROR'))){
-            return self::getConfig('route', 'ERROR')[$error];
+        if (array_key_exists($error, self::getConfig('routes', 'ERROR'))){
+            return self::getConfig('routes', 'ERROR')[$error];
         }
     }
 
@@ -286,11 +286,12 @@ class Application
 
         $route = $router->findAction($httpKernel);
 
-        if (!is_subclass_of($route['class'], Controller::class)) {
-            throw new InvocationException('Class ' . $route['class'] . ' is not a controller, extend ' . Controller::class . ' is required by controllers', InvocationException::ROUTER);
-        }
-
         if ($route !== null) {
+
+            if (!is_subclass_of($route['class'], Controller::class)) {
+                throw new InvocationException('Class ' . $route['class'] . ' is not a controller, extend ' . Controller::class . ' is required by controllers', InvocationException::ROUTER);
+            }
+
             $clazz = null;
             try {
                 if (!$this->container->has($route['class'])) {

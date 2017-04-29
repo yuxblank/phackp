@@ -30,6 +30,15 @@ abstract class Model
      * @var HackORM  */
     private $ormInstance;
 
+
+    public function __construct()
+    {
+        // create ORM instance when used outside DI container or when de-serializing.
+        if ($this->ormInstance=== null) {
+            $this->ormInstance =  Application::getInstance()->container()->get(HackORM::class);
+        }
+    }
+
     /**
      * Facade for making an instance of the model
      * @return Model

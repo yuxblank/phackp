@@ -1,4 +1,5 @@
 <?php
+
 namespace yuxblank\phackp\core;
 
 /*
@@ -49,6 +50,12 @@ class Router
     }
 
 
+    /**
+     * Todo refactor with DI
+     * @param $route
+     * @param array|null $params
+     * @param ServerRequestInterface|null $serverRequest
+     */
     public static function doRoute($route, array $params = null, ServerRequestInterface $serverRequest = null)
     {
         $controller = null;
@@ -86,9 +93,8 @@ class Router
         if ($params !== null) {
             $url = $this->fastParamBind($link, $params);
             return $this->appGlobals['APP_URL'] . '/' . implode('/', $url);
-        } else {
-            return $link !== '/' ? $this->appGlobals['APP_URL']. '/' . $link : $this->appGlobals['APP_URL']. $link;
         }
+        return $link !== '/' ? $this->appGlobals['APP_URL'] . '/' . $link : $this->appGlobals['APP_URL'] . $link;
     }
 
 
@@ -115,8 +121,6 @@ class Router
                         return $innerRoute['url'];
                     }
                 }
-
-
             }
         }
     }
@@ -143,9 +147,8 @@ class Router
         if ($params !== null) {
             $url = $this->fastParamBind($link, $params);
             return $this->appGlobals['APP_URL'] . '/' . implode('/', $url);
-        } else {
-            return $link !== '/' ? $this->appGlobals['APP_URL'] . '/' . $link : $this->appGlobals['APP_URL'] . $link;
         }
+        return $link !== '/' ? $this->appGlobals['APP_URL'] . '/' . $link : $this->appGlobals['APP_URL'] . $link;
     }
 
     /**
@@ -163,7 +166,7 @@ class Router
     public function alias(string $alias, String $method = null, array $params = null)
     {
 
-        $link = self::searchThroughRoutes($alias, 'alias', $method);
+        $link = $this->searchThroughRoutes($alias, 'alias', $method);
         if ($link === null) {
             $link = Application::getErrorRoute(404)['url'];
         }
@@ -171,9 +174,8 @@ class Router
         if ($params !== null) {
             $url = $url = self::fastParamBind($link, $params);
             return $this->appGlobals['APP_URL'] . '/' . implode('/', $url);
-        } else {
-            return $link !== '/' ? $this->appGlobals['APP_URL'] . '/' . $link : $this->appGlobals['APP_URL']. $link;
         }
+        return $link !== '/' ? $this->appGlobals['APP_URL'] . '/' . $link : $this->appGlobals['APP_URL'] . $link;
     }
 
 
@@ -245,11 +247,11 @@ class Router
                 // find wildcard
                 if (preg_match(self::WILDCARD_REGEXP, $route['url'])) {
                     $routeArray = preg_split('@/@', $route['url'], NULL, PREG_SPLIT_NO_EMPTY);
-                    $queryArray = preg_split('@/@',$httpKernel->getRequest()->getUri()->getPath(), NULL, PREG_SPLIT_NO_EMPTY);
-                    $url = self::compareRoutes($routeArray, $queryArray);
+                    $queryArray = preg_split('@/@', $httpKernel->getRequest()->getUri()->getPath(), NULL, PREG_SPLIT_NO_EMPTY);
+                    $url = $this->compareRoutes($routeArray, $queryArray);
                     // if compare routes matched and the url has been recreated, return this route
                     if ($url !== null) {
-                        $route['params'] = self::getWildCardParams($routeArray, $queryArray);
+                        $route['params'] = $this->getWildCardParams($routeArray, $queryArray);
                         return $route;
                     } else {
                         // search again
@@ -352,13 +354,11 @@ class Router
      * @param string $method
      */
 
-    public  function notFound()
+    public function notFound()
     {
-        header('location:' . $this->appGlobals['APP_URL']. '/' . Application::getErrorRoute(404)['url'], true);
+        header('location:' . $this->appGlobals['APP_URL'] . '/' . Application::getErrorRoute(404)['url'], true);
         exit(0);
     }
-
-
 
 
 }

@@ -1,7 +1,7 @@
 <?php
 namespace yuxblank\phackp\core;
 /**
- * Description of Security
+ * Session Wrapper class
  *
  * @author yuri.blanc
  */
@@ -22,37 +22,44 @@ class Session
         $this->name = $config['NAME'];
     }
 
+
     public function setValue($name, $object)
     {
+        $this->init();
         $_SESSION[$name] = $object;
     }
 
     public function getValue($name)
     {
+        $this->init();
         if ($this->exist($name)) { //&& $this->checkValidity($this->token)  ) {
             return $_SESSION[$name];
         }
+        return null;
     }
 
     public function exist($name)
     {
-        return isset($_SESSION[$name]);
+        $this->init();
+        return $this->isSession() && isset($_SESSION[$name]);
     }
 
     public function init()
     {
-        session_name($this->name);
-        session_start();
-        if ($this->useCookies) {
-            setcookie(
-                $this->name,
-                session_id(),
-                time() + $this->lifetime,
-                '/',
-                $this->cookie['DOMAIN'],
-                $this->cookie['SECURE'],
-                $this->cookie['HTTP_ONLY']
-            );
+        if (!$this->isSession()) {
+            session_name($this->name);
+            session_start();
+            if ($this->useCookies) {
+                setcookie(
+                    $this->name,
+                    session_id(),
+                    time() + $this->lifetime,
+                    '/',
+                    $this->cookie['DOMAIN'],
+                    $this->cookie['SECURE'],
+                    $this->cookie['HTTP_ONLY']
+                );
+            }
         }
     }
 
@@ -66,11 +73,7 @@ class Session
 
     private function sameDomain()
     {
-        if ($this->cookie['DOMAIN'] === $_SERVER['HTTP_HOST']) {
-            return true;
-        } else {
-            return false;
-        }
+        return $this->cookie['DOMAIN'] === $_SERVER['HTTP_HOST'];
     }
 
 
@@ -78,6 +81,10 @@ class Session
     {
         $this->init();
         session_unset();
+    }
+
+    public function isSession():bool{
+        return session_status() !== PHP_SESSION_NONE;
     }
 
 
