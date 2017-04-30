@@ -10,7 +10,6 @@ use yuxblank\phackp\services\api\ErrorHandler;
 use yuxblank\phackp\services\api\ExceptionHandler;
 use yuxblank\phackp\services\api\ThrowableHandler;
 use yuxblank\phackp\services\exceptions\ServiceProviderException;
-use yuxblank\phackp\utils\ReflectionUtils;
 
 /**
  * Created by IntelliJ IDEA.
@@ -48,7 +47,7 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler, 
             \DI\object($excClazz)
                 ->constructor(
                     $router,
-                    $this->container->get($router->getErrorRoute(500)['class']),
+                    $this->container->make($router->getErrorRoute(500)['class']),
                     $router->getErrorRoute(500)['method']));
 
         $routes = $this->container->get(Router::class)->getErrorRoute(500);

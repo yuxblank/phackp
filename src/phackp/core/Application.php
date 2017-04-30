@@ -308,10 +308,11 @@ class Application
 
         } else {
             $notFoundRoute = $this->container->get(Router::class)->getErrorRoute(404);
-            $clazz = new $notFoundRoute['class']($httpKernel->getRequest(), $router);
-            ReflectionUtils::invoke($clazz, 'onBefore');
-            $clazz->{$notFoundRoute['method']}($httpKernel->getParams());
-            ReflectionUtils::invoke($clazz, 'onAfter');
+            $clazz = $this->container->make($notFoundRoute['class'], [
+                'request' => $httpKernel->getRequest(),
+                'router' => $router
+            ]);
+            $router->doRoute($clazz, $notFoundRoute['method'], $httpKernel->getParams());
         }
 
         if (self::isDebug() && ($httpKernel->getContentType() === 'text/plain' || $httpKernel->getContentType() === 'text/html')) {
