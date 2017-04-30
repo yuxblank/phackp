@@ -34,12 +34,29 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler, 
     /** @var  ExceptionHandler */
     protected $exceptionDelegate;
 
+    protected $errorController;
+    protected $errorMethod;
+
 
     public function bootstrap()
     {
         /* set_error_handler(array($this, 'errorHandler'), E_ALL);*/ // todo
         $excClazz = $this->getConfig('exception_handler_delegate');
-        $this->container->set($excClazz, $excClazz);
+        $router = $this->container->get(Router::class);
+
+        $this->container->set($excClazz,
+            \DI\object($excClazz)
+                ->constructor(
+                    $router,
+                    $this->container->get($router->getErrorRoute(500)['class']),
+                    $router->getErrorRoute(500)['method']));
+
+        $routes = $this->container->get(Router::class)->getErrorRoute(500);
+        $this->container->set($routes['class'], $routes['class']);
+        $this->errorController = $this->container->get($routes['class']);
+        $this->errorMethod = $routes['method'];
+
+
         try {
             $this->exceptionDelegate = $this->container->make($excClazz);
             if (!class_implements($this->exceptionDelegate, ExceptionHandler::class)){
@@ -126,9 +143,7 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler, 
     public function exceptionHandler(\Throwable $exception)
     {
         $this->handle($exception);
-        $router = $this->container->get(Router::class)->getErrorRoute(500);
-        $instance = $this->container->get($router['class']);
-        $this->exceptionDelegate->onException($instance, $router['method'], $this->exceptions);
+        $this->exceptionDelegate->onException($this->exceptions);
     }
 
 

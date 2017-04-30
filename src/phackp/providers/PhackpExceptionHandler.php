@@ -28,21 +28,27 @@ class PhackpExceptionHandler implements ExceptionHandler
      */
 
     protected $router;
+    protected $instance;
+    protected $method;
 
     /**
      * PhackpExceptionHandler constructor.
      * @param Router $router
+     * @param ApplicationController|null $instance
+     * @param string|null $method
      */
-    public function __construct(Router $router)
+    public function __construct(Router $router, ApplicationController $instance=null, string $method=null)
     {
         $this->router = $router;
+        $this->instance = $instance;
+        $this->method = $method;
     }
 
 
-    public function onException(ApplicationController $instance=null, string $method=null, array $throwable)
+    public function onException(array $throwable)
     {
-        if ($instance!==null){
-            $this->router->doRoute($instance, $method, $throwable);
+        if ($this->instance!==null){
+            $this->router->doRoute($this->instance, $this->method, $throwable);
         } else {
             foreach ($throwable as $ex) {
                 echo "<p>" . $ex->getMessage();

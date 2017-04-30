@@ -22,6 +22,6 @@ interface ExceptionHandler
      * @param array $throwable
      * @return mixed
      */
-    public function onException(ApplicationController $controllerInstance=null, string $method=null,  array $throwable);
+    public function onException(array $throwable);
 
 }
