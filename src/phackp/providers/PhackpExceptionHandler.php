@@ -31,15 +31,15 @@ class PhackpExceptionHandler implements ExceptionHandler
 
     protected $router;
     protected $serverRequest;
+
     /**
      * Todo make DI working
      * PhackpExceptionHandler constructor.
-     * @param $router
+     * @param Router $router
      */
-    public function __construct(Router $router, ServerRequestInterface $serverRequest)
+    public function __construct(Router $router)
     {
         $this->router = $router;
-        $this->serverRequest = $serverRequest;
     }
 
 
@@ -47,7 +47,7 @@ class PhackpExceptionHandler implements ExceptionHandler
     {
         if (($route = $this->router->getErrorRoute(500))!==null){
 
-            $this->router->doRoute($route, $throwable, $this->serverRequest);
+            $this->router->doRoute($route, $throwable);
 
         } else {
             foreach ($throwable as $ex) {

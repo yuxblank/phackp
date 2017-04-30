@@ -246,6 +246,9 @@ class Application
                     return new HttpKernel($this->container->get('app.http'));
                 },
                 ServiceProvider::class => object(ServiceProvider::class)->property('container', $this->container),
+                ServerRequestInterface::class => function () {
+                    return $this->container->get(HttpKernel::class)->getRequest();
+                }
             ];
 
     }
@@ -291,9 +294,6 @@ class Application
                     'request' => $httpKernel->getRequest(),
                     'router' => $router
                 ]);
-
-                // ad ServerRequest to ServerRequestStack
-                $this->container->set(ServerRequestInterface::class, $httpKernel->getRequest());
 
             } catch (NotFoundException $e) {
                 throw new InvocationException('Class ' . $route['class'] . ' not found in routes', InvocationException::ROUTER, $e);
