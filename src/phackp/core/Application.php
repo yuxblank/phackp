@@ -150,9 +150,6 @@ class Application
             throw new ServiceProviderException('Class ' . get_class($service) . ' is not valid ' .
                 ServiceProvider::class, ServiceProviderException::DI_ERROR, $e);
         }
-
-        // do run bootstrap on Provider implementation
-        $service->bootstrap();
         return $service;
     }
 
@@ -279,7 +276,7 @@ class Application
         /** @var Router $router */
         $router = $this->container->make(Router::class);
 
-        $route = $router->findAction($httpKernel);
+        $route = $router->findAction();
 
         if ($route !== null) {
 

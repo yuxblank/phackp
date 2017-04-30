@@ -30,7 +30,6 @@ abstract class Controller implements ApplicationController {
 
     public function __construct(ServerRequestInterface $request=null, Router $router=null) {
         defined('pHackpRuntime') or die ('.:: pHackp runtime never initiated! - invalid access to resources ::. ');
-
         $this->request = $request;
         $this->router = $router;
     }
@@ -44,7 +43,7 @@ abstract class Controller implements ApplicationController {
      * @param int $expire in seconds
      */
     public function keep($name,$value,$expire=null) {
-        if (!isset($expire)) {
+        if ($expire!==null) {
             $expire = time()+1; //default
         } else {
             $expire = time() + $expire;

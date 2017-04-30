@@ -20,10 +20,8 @@ namespace yuxblank\phackp\core;
  */
 use Psr\Http\Message\ServerRequestInterface;
 use yuxblank\phackp\api\ApplicationController;
-use yuxblank\phackp\api\EventDrivenController;
 use yuxblank\phackp\exceptions\InvocationException;
 use yuxblank\phackp\utils\ReflectionUtils;
-use Zend\Diactoros\Server;
 
 /**
  * This class provides routing methods for index.php. Some methods can be used also externally for inverse routing and url
@@ -133,7 +131,7 @@ class Router
     {
         $link = $this->searchThroughRoutes($action, 'action', $method);
         if ($link === null) {
-            $link = Application::getErrorRoute(404)['url'];
+            $link = $this->getErrorRoute(404)['url'];
         }
 
         if ($params !== null) {
@@ -217,58 +215,34 @@ class Router
     /**
      * Find the action from httpKernel and set routed parameters if any.
      * if the route has been found return the route.
-     * @param HttpKernel $httpKernel
      * @return null|array
      */
-    public function findAction(HttpKernel $httpKernel)
+    public function findAction()
     {
 
-        foreach ($this->routes[$httpKernel->getRequest()->getMethod()] as $key => $route) {
+        foreach ($this->routes[$this->serverRequest->getMethod()] as $key => $route) {
             // case without params
 
-            /*      // if options, check if the content-type is the same
-                  if (array_key_exists('options', $route) && !self::isSameContentType($route, $httpKernel)) {
-                      continue;
-                  }*/
-
             // if the url is the same static route, just return!
-            if ($route['url'] === $httpKernel->getRequest()->getUri()->getPath()) {
+            if ($route['url'] === $this->serverRequest->getUri()->getPath()) {
                 return $route;
-
-            } else {
-                // find wildcard
-                if (preg_match(self::WILDCARD_REGEXP, $route['url'])) {
-                    $routeArray = preg_split('@/@', $route['url'], NULL, PREG_SPLIT_NO_EMPTY);
-                    $queryArray = preg_split('@/@', $httpKernel->getRequest()->getUri()->getPath(), NULL, PREG_SPLIT_NO_EMPTY);
-                    $url = $this->compareRoutes($routeArray, $queryArray);
-                    // if compare routes matched and the url has been recreated, return this route
-                    if ($url !== null) {
-                        $route['params'] = $this->getWildCardParams($routeArray, $queryArray);
-                        return $route;
-                    } else {
-                        // search again
-                        continue;
-                    }
+            }
+            // find wildcard
+            if (preg_match(self::WILDCARD_REGEXP, $route['url'])) {
+                $routeArray = preg_split('@/@', $route['url'], NULL, PREG_SPLIT_NO_EMPTY);
+                $queryArray = preg_split('@/@', $this->serverRequest->getUri()->getPath(), NULL, PREG_SPLIT_NO_EMPTY);
+                $url = $this->compareRoutes($routeArray, $queryArray);
+                // if compare routes matched and the url has been recreated, return this route
+                if ($url !== null) {
+                    $route['params'] = $this->getWildCardParams($routeArray, $queryArray);
+                    return $route;
                 }
             }
+
         }
         return null;
     }
 
-
-    /**
-     * Check if the content-type of the request is the same of the 'options'=>'accept' value of the given route.
-     * 'option' is an optional array to be used when you want to restrict a particular content-type submission.
-     * set HTTP_HEADER to 415 when false.
-     * @param array $route
-     * @param HttpKernel $httpKernel
-     * @return bool
-     */
-    private function isSameContentType(array $route, HttpKernel $httpKernel): bool
-    {
-        return $route['options']['accept'] === $httpKernel->getContentType();
-
-    }
 
 
     /**
@@ -338,19 +312,6 @@ class Router
         return $getParams;
     }
 
-
-    /**
-     * Performs a 404 not found
-     * @static
-     * @param string $action
-     * @param string $method
-     */
-
-    public function notFound()
-    {
-        header('location:' . $this->appGlobals['APP_URL'] . '/' . $this->getErrorRoute(404)['url'], true);
-        exit(0);
-    }
 
     public function getErrorRoute(int $code){
          if (isset($this->routes['ERROR'][$code])){
