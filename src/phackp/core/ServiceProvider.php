@@ -15,11 +15,17 @@ use yuxblank\phackp\services\api\Provider;
 use yuxblank\phackp\services\api\Service;
 use yuxblank\phackp\services\exceptions\ServiceProviderException;
 
+/**
+ * Class ServiceProvider
+ * is the superclass of any Provider of pHackp framework.
+ * Those services allow to access DI container after has been created.
+ * @package yuxblank\phackp\core
+ */
+
 abstract class ServiceProvider implements Service
 {
     /** @var  array */
-    protected $config
-    ;
+    protected $config;
     /**
      * @Inject
      * @var Container

@@ -41,7 +41,7 @@ class Controller {
      * @param string $value
      * @param int $expire in seconds
      */
-    public static function keep($name,$value,$expire=null) {
+    public function keep($name,$value,$expire=null) {
         if (!isset($expire)) {
             $expire = time()+1; //default
         } else {
@@ -57,7 +57,7 @@ class Controller {
      * @return JsonResponse
      * @throws \InvalidArgumentException
      */
-    public static function renderJSON($data, $options=null):JsonResponse {
+    public function renderJSON($data, $options=null):JsonResponse {
         return new JsonResponse($data);
     }
 

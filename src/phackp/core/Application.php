@@ -30,8 +30,6 @@ class Application
     public static $ROOT;
     private $config;
     protected $version;
-    protected $services = [];
-    protected $serviceConfig = [];
     /** @var  Container */
     private $container;
 
@@ -41,13 +39,6 @@ class Application
      */
     protected function __construct()
     {
-        /* // register default provider
-         $this->services =
-             [
-                 ErrorHandlerProvider::class
-             ];
-
-         $this->registerService($this->services);*/
     }
 
     /**
@@ -64,7 +55,7 @@ class Application
     }
 
 
-    public function container(): ContainerInterface
+    public function container(): Container
     {
         return $this->container;
     }
@@ -101,6 +92,13 @@ class Application
         }
     }
 
+    /**
+     * Register a service.
+     * @param string $service
+     * @param bool|null $bootOnStartup
+     * @param array|null $config
+     * @throws ServiceProviderException
+     */
     public function registerService(string $service, bool $bootOnStartup = null, array $config = null)
     {
 
@@ -119,16 +117,6 @@ class Application
             // create instance
             $this->getServiceInstance($service);
         }
-    }
-
-    public function getServiceConfig(string $serviceName)
-    {
-        foreach (self::getInstance()->serviceConfig as $name => $options) {
-            if ($name === $serviceName) {
-                return $options;
-            }
-        }
-        return null;
     }
 
 
