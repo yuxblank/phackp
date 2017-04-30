@@ -9,7 +9,7 @@
 namespace yuxblank\phackp\core;
 
 
-
+use DI\Container;
 use yuxblank\phackp\exceptions\InvocationException;
 use yuxblank\phackp\services\api\Provider;
 use yuxblank\phackp\services\api\Service;
@@ -18,8 +18,12 @@ use yuxblank\phackp\services\exceptions\ServiceProviderException;
 abstract class ServiceProvider implements Service
 {
     /** @var  array */
-    protected $config;
-    /** @Inject @var  Container */
+    protected $config
+    ;
+    /**
+     * @Inject
+     * @var Container
+     */
     protected $container;
 
     /**

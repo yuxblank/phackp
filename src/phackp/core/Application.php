@@ -255,7 +255,8 @@ class Application
                 },
                 HttpKernel::class => function () {
                     return new HttpKernel($this->container->get('app.http'));
-                }
+                },
+                ServiceProvider::class => object(ServiceProvider::class)->property('container', $this->container),
             ];
 
     }
