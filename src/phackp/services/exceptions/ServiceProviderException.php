@@ -15,6 +15,8 @@ class ServiceProviderException extends \Exception
     const NOT_A_PROVIDER = 48;
     /** The provider does not support auto-boot */
     const NOT_AUTO_BOOT = 64;
+    /** The provider has an invalid status inside the ContainerInterface implementation */
+    const DI_ERROR = 128;
 
     public function __construct(string $class, $code=null, \Exception $previous=null)
     {

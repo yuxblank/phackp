@@ -19,6 +19,7 @@ final class HttpKernel
     /**
      * HttpKernel constructor. When i run it capture all the information about the request and parse the url.
      * @param array $config
+     * @throws \InvalidArgumentException
      */
     public function __construct(array $config)
     {

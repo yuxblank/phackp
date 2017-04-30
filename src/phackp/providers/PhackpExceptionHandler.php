@@ -26,11 +26,25 @@ class PhackpExceptionHandler implements ExceptionHandler
      * @param array $throwable
      * @return mixed|void
      */
+
+    protected $router;
+
+    /**
+     * Todo make DI working
+     * PhackpExceptionHandler constructor.
+     * @param $router
+     */
+    public function __construct(Router $router)
+    {
+        $this->router = $router;
+    }
+
+
     public function onException(array $throwable)
     {
-        if (($route = Application::getErrorRoute(500))!=null){
+        if (($route = $this->router->getErrorRoute(500))!==null){
 
-            Router::doRoute($route, $throwable);
+            $this->router->doRoute($route, $throwable);
 
         } else {
             foreach ($throwable as $ex) {

@@ -4,8 +4,9 @@ namespace yuxblank\phackp\core;
 
 use DI\Container;
 use DI\ContainerBuilder;
+use DI\DependencyException;
 use DI\NotFoundException;
-use function foo\func;
+use DI\Scope;
 use Psr\Container\ContainerInterface;
 use yuxblank\phackp\database\Database;
 use yuxblank\phackp\database\HackORM;
@@ -33,7 +34,6 @@ class Application
     protected $serviceConfig = [];
     /** @var  Container */
     private $container;
-
 
 
     /**
@@ -64,7 +64,7 @@ class Application
     }
 
 
-    public function container():ContainerInterface
+    public function container(): ContainerInterface
     {
         return $this->container;
     }
@@ -76,11 +76,11 @@ class Application
      * @throws \DI\NotFoundException
      * @throws \DI\DependencyException
      */
-    public static function getConfig(string $name, string $key=null)
+    public static function getConfig(string $name, string $key = null)
     {
-        $config =  self::getInstance()->container->get($name);
+        $config = self::getInstance()->container->get($name);
 
-        if($key && array_key_exists($key,$config)){
+        if ($key && array_key_exists($key, $config)) {
             return $config[$key];
         }
         return $config;
@@ -103,19 +103,21 @@ class Application
 
     public function registerService(string $service, bool $bootOnStartup = null, array $config = null)
     {
-        try {
-            self::getInstance()->services[] = $service;
-        } catch (InvocationException $ex) {
-            throw new InvocationException("Unable to make service instance", InvocationException::SERVICE);
-        }
-        if ($config !== null) {
-            self::getInstance()->serviceConfig[$service] = $config;
-        }
+
+        // add service to container
+        $this->container->set($service,
+            \Di\object($service)
+                ->scope(Scope::SINGLETON)
+                ->constructor($config)
+                ->method('bootstrap'));
+
+        // boot if required
         if ($bootOnStartup) {
-            $serviceInstance = self::getInstance()->getService($service);
-            if (!class_implements($serviceInstance, AutoBootService::class)) {
+            if (!class_implements($service, AutoBootService::class)) {
                 throw new ServiceProviderException('Service ' . $service . 'does not implements ' . AutoBootService::class, ServiceProviderException::NOT_AUTO_BOOT);
             }
+            // create instance
+            $this->getServiceInstance($service);
         }
     }
 
@@ -135,40 +137,45 @@ class Application
      * Eventually makes an instance of the ServiceProvider if was never bootstrapped
      * @param string $serviceName
      * @return mixed|ServiceProvider
+     * @throws \InvalidArgumentException
      * @throws \yuxblank\phackp\services\exceptions\ServiceProviderException
-     * @throws \yuxblank\phackp\exceptions\InvocationException
      */
 
-    public static function getService(string $serviceName): ServiceProvider
+    public function getServiceInstance(string $serviceName): ServiceProvider
     {
-        foreach (self::getInstance()->services as $key => $service) {
-            if (!is_object($service) && $service === $serviceName) {
-                try {
-                    // bootstrap with config
-                    if (self::getInstance()->getServiceConfig($serviceName) !== null) {
-                        self::getInstance()->services[$key] = new $service(self::getInstance()->getServiceConfig($serviceName));
-                    } else {
-                        // no config
-                        self::getInstance()->services[$key] = new $service();
-                    }
-                    if (!is_subclass_of(self::getInstance()->services[$key], ServiceProvider::class)) {
-                        throw new ServiceProviderException('Class ' . get_class($service) . ' is not a subclass of ' .
-                            ServiceProvider::class, ServiceProviderException::NOT_A_PROVIDER);
-                    }
+        $service = null;
+        try {
+            /**
+             * @var ServiceProvider | null
+             */
+            $service = $this->container->get($serviceName);
 
-                    // do run bootstrap on Provider implementation
-                    self::getInstance()->services[$key]->bootstrap();
-
-
-                } catch (InvocationException $ex) {
-                    throw new InvocationException('Unable to make service instance', InvocationException::SERVICE, $ex);
-                }
+            if (!is_subclass_of($service, ServiceProvider::class)) {
+                throw new ServiceProviderException('Class ' . get_class($service) . ' is not a subclass of ' .
+                    ServiceProvider::class, ServiceProviderException::NOT_A_PROVIDER);
             }
-            if (self::getInstance()->services[$key] instanceof $serviceName) {
-                return self::getInstance()->services[$key];
-            }
+        } catch (NotFoundException $e) {
+            throw new ServiceProviderException('Class ' . get_class($service) . ' has not been registered ' .
+                ServiceProvider::class, ServiceProviderException::REQUIRE_UNREGISTERED, $e);
+        } catch (DependencyException $e) {
+            throw new ServiceProviderException('Class ' . get_class($service) . ' is not valid ' .
+                ServiceProvider::class, ServiceProviderException::DI_ERROR, $e);
         }
-        throw new ServiceProviderException($serviceName, ServiceProviderException::REQUIRE_UNREGISTERED);
+
+        // do run bootstrap on Provider implementation
+        $service->bootstrap();
+        return $service;
+    }
+
+    /**
+     * Facade. Get Service Provider from the container
+     * @param string $serviceName
+     * @return mixed
+     * @throws \yuxblank\phackp\services\exceptions\ServiceProviderException
+     * @throws \InvalidArgumentException
+     */
+    public static function getService(string $serviceName){
+        return self::getInstance()->getServiceInstance($serviceName);
     }
 
     private final function runtime()
@@ -187,7 +194,6 @@ class Application
      */
     public function bootstrap(string $realPath, string $configPath = null)
     {
-
 
         $containerBuilder = new ContainerBuilder();
 
@@ -229,24 +235,25 @@ class Application
      * Framework DI factories
      * @return array
      */
-    private function frameworkDI(){
+    private function frameworkDI()
+    {
         return
             [
-                Router::class => function (){
+                Router::class => function () {
                     return new Router($this->container->get('routes'), $this->container->get('app.globals'));
                 },
-                Database::class => function(){
+                Database::class => function () {
                     return new Database($this->container->get('database'));
                 },
                 HackORM::class => object(HackORM::class),
-                View::class => function(){
+                View::class => function () {
                     return new View(
-                        array_merge($this->container->get('app.view'), $this->container->get('app.globals'), ['APP_ROOT'=>self::$ROOT]), $this->container->get(Router::class));
+                        array_merge($this->container->get('app.view'), $this->container->get('app.globals'), ['APP_ROOT' => self::$ROOT]), $this->container->get(Router::class));
                 },
-                Session::class => function(){
+                Session::class => function () {
                     return new Session($this->container->get('app.session'));
                 },
-                HttpKernel::class => function() {
+                HttpKernel::class => function () {
                     return new HttpKernel($this->container->get('app.http'));
                 }
             ];

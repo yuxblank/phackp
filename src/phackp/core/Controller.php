@@ -52,7 +52,6 @@ class Controller {
     }
 
     /**
-     *
      * @param array $data
      * @param 3const $options
      * @return JsonResponse

@@ -51,16 +51,14 @@ class Router
 
 
     /**
-     * Todo refactor with DI
      * @param $route
      * @param array|null $params
      * @param ServerRequestInterface|null $serverRequest
      */
-    public static function doRoute($route, array $params = null, ServerRequestInterface $serverRequest = null)
+    public function doRoute($route, array $params = null, ServerRequestInterface $serverRequest = null)
     {
         $controller = null;
         $clazz = $route['class'];
-
 
         try {
             $controller = new $clazz($serverRequest);
@@ -75,8 +73,6 @@ class Router
             throw new InvocationException('Method ' . $route['method'] . ' not found for route class ' . $clazz, InvocationException::ROUTER, $ex);
         }
         ReflectionUtils::invoke($controller, 'onAfter');
-
-
     }
 
 
