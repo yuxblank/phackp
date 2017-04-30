@@ -9,9 +9,11 @@
 namespace yuxblank\phackp\providers;
 
 
+use Psr\Http\Message\ServerRequestInterface;
 use yuxblank\phackp\core\Application;
 use yuxblank\phackp\core\Router;
 use yuxblank\phackp\services\api\ExceptionHandler;
+use Zend\Diactoros\ServerRequest;
 
 /**
  * Class PhackpExceptionHandler
@@ -28,15 +30,16 @@ class PhackpExceptionHandler implements ExceptionHandler
      */
 
     protected $router;
-
+    protected $serverRequest;
     /**
      * Todo make DI working
      * PhackpExceptionHandler constructor.
      * @param $router
      */
-    public function __construct(Router $router)
+    public function __construct(Router $router, ServerRequestInterface $serverRequest)
     {
         $this->router = $router;
+        $this->serverRequest = $serverRequest;
     }
 
 
@@ -44,7 +47,7 @@ class PhackpExceptionHandler implements ExceptionHandler
     {
         if (($route = $this->router->getErrorRoute(500))!==null){
 
-            $this->router->doRoute($route, $throwable);
+            $this->router->doRoute($route, $throwable, $this->serverRequest);
 
         } else {
             foreach ($throwable as $ex) {

@@ -8,6 +8,7 @@ use DI\DependencyException;
 use DI\NotFoundException;
 use DI\Scope;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use yuxblank\phackp\database\Database;
 use yuxblank\phackp\database\HackORM;
 use yuxblank\phackp\exceptions\ConfigurationException;
@@ -290,6 +291,9 @@ class Application
                     'request' => $httpKernel->getRequest(),
                     'router' => $router
                 ]);
+
+                // ad ServerRequest to ServerRequestStack
+                $this->container->set(ServerRequestInterface::class, $httpKernel->getRequest());
 
             } catch (NotFoundException $e) {
                 throw new InvocationException('Class ' . $route['class'] . ' not found in routes', InvocationException::ROUTER, $e);
