@@ -36,7 +36,7 @@ abstract class ServiceProvider implements Service
      * ServiceProvider constructor.
      * @throws ServiceProviderException
      */
-    public function __construct(array $config)
+    public function __construct(array $config=null)
     {
 
         // set default provider config
