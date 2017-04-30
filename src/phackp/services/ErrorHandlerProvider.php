@@ -9,6 +9,7 @@ use yuxblank\phackp\services\api\ErrorHandler;
 use yuxblank\phackp\services\api\ExceptionHandler;
 use yuxblank\phackp\services\api\ThrowableHandler;
 use yuxblank\phackp\services\exceptions\ServiceProviderException;
+use yuxblank\phackp\utils\ReflectionUtils;
 
 /**
  * Created by IntelliJ IDEA.
@@ -36,9 +37,6 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler, 
     public function bootstrap()
     {
         /* set_error_handler(array($this, 'errorHandler'), E_ALL);*/ // todo
-        if ($this->getConfig('exception_handler_enable') === true) {
-            set_exception_handler(array($this, 'exceptionHandler'));
-        }
         $excClazz = $this->getConfig('exception_handler_delegate');
         $this->container->set($excClazz, $excClazz);
         try {
@@ -50,6 +48,10 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler, 
         } catch (InvocationException $ex) {
             throw new InvocationException('Class not found ' . $excClazz, InvocationException::SERVICE, $ex);
         }
+        if ($this->exceptionDelegate !== null && $this->getConfig('exception_handler_enable') === true) {
+            set_exception_handler(array($this, 'exceptionHandler'));
+        }
+
     }
 
 
