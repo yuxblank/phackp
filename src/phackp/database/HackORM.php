@@ -41,7 +41,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
      * @param $params
      * @return mixed
      */
-    public function _search($object, string $query = null, ...$params): array
+    public function _search($object, string $query = null, array $params): array
     {
         $table = $this->objectInjector($object);
         $queryBuilder = new QueryBuilder();
@@ -62,7 +62,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
      * @param $params
      * @return mixed
      */
-    public function _searchAll($object, string $query = null, ...$params): array
+    public function _searchAll($object, string $query = null, array $params): array
     {
         $table = $this->objectInjector($object);
         $queryBuilder = new QueryBuilder();
@@ -147,7 +147,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
      * @param mixed[] $params array with all params data non assoc.
      * @return mixed
      */
-    public function search($object, string $query, ...$params)
+    public function search($object, string $query, array $params)
     {
         $table = $this->objectInjector($object);
         $queryBuilder = new QueryBuilder();
@@ -161,7 +161,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
         return $this->db->fetchSingleClass($object);
     }
 
-    public function searchAll($object, string $query = null, ...$params): array
+    public function searchAll($object, string $query = null, array $params): array
     {
         $queryBuilder = new QueryBuilder();
         $queryBuilder
@@ -180,7 +180,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
      * @param array $params
      * @return int
      */
-    public function countObjects($object, string $query = null, ...$params): int
+    public function countObjects($object, string $query = null, array $params): int
     {
         $queryBuilder = new QueryBuilder();
         $queryBuilder
