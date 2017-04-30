@@ -28,7 +28,7 @@ abstract class Controller implements ApplicationController {
      */
     protected $view;
 
-    public function __construct(ServerRequestInterface $request, Router $router) {
+    public function __construct(ServerRequestInterface $request=null, Router $router=null) {
         defined('pHackpRuntime') or die ('.:: pHackp runtime never initiated! - invalid access to resources ::. ');
 
         $this->request = $request;
