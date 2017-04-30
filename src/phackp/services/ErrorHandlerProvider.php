@@ -9,7 +9,6 @@ use yuxblank\phackp\services\api\ErrorHandler;
 use yuxblank\phackp\services\api\ExceptionHandler;
 use yuxblank\phackp\services\api\ThrowableHandler;
 use yuxblank\phackp\services\exceptions\ServiceProviderException;
-use yuxblank\phackp\utils\ReflectionUtils;
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,14 +32,6 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler, 
     /** @var  ExceptionHandler */
     protected $exceptionDelegate;
 
-    /**
-     * ErrorHandlerProvider constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-
-    }
 
     public function bootstrap()
     {
@@ -49,8 +40,9 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler, 
             set_exception_handler(array($this, 'exceptionHandler'));
         }
         $excClazz = $this->getConfig('exception_handler_delegate');
+        $this->container->set($excClazz, $excClazz);
         try {
-            $this->exceptionDelegate = ReflectionUtils::makeInstance($excClazz);
+            $this->exceptionDelegate = $this->container->make($excClazz);
             if (!class_implements($this->exceptionDelegate, ExceptionHandler::class)){
                 throw new ServiceProviderException('The class '.$this->getConfig('exception_handler_delegate')
                     .' provided in configuration does not implements ' . ExceptionHandler::class, ServiceProviderException::INVALID_CONFIG);

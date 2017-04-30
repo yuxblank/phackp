@@ -15,20 +15,19 @@ use yuxblank\phackp\services\api\Provider;
 use yuxblank\phackp\services\api\Service;
 use yuxblank\phackp\services\exceptions\ServiceProviderException;
 
-class ServiceProvider implements Service
+abstract class ServiceProvider implements Service
 {
-    protected $reflectionClass;
     /** @var  array */
     protected $config;
+    /** @Inject @var  Container */
+    protected $container;
 
     /**
      * ServiceProvider constructor.
      * @throws ServiceProviderException
      */
-    public function __construct(array $config=null)
+    public function __construct(array $config)
     {
-        // before everything
-        $this->reflectionClass = new \ReflectionClass($this);
 
         // set default provider config
         $this->config = $this->invoke("defaultConfig");
@@ -39,14 +38,14 @@ class ServiceProvider implements Service
         }
 
 
-        if (!$this->reflectionClass->implementsInterface(Provider::class)){
-            throw new ServiceProviderException("The ServiceProvider " . $this->reflectionClass->getName() . " does not implements " . Provider::class, ServiceProviderException::NOT_A_PROVIDER);
+        if (!class_implements($this,Provider::class)){
+            throw new ServiceProviderException("The ServiceProvider " . get_class($this). " does not implements " . Provider::class, ServiceProviderException::NOT_A_PROVIDER);
         }
 
         try {
             if (!$this->invoke("isValidConfig")) {
                 throw new ServiceProviderException('The configuration is not valid for service '
-                    . $this->reflectionClass->getName(), ServiceProviderException::INVALID_CONFIG);
+                    . get_class($this),  ServiceProviderException::INVALID_CONFIG);
             }
         } catch (InvocationException $ex){
             throw new InvocationException("The provider does not implements isValidConfig method", InvocationException::SERVICE, $ex);
@@ -57,17 +56,17 @@ class ServiceProvider implements Service
 
 
 
-/*    public final function bootstrap()
-    {
-        try {
-            if (!$this->invoke("isValidConfig")) {
-                throw new ServiceProviderException('The configuration is not valid for service '
-                    . $this->reflectionClass->getName(), ServiceProviderException::INVALID_CONFIG);
+    /*    public final function bootstrap()
+        {
+            try {
+                if (!$this->invoke("isValidConfig")) {
+                    throw new ServiceProviderException('The configuration is not valid for service '
+                        . $this->reflectionClass->getName(), ServiceProviderException::INVALID_CONFIG);
+                }
+            } catch (InvocationException $ex){
+                throw new InvocationException("The provider does not implements isValidConfig method", InvocationException::SERVICE, $ex);
             }
-        } catch (InvocationException $ex){
-            throw new InvocationException("The provider does not implements isValidConfig method", InvocationException::SERVICE, $ex);
-        }
-    }*/
+        }*/
 
 
     /**
@@ -83,10 +82,15 @@ class ServiceProvider implements Service
     }
 
 
-
+    /**
+     * @Deprecated
+     * @param string $method
+     * @param null $params
+     * @return mixed
+     */
     public final function invoke(string $method, $params=null)
     {
-        if ($this->reflectionClass->hasMethod($method)){
+        if (method_exists($this, $method)){
             return $this->{$method}($params);
         }
     }
