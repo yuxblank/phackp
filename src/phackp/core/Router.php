@@ -19,6 +19,7 @@ namespace yuxblank\phackp\core;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 use Psr\Http\Message\ServerRequestInterface;
+use yuxblank\phackp\api\ApplicationController;
 use yuxblank\phackp\api\EventDrivenController;
 use yuxblank\phackp\exceptions\InvocationException;
 use yuxblank\phackp\utils\ReflectionUtils;
@@ -36,43 +37,38 @@ class Router
 
     private $routes;
     private $appGlobals;
+    private $serverRequest;
     const WILDCARD_REGEXP = '({[aA-zZ0-9]+})';
 
 
     /**
      * Router constructor.
      * @param $routes
+     * @param $appGlobals
+     * @param ServerRequestInterface $serverRequest
      */
-    public function __construct($routes, $appGlobals)
+    public function __construct($routes, $appGlobals, ServerRequestInterface $serverRequest)
     {
         $this->routes = $routes;
         $this->appGlobals = $appGlobals;
+        $this->serverRequest = $serverRequest;
     }
 
 
     /**
+     * FIXME Too specific, code duplication
      * @param $route
      * @param array|null $params
-     * @param ServerRequestInterface|null $serverRequest
      */
-    public function doRoute($route, array $params = null, ServerRequestInterface $serverRequest = null)
+    public function doRoute(ApplicationController $instance, string $method, array $params = null)
     {
-        $controller = null;
-        $clazz = $route['class'];
-
+        ReflectionUtils::invoke($instance, 'onBefore');
         try {
-            $controller = new $clazz($serverRequest);
+            $instance->{$method}($params);
         } catch (InvocationException $ex) {
-            throw new InvocationException('Class ' . $route['class'] . ' not found in routes', InvocationException::ROUTER, $ex);
+            throw new InvocationException('Method ' . $method . ' not found for route class ' . get_class($instance), InvocationException::ROUTER, $ex);
         }
-
-        ReflectionUtils::invoke($controller, 'onBefore');
-        try {
-            $controller->{$route['method']}($params);
-        } catch (InvocationException $ex) {
-            throw new InvocationException('Method ' . $route['method'] . ' not found for route class ' . $clazz, InvocationException::ROUTER, $ex);
-        }
-        ReflectionUtils::invoke($controller, 'onAfter');
+        ReflectionUtils::invoke($instance, 'onAfter');
     }
 
 
@@ -164,11 +160,11 @@ class Router
 
         $link = $this->searchThroughRoutes($alias, 'alias', $method);
         if ($link === null) {
-            $link = Application::getErrorRoute(404)['url'];
+            $link = $this->getErrorRoute(404)['url'];
         }
 
         if ($params !== null) {
-            $url = $url = self::fastParamBind($link, $params);
+            $url = $url = $this->fastParamBind($link, $params);
             return $this->appGlobals['APP_URL'] . '/' . implode('/', $url);
         }
         return $link !== '/' ? $this->appGlobals['APP_URL'] . '/' . $link : $this->appGlobals['APP_URL'] . $link;
@@ -352,7 +348,7 @@ class Router
 
     public function notFound()
     {
-        header('location:' . $this->appGlobals['APP_URL'] . '/' . Application::getErrorRoute(404)['url'], true);
+        header('location:' . $this->appGlobals['APP_URL'] . '/' . $this->getErrorRoute(404)['url'], true);
         exit(0);
     }
 

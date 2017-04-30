@@ -1,6 +1,7 @@
 <?php
 namespace yuxblank\phackp\services;
 
+use yuxblank\phackp\core\Router;
 use yuxblank\phackp\core\ServiceProvider;
 use yuxblank\phackp\exceptions\InvocationException;
 use yuxblank\phackp\providers\PhackpExceptionHandler;
@@ -125,7 +126,9 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler, 
     public function exceptionHandler(\Throwable $exception)
     {
         $this->handle($exception);
-        $this->exceptionDelegate->onException($this->exceptions);
+        $router = $this->container->get(Router::class)->getErrorRoute(500);
+        $instance = $this->container->get($router['class']);
+        $this->exceptionDelegate->onException($instance, $router['method'], $this->exceptions);
     }
 
 

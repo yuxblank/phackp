@@ -1,6 +1,8 @@
 <?php
 namespace yuxblank\phackp\core;
 use Psr\Http\Message\ServerRequestInterface;
+use yuxblank\phackp\api\ApplicationController;
+use yuxblank\phackp\api\EventDrivenController;
 use Zend\Diactoros\Response\JsonResponse;
 
 /**
@@ -11,7 +13,7 @@ use Zend\Diactoros\Response\JsonResponse;
  * @version 0.1
  * @since 0.1
  */
-class Controller {
+abstract class Controller implements ApplicationController {
 
     protected $request;
     protected $router;

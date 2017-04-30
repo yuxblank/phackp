@@ -229,7 +229,7 @@ class Application
         return
             [
                 Router::class => function () {
-                    return new Router($this->container->get('routes'), $this->container->get('app.globals'));
+                    return new Router($this->container->get('routes'), $this->container->get('app.globals'), $this->container->get(ServerRequestInterface::class));
                 },
                 Database::class => function () {
                     return new Database($this->container->get('database'));
@@ -271,6 +271,9 @@ class Application
 
         // get the httpKernel
 
+        /**
+         * @var HttpKernel $httpKernel
+         */
         $httpKernel = $this->container->make(HttpKernel::class);
 
         /** @var Router $router */
@@ -299,11 +302,9 @@ class Application
                 throw new InvocationException('Class ' . $route['class'] . ' not found in routes', InvocationException::ROUTER, $e);
             }
 
-
             $httpKernel->parseBody($route);
-            ReflectionUtils::invoke($clazz, 'onBefore');
-            $clazz->{$route['method']}($httpKernel->getParams());
-            ReflectionUtils::invoke($clazz, 'onAfter');
+
+            $router->doRoute($clazz, $route['method'], $httpKernel->getParams());
 
         } else {
             $notFoundRoute = $this->container->get(Router::class)->getErrorRoute(404);
