@@ -94,7 +94,7 @@ abstract class Model
 
     public function findAsArray(string $query, ...$params)
     {
-        return $this->getOrmInstance()->_searchAll($this, $query, $params);
+        return $this->getOrmInstance()->_search($this, $query, $params);
     }
 
     public function findAllAsArray(string $query = null, ...$params)
