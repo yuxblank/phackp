@@ -44,6 +44,10 @@ class View {
 
     }
 
+    public function getConfig(){
+        return $this->viewConfig;
+    }
+
 
     /**
      * Add data to the View object specifing a name and a value,

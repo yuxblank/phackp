@@ -52,14 +52,21 @@ class Router
         $this->serverRequest = $serverRequest;
     }
 
-
     /**
      * FIXME Too specific, code duplication
-     * @param $route
+     * @param ApplicationController $instance
+     * @param string $method
      * @param array|null $params
      */
+
+
     public function doRoute(ApplicationController $instance, string $method, array $params = null)
     {
+        $refl = new \ReflectionClass($instance);
+
+        foreach ($refl->getMethod($method)->getParameters() as $methodParam){
+            $methodParam->getType();
+        }
         ReflectionUtils::invoke($instance, 'onBefore');
         try {
             $instance->{$method}($params);
@@ -69,7 +76,6 @@ class Router
         ReflectionUtils::invoke($instance, 'onAfter');
     }
 
-
     /**
      * Get a link url without checking if the route is really defined.
      * To set params, specify the ordinal position in the link as {param}, the array must preserve params ordinal position.
@@ -78,6 +84,7 @@ class Router
      * @param array $params
      * @return string
      */
+
     public function link(string $link, array $params = null): string
     {
         if ($params !== null) {
@@ -86,35 +93,6 @@ class Router
         }
         return $link !== '/' ? $this->appGlobals['APP_URL'] . '/' . $link : $this->appGlobals['APP_URL'] . $link;
     }
-
-
-    /**
-     * Search the url of a given alias. When passing the method it's faster.
-     * @param string $value
-     * @param String $type
-     * @param string|null $method
-     * @return mixed
-     */
-    private function searchThroughRoutes(string $value, String $type, string $method = null)
-    {
-
-        if ($method !== null) {
-            foreach ($this->routes[$method] as $key => $route) {
-                if (array_key_exists($type, $route) && $route[$type] === $value) {
-                    return $route['url'];
-                }
-            }
-        } else {
-            foreach ($this->routes as $key => $rest) {
-                foreach ($rest as $innerKey => $innerRoute) {
-                    if (array_key_exists($type, $innerRoute) && $innerRoute[$type] === $value) {
-                        return $innerRoute['url'];
-                    }
-                }
-            }
-        }
-    }
-
 
     /**
      * Get the link by a given action. This way to get links is slower but allow the developer to change urls without changing code,
@@ -127,6 +105,7 @@ class Router
      * @param array|null $params
      * @return string
      */
+
     public function action(string $action, String $method = null, array $params = null)
     {
         $link = $this->searchThroughRoutes($action, 'action', $method);
@@ -168,38 +147,17 @@ class Router
         return $link !== '/' ? $this->appGlobals['APP_URL'] . '/' . $link : $this->appGlobals['APP_URL'] . $link;
     }
 
-
-    /**
-     * Process the route URI and return the url with given parameters.
-     * Use positions of Wildcards and the ordinal replace them with params
-     * @param $routeUrl
-     * @param $params
-     * @return array
-     */
-
-    private function fastParamBind($routeUrl, $params)
-    {
-        $url = explode('/', $routeUrl);
-        $wildcards = preg_grep(self::WILDCARD_REGEXP, $url);
-        $i = 0;
-        foreach ($wildcards as $key => $wildcard) {
-            $url[$key] = $params[$i];
-            $i++;
-        }
-        return $url;
-    }
-
     /**
      * Redirect (302) to another action from an action.
      * @param string $url
      * @param array|null $params
      */
+
     public function switchAction(string $url, array $params = null)
     {
         $r = Router::link($url, $params);
         header("location:$r", true, 302);
     }
-
 
     /**
      * External url redirect
@@ -211,12 +169,12 @@ class Router
         header("location:$url", true, 302);
     }
 
-
     /**
      * Find the action from httpKernel and set routed parameters if any.
      * if the route has been found return the route.
      * @return null|array
      */
+
     public function findAction()
     {
 
@@ -243,6 +201,66 @@ class Router
         return null;
     }
 
+    public function getErrorRoute(int $code){
+        if (isset($this->routes['ERROR'][$code])){
+            return $this->routes['ERROR'][$code];
+        }
+        return null;
+    }
+
+
+    /*
+     * PRIVATE
+     */
+
+
+    /**
+     * Search the url of a given alias. When passing the method it's faster.
+     * @param string $value
+     * @param String $type
+     * @param string|null $method
+     * @return mixed
+     */
+
+    private function searchThroughRoutes(string $value, String $type, string $method = null)
+    {
+
+        if ($method !== null) {
+            foreach ($this->routes[$method] as $key => $route) {
+                if (array_key_exists($type, $route) && $route[$type] === $value) {
+                    return $route['url'];
+                }
+            }
+        } else {
+            foreach ($this->routes as $key => $rest) {
+                foreach ($rest as $innerKey => $innerRoute) {
+                    if (array_key_exists($type, $innerRoute) && $innerRoute[$type] === $value) {
+                        return $innerRoute['url'];
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Process the route URI and return the url with given parameters.
+     * Use positions of Wildcards and the ordinal replace them with params
+     * @param $routeUrl
+     * @param $params
+     * @return array
+     */
+
+    private function fastParamBind($routeUrl, $params)
+    {
+        $url = explode('/', $routeUrl);
+        $wildcards = preg_grep(self::WILDCARD_REGEXP, $url);
+        $i = 0;
+        foreach ($wildcards as $key => $wildcard) {
+            $url[$key] = $params[$i];
+            $i++;
+        }
+        return $url;
+    }
 
 
     /**
@@ -252,6 +270,7 @@ class Router
      * @param $realParams
      * @return null|string
      */
+
     private function compareRoutes(array $routeParams, array $realParams)
     {
 
@@ -301,6 +320,7 @@ class Router
      * @param $queryArray
      * @return array
      */
+
     private function getWildCardParams(array $routeParams, array $queryArray): array
     {
         $params = preg_grep(self::WILDCARD_REGEXP, $routeParams);
@@ -311,14 +331,4 @@ class Router
         }
         return $getParams;
     }
-
-
-    public function getErrorRoute(int $code){
-         if (isset($this->routes['ERROR'][$code])){
-             return $this->routes['ERROR'][$code];
-         }
-         return null;
-    }
-
-
 }
