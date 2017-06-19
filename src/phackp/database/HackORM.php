@@ -189,6 +189,7 @@ class HackORM implements ObjectRelationalMapping, ObjectsDataAccess
 
         $query = $query === null ? $queryBuilder->getQuery() : $queryBuilder->getQuery() . ' ' . $query;
         $this->db->query($query);
+        $this->db->paramsBinder($params);
         return $this->db->rowCount();
     }
 
