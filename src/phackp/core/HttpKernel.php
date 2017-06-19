@@ -4,6 +4,7 @@ namespace yuxblank\phackp\core;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\ServerRequestFactory;
 
 /**
@@ -63,7 +64,7 @@ final class HttpKernel
     /**
      * @return RequestInterface
      */
-    public function getRequest(): ServerRequestInterface
+    public function getRequest(): ServerRequest
     {
         return $this->request;
     }
@@ -96,7 +97,7 @@ final class HttpKernel
      * @return mixed
      * @throws \RuntimeException
      */
-    public function parseBody()
+    protected function parseBodyByContentType()
     {
         switch ($this->getContentType()) {
             case "application/json":
@@ -112,11 +113,13 @@ final class HttpKernel
 
     /**
      * Dispatch HTTP request and parameters to the current HttpKernel instance.
+     * todo refactor read route params into Router class
      * @param array $route (the current route object)
      * @throws \RuntimeException
      */
-/*    public function parseBody(array $route)
+    public function parseRequest(array $route)
     {
+        $params = [];
         switch ($this->request->getMethod()) {
             case 'GET':
                 // get paramets ?name=value
@@ -128,16 +131,17 @@ final class HttpKernel
                 }
                 break;
             case 'POST':
-                $this->setParams($this->parseByContentType());
+                $this->parseBodyByContentType();
                 $this->setRouteParams($route);
             // if break, we cant receive body so we continue
             case ('PUT' || 'DELETE' || 'HEAD' || 'PATCH' || 'OPTIONS'):
-                $this->setParams($this->parseByContentType());
                 $this->setRouteParams($route);
+                $this->parseBodyByContentType();
                 break;
             default:
                 break;
         }
-    }*/
+        $this->request = $this->request->withQueryParams($this->params);
+    }
 
 }

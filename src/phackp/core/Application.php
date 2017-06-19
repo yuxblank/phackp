@@ -221,6 +221,9 @@ class Application
     /**
      * Framework DI factories
      * @return array
+     * @throws \DI\NotFoundException
+     * @throws \DI\DependencyException
+     * @throws \InvalidArgumentException
      */
     private function frameworkDI()
     {
@@ -244,9 +247,7 @@ class Application
                     return new HttpKernel($this->container->get('app.http'));
                 },
                 ServiceProvider::class => object(ServiceProvider::class)->property('container', $this->container),
-                ServerRequestInterface::class => function () {
-                    return $this->container->get(HttpKernel::class)->getRequest();
-                }
+                ServerRequestInterface::class => \DI\factory([HttpKernel::class, 'getRequest'])->scope(Scope::PROTOTYPE)
             ];
 
     }
@@ -270,10 +271,7 @@ class Application
 
         // get the httpKernel
 
-        /**
-         * @var HttpKernel $httpKernel
-         */
-        $httpKernel = $this->container->make(HttpKernel::class);
+        $httpKernel = $this->container->get(HttpKernel::class);
 
         /** @var Router $router */
         $router = $this->container->make(Router::class);
@@ -286,34 +284,34 @@ class Application
                 throw new InvocationException('Class ' . $route['class'] . ' is not a controller, extend ' . Controller::class . ' is required by controllers', InvocationException::ROUTER);
             }
 
-            $clazz = null;
             try {
-                if (!$this->container->has(ApplicationController::class)) {
-                    $this->container->set(ApplicationController::class, $route['class']);
-                }
-
+                $this->container->set(ApplicationController::class, $route['class']);
             } catch (NotFoundException $e) {
                 throw new InvocationException('Class ' . $route['class'] . ' not found in routes', InvocationException::ROUTER, $e);
             }
 
-            $httpKernel->parseBody();
-
-            $appCtrl = $this->container->get(ApplicationController::class);
-            $this->container()->call([$appCtrl,$route['method']]);
-
-            /*      $router->doRoute($clazz, $route['method'], $httpKernel->getParams());*/
+            $this->container->call([HttpKernel::class, 'parseRequest'], [$route]);
+            $this->callController($route['method']);
 
         } else {
             $notFoundRoute = $this->container->get(Router::class)->getErrorRoute(404);
             $this->container->set(ApplicationController::class, $notFoundRoute['class']);
-            $appCtrl = $this->container->get(ApplicationController::class);
-            $this->container()->call([$appCtrl,$route['method']]);
+            $this->callController($notFoundRoute['method']);
         }
 
         if (self::isDebug() && ($httpKernel->getContentType() === 'text/plain' || $httpKernel->getContentType() === 'text/html')) {
             // Anywhere else in the script
             echo '<p style="position: fixed; bottom:0; margin: 0 auto;"> Total execution time in seconds: ' . (microtime(true) - $time_start) . ' runtime_id: ' . pHackpRuntime . ' memory peak: ' . UnitConversion::byteConvert($memoryPeak) . '</p>';
         }
+    }
+
+
+
+    private final function callController(string $method){
+        $instace = $this->container->get(ApplicationController::class);
+        $this->container()->call([$instace,'onBefore']);
+        $this->container()->call([$instace,$method]);
+        $this->container()->call([$instace,'onAfter']);
     }
 
 
