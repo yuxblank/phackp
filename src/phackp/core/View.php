@@ -1,21 +1,21 @@
 <?php
 namespace yuxblank\phackp\core;
-    /*
-     * Copyright (C) 2015 yuri.blanc
-     *
-     * This program is free software: you can redistribute it and/or modify
-     * it under the terms of the GNU General Public License as published by
-     * the Free Software Foundation, either version 3 of the License, or
-     * (at your option) any later version.
-     *
-     * This program is distributed in the hope that it will be useful,
-     * but WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-     * GNU General Public License for more details.
-     *
-     * You should have received a copy of the GNU General Public License
-     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-     */
+/*
+ * Copyright (C) 2015 yuri.blanc
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * The view object has all methods used for creating views and passing data.
@@ -76,7 +76,7 @@ class View {
                 $path = implode("/", array_slice(explode("/", $view), 0, -1));
             }
             $this->content = $appRoot . '/' . $view . ".php";
-            $this->extractVars(EXTR_OVERWRITE);
+            extract(array_merge($this->var, $this->viewConfig),EXTR_OVERWRITE);
             if (!$path) {
                 include $appRoot . "/main.php";
             } else {
@@ -95,22 +95,8 @@ class View {
      */
 
     public function content() {
-        $this->extractVars(EXTR_SKIP);
+        extract(array_merge($this->var, $this->viewConfig), EXTR_SKIP);
         include $this->content;
-    }
-
-
-    /**
-     * @param int $type
-     * @param string $prefix
-     * @return int elements extracted
-     */
-    private function extractVars(int $type, string $prefix=null) {
-        $vars =  array_merge($this->var, $this->viewConfig);
-        if ($prefix!==null) {
-           return extract($vars, $type, $prefix);
-        }
-        return extract($vars, $type);
     }
 
 
@@ -123,8 +109,7 @@ class View {
      */
     public function hook(string $hook, array $args=null) {
         if ($args!==null) {
-            $this->var = array_merge($this->var, $args);
-            $this->extractVars(EXTR_PREFIX_ALL,'');
+            extract(array_merge($this->var, $this->viewConfig), EXTR_PREFIX_ALL,'');
         }
         if ($hook)
             $path = Application::$ROOT  . '/src/view/' . $this->viewConfig['HOOKS'][$hook];
