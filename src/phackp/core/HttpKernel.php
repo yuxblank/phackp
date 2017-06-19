@@ -1,5 +1,7 @@
 <?php
+
 namespace yuxblank\phackp\core;
+
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\ServerRequestFactory;
@@ -36,13 +38,14 @@ final class HttpKernel
     {
         return $this->params;
     }
+
     /**
      * Set parameters to the request
      * @param $params
      */
     public function setParams($params)
     {
-        if ($this->params===null) {
+        if ($this->params === null) {
             $this->params = $params;
         } else {
             $this->params = array_merge($this->params, $params);
@@ -65,7 +68,8 @@ final class HttpKernel
         return $this->request;
     }
 
-    public function getContentType():string {
+    public function getContentType(): string
+    {
         return $this->request->getHeaderLine('Content-type');
     }
 
@@ -79,7 +83,7 @@ final class HttpKernel
     private function parseJson($jsonData)
     {
         $decode = json_decode($jsonData, true);
-        if (json_last_error() === JSON_ERROR_NONE){
+        if (json_last_error() === JSON_ERROR_NONE) {
             return $decode;
         }
         return $this->params = null;
@@ -91,20 +95,19 @@ final class HttpKernel
      * If other, parse body.
      * @param $body
      * @return mixed
+     * @throws \RuntimeException
      */
-    private function parseContentType($body)
+    private function parseByContentType()
     {
         switch ($this->getContentType()) {
             case "application/json":
-                return $this->parseJson($body);
+                return $this->parseJson($this->getRequest()->getBody()->getContents());
                 break;
             case "application/x-www-form-urlencoded":
-                parse_str($body, $parsed);
-                return $parsed;
+                return $this->request->getParsedBody();
                 break;
             default:
-                parse_str($body, $parsed);
-                return $parsed;
+                return $this->request->getParsedBody();
         }
     }
 
@@ -126,12 +129,11 @@ final class HttpKernel
                 }
                 break;
             case 'POST':
-                $this->setParams($this->parseContentType($this->getRequest()->getBody()->getContents())); // todo refactor to read streams
+                $this->setParams($this->parseByContentType());
                 $this->setRouteParams($route);
             // if break, we cant receive body so we continue
             case ('PUT' || 'DELETE' || 'HEAD' || 'PATCH' || 'OPTIONS'):
-                $body = $this->getRequest()->getBody()->getContents(); // todo refactor to read streams
-                $this->setParams($this->parseContentType($body));
+                $this->setParams($this->parseByContentType());
                 $this->setRouteParams($route);
                 break;
             default:
