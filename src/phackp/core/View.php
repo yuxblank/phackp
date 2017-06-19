@@ -76,7 +76,7 @@ class View {
                 $path = implode("/", array_slice(explode("/", $view), 0, -1));
             }
             $this->content = $appRoot . '/' . $view . ".php";
-            extract(array_merge($this->var, $this->viewConfig),EXTR_OVERWRITE);
+            $this->extractVars(EXTR_OVERWRITE);
             if (!$path) {
                 include $appRoot . "/main.php";
             } else {
@@ -95,8 +95,22 @@ class View {
      */
 
     public function content() {
-        extract($this->var, EXTR_SKIP);
+        $this->extractVars(EXTR_SKIP);
         include $this->content;
+    }
+
+
+    /**
+     * @param int $type
+     * @param string $prefix
+     * @return int elements extracted
+     */
+    private function extractVars(int $type, string $prefix=null) {
+        $vars =  array_merge($this->var, $this->viewConfig);
+        if ($prefix!==null) {
+           return extract($vars, $type, $prefix);
+        }
+        return extract($vars, $type);
     }
 
 
@@ -109,7 +123,8 @@ class View {
      */
     public function hook(string $hook, array $args=null) {
         if ($args!==null) {
-            extract($args, EXTR_PREFIX_ALL,'');
+            $this->var = array_merge($this->var, $args);
+            $this->extractVars(EXTR_PREFIX_ALL,'');
         }
         if ($hook)
             $path = Application::$ROOT  . '/src/view/' . $this->viewConfig['HOOKS'][$hook];
