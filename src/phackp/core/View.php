@@ -35,7 +35,9 @@ class View {
 
     /**
      * View constructor.
-     * @param array $var
+     * @param array $viewConfig
+     * @param Router $router
+     * @internal param array $var
      */
     public function __construct(array $viewConfig, Router $router)
     {

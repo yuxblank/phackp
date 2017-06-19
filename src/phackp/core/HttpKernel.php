@@ -93,11 +93,10 @@ final class HttpKernel
     /**
      * Parse the request content type. If application/json serialize to array.
      * If other, parse body.
-     * @param $body
      * @return mixed
      * @throws \RuntimeException
      */
-    private function parseByContentType()
+    public function parseBody()
     {
         switch ($this->getContentType()) {
             case "application/json":
@@ -116,7 +115,7 @@ final class HttpKernel
      * @param array $route (the current route object)
      * @throws \RuntimeException
      */
-    public function parseBody(array $route)
+/*    public function parseBody(array $route)
     {
         switch ($this->request->getMethod()) {
             case 'GET':
@@ -139,6 +138,6 @@ final class HttpKernel
             default:
                 break;
         }
-    }
+    }*/
 
 }

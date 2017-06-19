@@ -9,6 +9,7 @@ use DI\NotFoundException;
 use DI\Scope;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use yuxblank\phackp\api\ApplicationController;
 use yuxblank\phackp\database\Database;
 use yuxblank\phackp\database\HackORM;
 use yuxblank\phackp\exceptions\ConfigurationException;
@@ -257,6 +258,7 @@ class Application
      * @throws \InvalidArgumentException
      * @throws \DI\DependencyException
      * @throws \DI\NotFoundException
+     * @throws \RuntimeException
      */
     public function run()
     {
@@ -286,30 +288,26 @@ class Application
 
             $clazz = null;
             try {
-                if (!$this->container->has($route['class'])) {
-                    $this->container->set($route['class'], $route['class']);
+                if (!$this->container->has(ApplicationController::class)) {
+                    $this->container->set(ApplicationController::class, $route['class']);
                 }
-                /** Make the controller class */
-                $clazz = $this->container->make($route['class'], [
-                    'request' => $httpKernel->getRequest(),
-                    'router' => $router
-                ]);
 
             } catch (NotFoundException $e) {
                 throw new InvocationException('Class ' . $route['class'] . ' not found in routes', InvocationException::ROUTER, $e);
             }
 
-            $httpKernel->parseBody($route);
+            $httpKernel->parseBody();
 
-            $router->doRoute($clazz, $route['method'], $httpKernel->getParams());
+            $appCtrl = $this->container->get(ApplicationController::class);
+            $this->container()->call([$appCtrl,$route['method']]);
+
+            /*      $router->doRoute($clazz, $route['method'], $httpKernel->getParams());*/
 
         } else {
             $notFoundRoute = $this->container->get(Router::class)->getErrorRoute(404);
-            $clazz = $this->container->make($notFoundRoute['class'], [
-                'request' => $httpKernel->getRequest(),
-                'router' => $router
-            ]);
-            $router->doRoute($clazz, $notFoundRoute['method'], $httpKernel->getParams());
+            $this->container->set(ApplicationController::class, $notFoundRoute['class']);
+            $appCtrl = $this->container->get(ApplicationController::class);
+            $this->container()->call([$appCtrl,$route['method']]);
         }
 
         if (self::isDebug() && ($httpKernel->getContentType() === 'text/plain' || $httpKernel->getContentType() === 'text/html')) {

@@ -54,11 +54,11 @@ class Router
 
     /**
      * FIXME Too specific, code duplication
+     * @deprecated
      * @param ApplicationController $instance
      * @param string $method
      * @param array|null $params
      */
-
 
     public function doRoute(ApplicationController $instance, string $method, array $params = null)
     {

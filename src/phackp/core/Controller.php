@@ -15,23 +15,8 @@ use Zend\Diactoros\Response\JsonResponse;
  */
 abstract class Controller implements ApplicationController {
 
-    protected $request;
-    protected $router;
-    /**
-     * @Inject
-     * @var Session
-     */
-    protected $session;
-    /**
-     * @Inject
-     * @var View
-     */
-    protected $view;
-
-    public function __construct(ServerRequestInterface $request=null, Router $router=null) {
+    public function __construct() {
         defined('pHackpRuntime') or die ('.:: pHackp runtime never initiated! - invalid access to resources ::. ');
-        $this->request = $request;
-        $this->router = $router;
     }
 
 
