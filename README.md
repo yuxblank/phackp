@@ -10,9 +10,7 @@ The framework is actually compatible with PHP7+.
 # Introduction
 pHackp aim to provide a fast and easy way to build modern and responsive websites and apps.
 It provides an Model View Controller structure for organizing your project and tries to be as far as possible "convention over configuration".
-The framework provide all basic features for develop Restful APIs, Websites and web applications. it has no dependencies and it's not a fully fledged framework as many others in PHP panorama: you get the basis to work for any kind of project (MVC, Routing, Template, Pretty URL, Database Access, Sessions, REST, Services and Providers *cache to come*) and when something is missing you just: *composer require X*. That's it!
-
-There are plenty of Frameworks wrapping the world of PHP packages, why just don't use them?
+The framework provide all basic features for develop Restful APIs, Websites and web applications.
 
 # Requirements
 Actually the frameworks is on heavy development. it has been tested with Apache (need .htaccess mod_rewrite) and built-in PHP 7 server (URL rewrite by root).
@@ -26,41 +24,38 @@ Actually the frameworks is on heavy development. it has been tested with Apache 
   * Polymorphic
   * Totally object oriented
   * Easy to use & intuitive
-  * 0 dependencies required
+  * ~~0 dependencies required~~
   * PHP 7+
   * easy extensibility (ServiceProviders etc.)*
   * Almost no configuration (No yaml, xml, ini.. Just PHP)
   * Great Performance, ease of use and speed of development!
+  * Dependency Injection done via Container (PHP-DI)
+  * PSR-4, PSR-7, PSR-11 compatible
 
 ### Routing
-  * Routing is made by code, no server configuration rules generation or requirement (just mod_require to index.php)
+  * Routing is made by php code, no server configuration rules generation or requirement (just mod_require to index.php)
   * array mapped routes
   * actions are mapped by Class and Method name for given url
   * exclusion of non-mapped routes (return configurable error routes)
   * 100% pretty urls (e.g. ...blog/title/1)
   * parameter bound with simple tag {tag} (e.g. tag/{tag}/)
   * REST method mapping (GET,POST,PUT,DELETE,HEAD,OPTIONS,PATCH)
-  * auto parameters injection to target method signature
   * rich set of RESTful features (e.g. auto json decoding/encoding)
-  * GET parameters injection maps to given tag name {name} ($param['name'])
+  * GET parameters injection maps to given tag name {name} ($serverRequest->getQueryParams()['name'])
 
 ### Persistence
-   * object-relational mapping engine built on top of PDO. (HackORM)
+   * object-relational (ActiveRecords) mapping engine built on top of PDO. (HackORM)
    * API for intuitive access
-   * auto model mapping (convention-based)
+   * Auto model mapping (convention-based)
    * OneToMany, ManyToOne, ManyToMany relationships between objects
-   * Self reflecting methods (Abstract) (e.g. $object->save() .)
-   * dependency injection (e.g self::oneToMany($this, 'Parent::class') returns $Parent instances.)
-   * ability to use Database class as standalone to preserve "is a" OOP rule. (but Model API is more productive!)
+   * Parent implementation of behaviours (e.g. $object->save() .)
+   * Dependency injection (e.g self::oneToMany($this, 'Parent::class') returns $Parent instances.)
+   * Ability to use Database class as standalone to preserve "is a" OOP rule. (but Model API is more productive!)
    * Models can always access PDO instance when needed ($this->getPDO())
    
 ### Model View Controller
-  * Controller API provides all useful stuff (sessions, flash scopes, security etc...)*
-  * controllers/models can be put in any folder/s, the classloader will do the rest
-  * simple API for models
-  * view variables rendering from controllers (e.g $View->renderArgs("name", value) accessible from view as $name.)
-  * view render specific template (e.g. $View->render("app/blogpage") .)
-  * Configurable Hooks with scope isolation (or passed-by)
+  * Application lifecycle will route the current request to the specified controller method, also when errors or 404.
+  * Controllers takes advantages of DI, so your are free to Inject what you need (Views, Sessions, Models, Requests)
   * built-in template system support template inheritance. (plain php!)
   * it's all about conventions!
 
@@ -69,7 +64,7 @@ Actually the frameworks is on heavy development. it has been tested with Apache 
    * plain PHP syntax
    * template inheritance
    * Dynamic Hook support
-   * Scope isolation (hooks)
+   * Configurable Hooks with scope isolation (or passed-by)
    
 ### Services and Providers
    * Dynamically register providers instances (non-singleton, single runtime instance beans)
@@ -78,16 +73,22 @@ Actually the frameworks is on heavy development. it has been tested with Apache 
    * Both Eager and Lazy provider instantiation
    * Configurable, extensible and fully integrated into framework container
    * Ready to use ServiceProviders
-     * ErrorHandler (Provide PHP error and exception handling overrides)
+   * ErrorHandler (Provide PHP error and exception handling overrides)
    
- 
 ### PSR-4
   * use composer default autoload psr-4
   * auto mapping for project classes
   
+### PSR-7
+   * ServerRequest interface is created and set into DI container
+   * Controller method use DI to get the current request via type injection (autowiring)
+   
+### PSR-11 (draft)
+  * We use PHP-DI as reference implementation
+  * Framework dependencies factories are managed by pHackp runtime
+  
 ### RESTful
   * Easy, simple straightforward REST API creation
   * routes GET,POST,PUT,DELETE,OPTIONS,PATCH etc. for CRUD RESTFUL standard API's
-  * automatic serialize/un-serialize json-to-array
-  * content-type filtering (via routes options)*
+  * automatic serialize/un-serialize json-to-array (PSR-7 Middleware)
   * Ready to use CORS filter*
