@@ -127,7 +127,7 @@ abstract class Model
         return $this->getOrmInstance()->oneToMany($this, $target);
     }
 
-    public function HasOne(string $target)
+    public function hasOne(string $target)
     {
         return $this->getOrmInstance()->manyToOne($this, $target);
     }

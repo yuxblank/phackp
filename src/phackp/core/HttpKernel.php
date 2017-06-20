@@ -119,7 +119,6 @@ final class HttpKernel
      */
     public function parseRequest(array $route)
     {
-        $params = [];
         switch ($this->request->getMethod()) {
             case 'GET':
                 // get paramets ?name=value
@@ -141,7 +140,9 @@ final class HttpKernel
             default:
                 break;
         }
-        $this->request = $this->request->withQueryParams($this->params);
+        if ($this->params!==null) {
+            $this->request = $this->request->withQueryParams($this->params);
+        }
     }
 
 }
