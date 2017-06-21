@@ -178,6 +178,9 @@ class Application
      * @param string $realPath (__DIR__) of the application root
      * @param string $configPath override default path of configuration (e.g. when you want use a protected path outside /httpdocs)
      * @throws ConfigurationException
+     * @throws \DI\DependencyException
+     * @throws \DI\NotFoundException
+     * @throws \InvalidArgumentException
      */
     public function bootstrap(string $realPath, string $configPath = null)
     {
@@ -198,6 +201,7 @@ class Application
         $tmp = null;
         $files = glob($config . '*.php');
 
+        $containerBuilder->addDefinitions($this->frameworkDI());
         foreach ($files as $file) {
             $containerBuilder->addDefinitions($file);
         }
@@ -212,7 +216,7 @@ class Application
             }
         }
         */
-        $containerBuilder->addDefinitions($this->frameworkDI());
+
         $containerBuilder->useAutowiring(true);
         $containerBuilder->useAnnotations(true);
         $this->container = $containerBuilder->build();
@@ -225,7 +229,7 @@ class Application
      * @throws \DI\DependencyException
      * @throws \InvalidArgumentException
      */
-    private function frameworkDI()
+    private function frameworkDI():array
     {
         return
             [
@@ -238,7 +242,7 @@ class Application
                 HackORM::class => object(HackORM::class),
                 View::class => function () {
                     return new View(
-                        array_merge($this->container->get('app.view'), $this->container->get('app.globals'), ['APP_ROOT' => self::$ROOT]), $this->container->get(Router::class));
+                        $this->container->get('app.view'), array_merge($this->container->get('app.globals'),['APP_ROOT' => self::$ROOT]), $this->container->get(Router::class));
                 },
                 Session::class => function () {
                     return new Session($this->container->get('app.session'));
