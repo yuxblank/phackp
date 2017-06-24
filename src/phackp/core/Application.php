@@ -298,6 +298,7 @@ class Application
             $this->callController($route['method']);
 
         } else {
+            //todo better support for multi-apps
             $notFoundRoute = $this->container->get(Router::class)->getErrorRoute(404);
             $this->container->set(ApplicationController::class, $notFoundRoute['class']);
             $this->callController($notFoundRoute['method']);
