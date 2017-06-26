@@ -15,9 +15,16 @@ use Zend\Diactoros\Response\JsonResponse;
  */
 abstract class Controller implements ApplicationController {
 
+    const EVENT_ON_BEFORE = 'onBefore';
+    const EVENT_ON_AFTER = 'onAfter';
+
     public function __construct() {
         defined('pHackpRuntime') or die ('.:: pHackp runtime never initiated! - invalid access to resources ::. ');
     }
+
+    public abstract function onBefore();
+
+    public abstract function onAfter();
 
 
     /**
