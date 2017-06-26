@@ -78,18 +78,18 @@ class View
     {
 
 
-        $appRoot = $this->viewConfig['ROOT'];
+        $appRoot = $this->viewConfig['APP_ROOT'] . DIRECTORY_SEPARATOR . $this->viewConfig['ROOT'];
         if ($view !== null) {
             $path = null;
             if (strpos($view, "/") !== false) {
                 $path = implode("/", array_slice(explode("/", $view), 0, -1));
             }
-            $this->content = $appRoot . '/' . $view . ".php";
+            $this->content = $appRoot . DIRECTORY_SEPARATOR . $view . ".php";
             extract(array_merge($this->var, $this->viewConfig), EXTR_OVERWRITE);
             if (!$path) {
-                include $appRoot . "/main.php";
+                include $appRoot . DIRECTORY_SEPARATOR . 'main.php';
             } else {
-                include $appRoot . "/$path/main.php";
+                include $appRoot . DIRECTORY_SEPARATOR . $path .DIRECTORY_SEPARATOR. 'main.php';
             }
         }
     }
@@ -120,7 +120,7 @@ class View
         }
         $path = null;
         if ($hook)
-            $path = Application::$ROOT . '/src/view/' . $this->viewConfig['HOOKS'][$hook];
+            $path = $this->viewConfig['APP_ROOT'] . DIRECTORY_SEPARATOR .  $this->viewConfig['ROOT'] . DIRECTORY_SEPARATOR . $this->viewConfig['HOOKS'][$hook];
         if ($path!==null && file_exists($path)) {
             include $path;
         }
