@@ -5,33 +5,31 @@ return [
      * New routes using PHP arrays
      */
 
-    'ROUTES' => [
+    'routes' => [
 
         'GET' => [
             [
                 'url' => '/',
-                'action' => 'App@index',
-                'alias' => 'home'
+                'alias' => 'home',
+                'method' => 'index',
+                'class' => 'App'
             ],
             [
                 'url' => 'blog/title/{id}',
-                'action' => 'App@showPost',
+                'method' => 'showPost',
                 'alias' => 'blogpost',
-                'options' =>
-                    [
-                        'accept' => 'application/json',
-                        'return' => 'application/json'
-                    ]
-
+                'class' => 'App'
             ],
             [
                 'url' => 'blog/{id}',
-                'action' => 'App@showPost',
+                'method' => 'showPost',
+                'class' => 'App'
             ],
 
             [
                 'url' => 'tag/{id}',
-                'action' => 'App@tagSearch'
+                'action' => 'tagSearch',
+                'class' => 'App'
             ],
 
             [
