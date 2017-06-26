@@ -2,51 +2,20 @@
 return [
 
 
-    /**
-     * Application informations
-     */
-
-    "APP_NAME" => "phackp",
-    "APP_VERSION" => "0.1-test",
-
-
-    /**
-     * Author informations
-     */
-    "AUTHOR" =>
+    'app.globals' =>
         [
-            "NAME" => "Name",
-            "EMAIL" => "email@devexample.com"
+            "APP_NAME" => "phackp",
+            "APP_VERSION" => "0.1-test",
+            "AUTHOR" =>
+                [
+                    "NAME" => "Name",
+                    "EMAIL" => "email@devexample.com"
+                ],
+            "APP_MODE" => "DEBUG",
+            'APP_URL' => 'http://localhost:7000',
         ],
 
-    /**
-     * App filesystem settings
-     */
-
-    /* "APP_ROOT" => __DIR__ ,*/
-
-
-    /**
-     * App status
-     */
-
-    "APP_MODE" => "DEBUG",
-
-
-    'APP_URL' => 'http://localhost:7000',
-
-
-    /**
-     * Rest settings
-     */
-
-    'INJECT_QUERY_STRING' => true,
-
-    /**
-     * Cookies and Sessions
-     */
-
-    'SESSION' =>
+    'app.session' =>
         [
             'LIFETIME' => 1024,
             'USE_COOKIES' => true,
@@ -55,33 +24,18 @@ return [
                 [
                     'PATH' => '/',
                     'DOMAIN' => 'http://test-server.com',
-                    'SECURE' => array_key_exists('HTTPS',$_SERVER),
+                    'SECURE' => array_key_exists('HTTPS', $_SERVER),
                     'HTTP_ONLY' => false
                 ]
         ],
 
 
-    /**
-     * Performance settings
-     */
+    'app.http' => [
+        'INJECT_QUERY_STRING' => true,
+        "GZIP" => false,
+    ],
 
-    /*    "CACHE" => false, // not implemented yet*/
-    "GZIP" => false,
-
-
-    'USE_DATABASE' => true,
-
-
-    // change default project-level namepsaces
-    'NAMESPACE' =>
-
-        [
-            'CONTROLLER' => 'controller\\',
-            'MODEL' => 'model\\',
-
-        ],
-
-    'VIEW' =>
+    'app.view' =>
         [
             'ROOT' => 'src/view',
             'HOOKS' =>
