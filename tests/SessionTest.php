@@ -1,5 +1,5 @@
 <?php
-require '../vendor/autoload.php';
+require './vendor/autoload.php';
 /**
  * Created by IntelliJ IDEA.
  * User: yuri.blanc
@@ -12,23 +12,22 @@ use yuxblank\phackp\core\Session;
 class SessionTest extends PHPUnit_Framework_TestCase
 {
 
-    /**
-     * SessionTest constructor.
-     * @param $config
-     */
-    public function __construct()
-    {
-        $app = Application::getInstance();
-        $app->bootstrap(__DIR__);
+    /** @var  Session */
+    private $session;
+    private $config;
+
+
+    protected function setUp(){
+        $this->config = require 'config/app.php';
+        $this->session = new Session($this->config['app.session']);
     }
 
 
     public function testInstance()
     {
         @session_start();
-        $session = new Session();
-        $session->setValue('test', [1,2,3,4,5,6=>[new stdClass()]]);
-        self::assertNull($session->getValue('test'));
+        $this->session->setValue('test', [1,2,3,4,5,6=>[new stdClass()]]);
+        $this->assertNotNull($this->session->getValue('test'));
     }
 
 
