@@ -284,9 +284,9 @@ class Application
 
         if ($route !== null) {
 
-            if (!is_subclass_of($route['class'], Controller::class)) {
+           /* if (!is_subclass_of($route['class'], Controller::class)) {
                 throw new InvocationException('Class ' . $route['class'] . ' is not a controller, extend ' . Controller::class . ' is required by controllers', InvocationException::ROUTER);
-            }
+            }*/
 
             try {
                 $this->container->set(ApplicationController::class, $route['class']);

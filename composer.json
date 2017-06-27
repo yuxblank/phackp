@@ -36,7 +36,8 @@
       "yuxblank\\phackp\\utils\\" : "src/phackp/utils",
       "yuxblank\\phackp\\database\\" : "src/phackp/database",
       "yuxblank\\phackp\\services\\" : "src/phackp/services",
-      "yuxblank\\phackp\\providers\\" : "src/phackp/providers"
+      "yuxblank\\phackp\\providers\\" : "src/phackp/providers",
+      "test\\controller\\" : "tests/src/controller"
     }
   }
 }

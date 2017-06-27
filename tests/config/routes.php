@@ -12,24 +12,24 @@ return [
                 'url' => '/',
                 'alias' => 'home',
                 'method' => 'index',
-                'class' => 'App'
+                'class' => test\controller\App::class
             ],
             [
                 'url' => 'blog/title/{id}',
                 'method' => 'showPost',
                 'alias' => 'blogpost',
-                'class' => 'App'
+                'class' => test\controller\App::class
             ],
             [
                 'url' => 'blog/{id}',
                 'method' => 'showPost',
-                'class' => 'App'
+                'class' => test\controller\App::class
             ],
 
             [
                 'url' => 'tag/{id}',
                 'action' => 'tagSearch',
-                'class' => 'App'
+                'class' => test\controller\App::class
             ],
 
             [
