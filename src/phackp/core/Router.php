@@ -95,6 +95,8 @@ class Router
     }
 
     /**
+     * @deprecated
+     * fixme not working anymore with new routing vars class and method
      * Get the link by a given action. This way to get links is slower but allow the developer to change urls without changing code,
      * referencing to urls with the action instead of a link.
      * Passing the HTTP method will make it faster.
@@ -155,7 +157,7 @@ class Router
 
     public function switchAction(string $url, array $params = null)
     {
-        $r = Router::link($url, $params);
+        $r = $this->link($url, $params);
         header("location:$r", true, 302);
     }
 

@@ -8,13 +8,13 @@ return [
     "app.database" =>
     [
         "ID"      => "default",
-        "DRIVER"  => "mysql",
-        "HOST"    => "localhost",
-        "PORT"    => "",
-        "USER"    => "root",
-        "PSW"     => "root",
-        "NAME"    => "phackptest",
-        "OPTIONS" => [],
+        "DRIVER"  => "sqlite::memory",
+        "HOST"    => null,
+        "PORT"    => null,
+        "USER"    => null,
+        "PSW"     => null,
+        "NAME"    => null,
+        "OPTIONS" => [PDO::ATTR_PERSISTENT => true],
     ]
 
 ];
