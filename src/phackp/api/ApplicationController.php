@@ -11,5 +11,13 @@ namespace yuxblank\phackp\api;
 
 interface ApplicationController extends EventDrivenController
 {
+    /**
+     * Keep a value for a next context, ex. via cookies
+     * @param $name
+     * @param $value
+     * @param null $expire
+     * @return
+     */
+    public function keep($name,$value,$expire=null);
 
 }

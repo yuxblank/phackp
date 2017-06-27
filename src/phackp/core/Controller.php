@@ -44,16 +44,6 @@ abstract class Controller implements ApplicationController {
     
     }
 
-    /**
-     * @param array $data
-     * @param 3const $options
-     * @return JsonResponse
-     * @throws \InvalidArgumentException
-     */
-    public function renderJSON($data, $options=null):JsonResponse {
-        return new JsonResponse($data);
-    }
-
 
 
 

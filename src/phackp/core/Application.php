@@ -288,6 +288,15 @@ class Application
                 throw new InvocationException('Class ' . $route['class'] . ' is not a controller, extend ' . Controller::class . ' is required by controllers', InvocationException::ROUTER);
             }*/
 
+           /*$class = $route['class'];
+           todo check interface or superclass
+           if (!class_exists($class)){
+               throw new InvocationException("Class " . $class . " does not exist", InvocationException::ROUTER);
+           }
+           if (! (class_implements($class,true) || is_subclass_of($class, Controller::class))) {
+               throw new InvocationException("Class " . $class . " either not implement " .  ApplicationController::class . " or extend " . Controller::class , InvocationException::ROUTER);
+           }*/
+
             try {
                 $this->container->set(ApplicationController::class, $route['class']);
             } catch (NotFoundException $e) {
