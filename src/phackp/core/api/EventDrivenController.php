@@ -6,7 +6,7 @@
  * Time: 16:18
  */
 
-namespace yuxblank\phackp\api;
+namespace yuxblank\phackp\core\api;
 
 
 interface EventDrivenController

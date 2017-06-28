@@ -1,9 +1,8 @@
 <?php
 namespace yuxblank\phackp\core;
-use Psr\Http\Message\ServerRequestInterface;
-use yuxblank\phackp\api\ApplicationController;
-use yuxblank\phackp\api\EventDrivenController;
-use Zend\Diactoros\Response\JsonResponse;
+use yuxblank\phackp\core\api\{
+    ApplicationController
+};
 
 /**
  * This class is a the pHackp framework controllers superclass.

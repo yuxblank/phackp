@@ -19,7 +19,7 @@ namespace yuxblank\phackp\core;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 use Psr\Http\Message\ServerRequestInterface;
-use yuxblank\phackp\api\ApplicationController;
+use yuxblank\phackp\core\api\ApplicationController;
 use yuxblank\phackp\exceptions\InvocationException;
 use yuxblank\phackp\utils\ReflectionUtils;
 
@@ -30,7 +30,7 @@ use yuxblank\phackp\utils\ReflectionUtils;
  * @copyright (c) 2015, Yuri Blanc
  * @since 0.1
  */
-class Router
+class Router implements api\Router
 {
 
     private $routes;
@@ -163,10 +163,11 @@ class Router
 
     /**
      * External url redirect
-     * @param $url
+     * @param string $url
+     * @param bool $external
      */
 
-    public function redirect(string $url)
+    public function redirect(string $url, bool $external=null)
     {
         header("location:$url", true, 302);
     }

@@ -62,7 +62,7 @@ final class HttpKernel
 
 
     /**
-     * @return RequestInterface
+     * @return RequestInterface|ServerRequest
      */
     public function getRequest(): ServerRequest
     {
