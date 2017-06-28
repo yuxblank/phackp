@@ -1,5 +1,4 @@
 <?php
-require '../vendor/autoload.php';
 /**
  * Created by IntelliJ IDEA.
  * User: yuri.blanc
@@ -18,7 +17,7 @@ class SessionTest extends PHPUnit_Framework_TestCase
 
 
     protected function setUp(){
-        $this->config = require 'config/app.php';
+        $this->config = require '../config/app.php';
         $this->session = new Session($this->config['app.session']);
     }
 

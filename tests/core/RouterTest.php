@@ -1,5 +1,4 @@
 <?php
-require '../vendor/autoload.php';
 /**
  * Created by IntelliJ IDEA.
  * User: yuri.blanc
@@ -19,8 +18,8 @@ final class RouterTest extends PHPUnit_Framework_TestCase
     public $routes;
 
     protected function setUp() {
-        $this->config = require "config/app.php";
-        $this->routes = require "config/routes.php";
+        $this->config = require "../config/app.php";
+        $this->routes = require "../config/routes.php";
         $this->APP_URL = $this->config['app.globals']['APP_URL'];
         $this->httpKernel = new HttpKernel([$this->config['app.http']]);
         $this->router = new Router($this->routes['routes'], $this->config['app.globals'], $this->httpKernel->getRequest());

@@ -1,5 +1,5 @@
 <?php
-require '../../vendor/autoload.php';
+
 /**
  * Created by IntelliJ IDEA.
  * User: yuri.blanc
