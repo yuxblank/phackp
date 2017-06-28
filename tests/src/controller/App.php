@@ -11,6 +11,7 @@ namespace test\controller;
 
 use Psr\Http\Message\ServerRequestInterface;
 use yuxblank\phackp\core\Controller;
+use Zend\Diactoros\Response;
 
 class App extends Controller
 {
@@ -24,9 +25,14 @@ class App extends Controller
         // TODO: Implement onAfter() method.
     }
 
+    /**
+     * @param ServerRequestInterface $serverRequest
+     * @return Response
+     */
     public function index(ServerRequestInterface $serverRequest){
-
-        echo "true";
+        $response = new Response();
+        $response->getBody()->write("Hello!");
+        return $response;
     }
 
 

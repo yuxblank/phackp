@@ -17,8 +17,12 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         $app->bootstrap('../');
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     public function testRun(){
         $this->application->run();
+        $this->assertEquals(ob_get_contents(), 'Hello!');
     }
 
 }

@@ -7,7 +7,7 @@ use DI\ContainerBuilder;
 use DI\DependencyException;
 use DI\NotFoundException;
 use DI\Scope;
-use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use yuxblank\phackp\api\ApplicationController;
 use yuxblank\phackp\database\Database;
@@ -16,8 +16,9 @@ use yuxblank\phackp\exceptions\ConfigurationException;
 use yuxblank\phackp\exceptions\InvocationException;
 use yuxblank\phackp\services\api\AutoBootService;
 use yuxblank\phackp\services\exceptions\ServiceProviderException;
-use yuxblank\phackp\utils\ReflectionUtils;
 use yuxblank\phackp\utils\UnitConversion;
+use Zend\Diactoros\Response;
+use Zend\Diactoros\Response\SapiEmitter;
 use function DI\object;
 
 /**
@@ -251,7 +252,10 @@ class Application
                     return new HttpKernel($this->container->get('app.http'));
                 },
                 ServiceProvider::class => object(ServiceProvider::class)->property('container', $this->container),
-                ServerRequestInterface::class => \DI\factory([HttpKernel::class, 'getRequest'])->scope(Scope::PROTOTYPE)
+                ServerRequestInterface::class => \DI\factory([HttpKernel::class, 'getRequest'])->scope(Scope::PROTOTYPE),
+                Response\EmitterInterface::class => function(){
+                    return new SapiEmitter();
+                }
             ];
 
     }
@@ -324,7 +328,12 @@ class Application
     private final function callController(string $method){
         $instace = $this->container->get(ApplicationController::class);
         $this->container()->call([$instace,'onBefore']);
-        $this->container()->call([$instace,$method]);
+
+        $resp = $this->container()->call([$instace,$method]);
+        if ($resp && $resp instanceof ResponseInterface){
+            $emitter = $this->container->get(Response\EmitterInterface::class);
+            $emitter->emit($resp);
+        }
         $this->container()->call([$instace,'onAfter']);
     }
 
