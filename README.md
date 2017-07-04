@@ -7,6 +7,9 @@ pHackp is actually in alpha stage.
 the framework might change in ways that make alpha/beta releases un-compatible with the first stable version in the future.
 The framework is actually compatible with PHP7+.
 
+# Ready to start?
+https://github.com/yuxblank/phackp/wiki/Get-started
+
 # Introduction
 pHackp aim to provide a fast and easy way to build modern and responsive websites and apps.
 It provides an Model View Controller structure for organizing your project and tries to be as far as possible "convention over configuration".
