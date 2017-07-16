@@ -255,6 +255,7 @@ class Application
                 },
                 ServiceProvider::class => object(ServiceProvider::class)->property('container', $this->container),
                 ServerRequestInterface::class => \DI\factory([HttpKernel::class, 'getRequest'])->scope(Scope::PROTOTYPE),
+                \yuxblank\phackp\http\api\ServerRequestInterface::class => \DI\factory([HttpKernel::class, 'getRequest'])->scope(Scope::PROTOTYPE),
                 ServerRequest::class => \DI\factory([HttpKernel::class, 'getRequest'])->scope(Scope::PROTOTYPE),
                 Response\EmitterInterface::class => function(){
                     return new SapiEmitter();

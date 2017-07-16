@@ -9,9 +9,9 @@
 namespace yuxblank\phackp\http;
 
 
-use yuxblank\phackp\http\api\ServerRequestPath;
+use yuxblank\phackp\http\api\ServerRequestInterface;
 
-class ServerRequest extends \Zend\Diactoros\ServerRequest implements ServerRequestPath
+class ServerRequest extends \Zend\Diactoros\ServerRequest implements ServerRequestInterface
 {
     private $pathParams;
 
