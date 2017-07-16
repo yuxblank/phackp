@@ -33,7 +33,9 @@ Actually the frameworks is on heavy development. it has been tested with Apache 
   * Almost no configuration (No yaml, xml, ini.. Just PHP)
   * Great Performance, ease of use and speed of development!
   * Dependency Injection done via Container (PHP-DI)
-  * PSR-4, PSR-7, PSR-11 compatible
+  * PSR-4, PSR-7*, PSR-11 compatible
+  
+* PSR-7 is actually extended, since pHackp ServerRequestInterface supports path params for restful routes.
 
 ### Routing
   * Routing is made by php code, no server configuration rules generation or requirement (just mod_require to index.php)
