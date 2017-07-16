@@ -4,9 +4,8 @@ namespace yuxblank\phackp\core;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use yuxblank\phackp\http\ServerRequest;
 use yuxblank\phackp\http\ServerRequestFactory;
-use Zend\Diactoros\ServerRequest;
-
 /**
  * Class HttpKernel
  * @author Yuri Blanc
@@ -97,7 +96,7 @@ final class HttpKernel
      * @return mixed
      * @throws \RuntimeException
      */
-    protected function parseBodyByContentType()
+    private function parseBodyByContentType()
     {
         switch ($this->getContentType()) {
             case "application/json":
@@ -121,24 +120,19 @@ final class HttpKernel
     {
         switch ($this->request->getMethod()) {
             case 'GET':
-                if (array_key_exists('params', $route)) {
-                    $this->setParams($route['params']);
-                }
+                $this->request = $this->request->withPathParams($route['params']);
                 break;
             case 'POST':
                 $this->parseBodyByContentType();
-                $this->setRouteParams($route);
+                $this->request = $this->request->withPathParams($route['params']);
             // if break, we cant receive body so we continue
             case ('PUT' || 'DELETE' || 'HEAD' || 'PATCH' || 'OPTIONS'):
-                $this->setRouteParams($route);
                 $this->parseBodyByContentType();
                 break;
             default:
                 break;
         }
-        if ($this->params!==null) {
-            $this->request = $this->request->withPathParams($this->params);
-        }
     }
+
 
 }
