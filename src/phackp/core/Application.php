@@ -9,7 +9,7 @@ use DI\NotFoundException;
 use DI\Scope;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use yuxblank\phackp\api\ApplicationController;
+use yuxblank\phackp\core\api\ApplicationController;
 use yuxblank\phackp\database\Database;
 use yuxblank\phackp\database\HackORM;
 use yuxblank\phackp\exceptions\ConfigurationException;

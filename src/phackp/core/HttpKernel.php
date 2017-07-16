@@ -4,8 +4,8 @@ namespace yuxblank\phackp\core;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use yuxblank\phackp\http\ServerRequestFactory;
 use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\ServerRequestFactory;
 
 /**
  * Class HttpKernel
@@ -121,10 +121,6 @@ final class HttpKernel
     {
         switch ($this->request->getMethod()) {
             case 'GET':
-                // get paramets ?name=value
-                if ($this->config['INJECT_QUERY_STRING']) {
-                    $this->setParams($this->getRequest()->getQueryParams());
-                }
                 if (array_key_exists('params', $route)) {
                     $this->setParams($route['params']);
                 }
@@ -141,7 +137,7 @@ final class HttpKernel
                 break;
         }
         if ($this->params!==null) {
-            $this->request = $this->request->withQueryParams($this->params);
+            $this->request = $this->request->withPathParams($this->params);
         }
     }
 
