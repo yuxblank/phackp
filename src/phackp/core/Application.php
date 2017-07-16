@@ -14,6 +14,7 @@ use yuxblank\phackp\database\Database;
 use yuxblank\phackp\database\HackORM;
 use yuxblank\phackp\exceptions\ConfigurationException;
 use yuxblank\phackp\exceptions\InvocationException;
+use yuxblank\phackp\http\HttpKernel;
 use yuxblank\phackp\services\api\AutoBootService;
 use yuxblank\phackp\services\exceptions\ServiceProviderException;
 use yuxblank\phackp\utils\UnitConversion;
