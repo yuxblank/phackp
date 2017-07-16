@@ -8,6 +8,17 @@ namespace yuxblank\phackp\http\api;
  */
 interface ServerRequestInterface extends \Psr\Http\Message\ServerRequestInterface
 {
+    /**
+     * Get path params, resolved by a RestFul router
+     * @return mixed
+     */
     public function getPathParams();
+
+    /**
+     * Return an instance with the parsed path params.
+     * @param array $params
+     * @return mixed
+     */
+    public function withPathParams(array $params);
 
 }
