@@ -1,11 +1,10 @@
 <?php
 
-namespace yuxblank\phackp\core;
+namespace yuxblank\phackp\http;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use yuxblank\phackp\http\ServerRequest;
-use yuxblank\phackp\http\ServerRequestFactory;
+
 /**
  * Class HttpKernel
  * @author Yuri Blanc
