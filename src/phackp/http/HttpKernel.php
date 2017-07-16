@@ -99,13 +99,11 @@ final class HttpKernel
     {
         switch ($this->getContentType()) {
             case "application/json":
-                return $this->parseJson($this->getRequest()->getBody()->getContents());
+                $this->request->withParsedBody($this->parseJson($this->getRequest()->getBody()->getContents()));
                 break;
             case "application/x-www-form-urlencoded":
-                return $this->request->getParsedBody();
                 break;
             default:
-                return $this->request->getParsedBody();
         }
     }
 
@@ -119,11 +117,11 @@ final class HttpKernel
     {
         switch ($this->request->getMethod()) {
             case 'GET':
-                $this->request = $this->request->withPathParams($route['params']);
+               $this->request->withPathParams($route['params']);
                 break;
             case 'POST':
                 $this->parseBodyByContentType();
-                $this->request = $this->request->withPathParams($route['params']);
+                $this->request->withPathParams($route['params']);
             // if break, we cant receive body so we continue
             case ('PUT' || 'DELETE' || 'HEAD' || 'PATCH' || 'OPTIONS'):
                 $this->parseBodyByContentType();
