@@ -1,6 +1,6 @@
 <?php
 
-namespace yuxblank\phackp\core;
+namespace yuxblank\phackp\routing;
 
 /*
  * Copyright (C) 2015 yuri.blanc

@@ -16,6 +16,7 @@ use yuxblank\phackp\exceptions\ConfigurationException;
 use yuxblank\phackp\exceptions\InvocationException;
 use yuxblank\phackp\http\HttpKernel;
 use yuxblank\phackp\http\ServerRequest;
+use yuxblank\phackp\routing\api\Router;
 use yuxblank\phackp\services\api\AutoBootService;
 use yuxblank\phackp\services\exceptions\ServiceProviderException;
 use yuxblank\phackp\utils\UnitConversion;
@@ -66,11 +67,11 @@ class Application
     }
 
     /**
+     * @deprecated
      * Return the entire array of configurations.
+     * @param string $name
+     * @param string|null $key
      * @return array
-     * @throws \InvalidArgumentException
-     * @throws \DI\NotFoundException
-     * @throws \DI\DependencyException
      */
     public static function getConfig(string $name, string $key = null)
     {
@@ -83,7 +84,8 @@ class Application
     }
 
 
-    /**
+    /**+
+     * @deprecated
      * Check if the application APP_MODE is set to DEBUG
      * @return bool
      */
@@ -126,6 +128,7 @@ class Application
 
 
     /**
+     * @deprecated inject the service where you need it
      * Retrieve the instance from the container.
      * Eventually makes an instance of the ServiceProvider if was never bootstrapped
      * @param string $serviceName
@@ -187,12 +190,8 @@ class Application
      */
     public function bootstrap(string $realPath, string $configPath = null)
     {
-
         $containerBuilder = new ContainerBuilder();
-
-
         $this->runtime();
-
         self::$ROOT = $realPath;
 
         $config = $configPath === null ? $realPath . '/config/' : $configPath;
@@ -208,17 +207,6 @@ class Application
         foreach ($files as $file) {
             $containerBuilder->addDefinitions($file);
         }
-
-        /*
-        foreach ($tmp as $key => $value) {
-
-            foreach ($value as $key2 => $innervalue) {
-
-                $this->config[$key2] = $innervalue;
-
-            }
-        }
-        */
 
         $containerBuilder->useAutowiring(true);
         $containerBuilder->useAnnotations(true);
@@ -237,7 +225,7 @@ class Application
         return
             [
                 Router::class => function () {
-                    return new Router($this->container->get('routes'), $this->container->get('app.globals'), $this->container->get(ServerRequestInterface::class));
+                    return new \yuxblank\phackp\routing\Router($this->container->get('routes'), $this->container->get('app.globals'), $this->container->get(ServerRequestInterface::class));
                 },
                 Database::class => function () {
                     return new Database($this->container->get('database'));

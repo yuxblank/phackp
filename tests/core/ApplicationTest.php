@@ -22,7 +22,21 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
      */
     public function testRun(){
         $this->application->run();
-        $this->assertEquals(ob_get_contents(), 'Hello!');
+        $out = ob_get_contents();
+        ob_clean();
+        $this->assertEquals($out, 'Hello!');
+
     }
+    /**
+     * @runInSeparateProcess
+     */
+  /*  public function testRoutedResponse(){
+        $this->application->run();
+        $out = ob_get_contents();
+        ob_clean();
+        var_dump($out);
+        //$this->assertEquals($out, 'Pippo!');
+
+    }*/
 
 }

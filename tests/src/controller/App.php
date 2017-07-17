@@ -35,5 +35,11 @@ class App extends Controller
         return $response;
     }
 
+    public function testGet(){
+        $response = new Response();
+        $response->getBody()->write("Pippo!");
+        return $response;
+    }
+
 
 }

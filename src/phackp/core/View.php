@@ -1,6 +1,6 @@
 <?php
-
 namespace yuxblank\phackp\core;
+use yuxblank\phackp\routing\api\Router;
 /*
  * Copyright (C) 2015 yuri.blanc
  *
@@ -17,6 +17,7 @@ namespace yuxblank\phackp\core;
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 
 /**
  * The view object has all methods used for creating views and passing data.

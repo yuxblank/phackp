@@ -15,9 +15,9 @@ return [
                 'class' => test\controller\App::class
             ],
             [
-                'url' => 'blog/title/{id}',
-                'method' => 'showPost',
-                'alias' => 'blogpost',
+                'url' => 'test/title/{id}',
+                'method' => 'testGet',
+                'alias' => 'test.get',
                 'class' => test\controller\App::class
             ],
             [

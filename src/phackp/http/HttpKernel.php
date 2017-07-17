@@ -109,7 +109,7 @@ final class HttpKernel
 
     private function parsePathParams($route)
     {
-        if (array_key_exists("params", $route)){
+        if (array_key_exists("params", $route)) {
             $this->request = $this->request->withPathParams($route['params']);
         }
     }
@@ -127,8 +127,7 @@ final class HttpKernel
             case 'GET':
                 break;
             case 'POST':
-                $this->parseBodyByContentType();
-            // if break, we cant receive body so we continue
+                // if break, we cant receive body so we continue
             case ('PUT' || 'DELETE' || 'HEAD' || 'PATCH' || 'OPTIONS'):
                 $this->parseBodyByContentType();
                 break;
