@@ -35,6 +35,8 @@
       "yuxblank\\phackp\\exceptions\\": "src/phackp/exceptions",
       "yuxblank\\phackp\\http\\": "src/phackp/http/",
       "yuxblank\\phackp\\http\\api\\": "src/phackp/http/api",
+      "yuxblank\\phackp\\routing\\": "src/phackp/routing",
+      "yuxblank\\phackp\\routing\\api\\": "src/phackp/routing/api",
       "yuxblank\\phackp\\utils\\" : "src/phackp/utils",
       "yuxblank\\phackp\\database\\" : "src/phackp/database",
       "yuxblank\\phackp\\services\\" : "src/phackp/services",
