@@ -189,7 +189,7 @@ class Router implements api\Router
 
             // if the url is the same static route, just return!
             if ($route['url'] === $this->serverRequest->getUri()->getPath()) {
-                return $route;
+                return $this->createRouteFromArray($route);
             }
             // find wildcard
             if (preg_match(self::WILDCARD_REGEXP, $route['url'])) {
@@ -199,7 +199,7 @@ class Router implements api\Router
                 // if compare routes matched and the url has been recreated, return this route
                 if ($url !== null) {
                     $route['params'] = $this->getWildCardParams($routeArray, $queryArray);
-                    return $route;
+                    return $this->createRouteFromArray($route);
                 }
             }
 
@@ -342,5 +342,9 @@ class Router implements api\Router
             $getParams[$index] = $queryArray[$key];
         }
         return $getParams;
+    }
+
+    private function createRouteFromArray(array $routeArray){
+        return new Route($routeArray['url'],$routeArray['class'],$routeArray['method'],$routeArray['alias']);
     }
 }
