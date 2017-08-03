@@ -4,6 +4,7 @@ namespace yuxblank\phackp\http;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use yuxblank\phackp\routing\api\RouteInterface;
 
 /**
  * Class HttpKernel
@@ -107,20 +108,19 @@ final class HttpKernel
         }
     }
 
-    private function parsePathParams($route)
+    private function parsePathParams(RouteInterface $route)
     {
-        if (array_key_exists("params", $route)) {
-            $this->request = $this->request->withPathParams($route['params']);
+        if ($route->hasParams()) {
+            $this->request = $this->request->withPathParams($route->getParams());
         }
     }
 
     /**
      * Dispatch HTTP request and parameters to the current HttpKernel instance.
      * todo refactor read route params into Router class
-     * @param array $route (the current route object)
-     * @throws \RuntimeException
+     * @param RouteInterface $route (the current route object)
      */
-    public function parseRequest(array $route)
+    public function parseRequest(RouteInterface $route)
     {
         $this->parsePathParams($route);
         switch ($this->request->getMethod()) {

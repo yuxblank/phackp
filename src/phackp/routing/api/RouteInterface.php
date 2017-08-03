@@ -55,4 +55,9 @@ interface RouteInterface
     public function setIsError(bool $isError);
 
 
+    public function getParams(): array;
+    public function setParams(array $params);
+    public function hasParams():bool;
+
+
 }

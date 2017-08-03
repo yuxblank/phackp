@@ -9,6 +9,8 @@
 namespace yuxblank\phackp\routing\api;
 
 
+use yuxblank\phackp\routing\Route;
+
 interface Router
 {
     /**
@@ -40,14 +42,16 @@ interface Router
      * Find the action for the give ServerRequest. The method it's invoked by pHackp runtime in order to detect
      * the current route.
      * Must return the actual route.
-     * @return mixed
+     * @throws \RouterException
+     * @return RouteInterface
      */
-    public function findAction();
+    public function findAction():RouteInterface;
 
     /**
      * Get an Error route by error code.
      * @param int $code
-     * @return mixed
+     * @throws \RouterException
+     * @return RouteInterface
      */
-    public function getErrorRoute(int $code);
+    public function getErrorRoute(int $code):RouteInterface;
 }

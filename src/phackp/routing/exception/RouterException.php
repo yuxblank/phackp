@@ -6,9 +6,10 @@
  * Date: 17/07/2017
  * Time: 14:06
  */
-class RouterException extends RuntimeException
+class RouterException extends \Exception
 {
 
+    const ROUTE_NOT_DEFINED = 1;
     const NOT_FOUND = 404;
 
     /**
@@ -17,7 +18,7 @@ class RouterException extends RuntimeException
      * @param int $code
      * @param Throwable $throwable
      */
-    public function __construct(string $message=null, int $code, Throwable $throwable)
+    public function __construct(string $message=null, int $code, Throwable $throwable=null)
     {
         parent::__construct($message,$code,$throwable);
     }

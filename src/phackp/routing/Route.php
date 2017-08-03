@@ -24,6 +24,8 @@ class Route implements RouteInterface
     private $alias;
     /** @var  bool */
     private $isError;
+    /** @var  array */
+    private $params = [];
 
     /**
      * Route constructor.
@@ -113,6 +115,21 @@ class Route implements RouteInterface
     public function isError():bool
     {
         return $this->isError;
+    }
+
+    public function getParams(): array
+    {
+        return $this->params;
+    }
+
+    public function setParams(array $params)
+    {
+        $this->params = $params;
+    }
+
+    public function hasParams(): bool
+    {
+        return count($this->params) > 0;
     }
 
 

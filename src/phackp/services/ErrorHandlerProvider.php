@@ -1,10 +1,10 @@
 <?php
 namespace yuxblank\phackp\services;
 
-use yuxblank\phackp\core\Router;
 use yuxblank\phackp\core\ServiceProvider;
 use yuxblank\phackp\exceptions\InvocationException;
 use yuxblank\phackp\providers\PhackpExceptionHandler;
+use yuxblank\phackp\routing\api\Router;
 use yuxblank\phackp\services\api\AutoBootService;
 use yuxblank\phackp\services\api\ErrorHandler;
 use yuxblank\phackp\services\api\ExceptionHandler;
@@ -47,13 +47,13 @@ class ErrorHandlerProvider extends ServiceProvider implements ThrowableHandler, 
             \DI\object($excClazz)
                 ->constructor(
                     $router,
-                    $this->container->make($router->getErrorRoute(500)['class']),
-                    $router->getErrorRoute(500)['method']));
+                    $this->container->make($router->getErrorRoute(500)->getClass()),
+                    $router->getErrorRoute(500)->getAction()));
 
         $routes = $this->container->get(Router::class)->getErrorRoute(500);
-        $this->container->set($routes['class'], $routes['class']);
-        $this->errorController = $this->container->get($routes['class']);
-        $this->errorMethod = $routes['method'];
+        $this->container->set($routes['class'], $routes->getClass());
+        $this->errorController = $this->container->get($routes->getClass());
+        $this->errorMethod = $routes->getAction();
 
 
         try {

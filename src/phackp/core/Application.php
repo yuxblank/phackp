@@ -276,37 +276,24 @@ class Application
         /** @var Router $router */
         $router = $this->container->make(Router::class);
 
-        $route = $router->findAction();
 
-        if ($route !== null) {
-
-           /* if (!is_subclass_of($route['class'], Controller::class)) {
-                throw new InvocationException('Class ' . $route['class'] . ' is not a controller, extend ' . Controller::class . ' is required by controllers', InvocationException::ROUTER);
-            }*/
-
-           /*$class = $route['class'];
-           todo check interface or superclass
-           if (!class_exists($class)){
-               throw new InvocationException("Class " . $class . " does not exist", InvocationException::ROUTER);
-           }
-           if (! (class_implements($class,true) || is_subclass_of($class, Controller::class))) {
-               throw new InvocationException("Class " . $class . " either not implement " .  ApplicationController::class . " or extend " . Controller::class , InvocationException::ROUTER);
-           }*/
-
+        try {
+            $route = $router->findAction();
             try {
-                $this->container->set(ApplicationController::class, $route['class']);
+                $this->container->set(ApplicationController::class, $route->getClass());
+                $this->container->call([HttpKernel::class, 'parseRequest'], $route);
+                $this->callController($route->getAction());
             } catch (NotFoundException $e) {
-                throw new InvocationException('Class ' . $route['class'] . ' not found in routes', InvocationException::ROUTER, $e);
+                throw new InvocationException('Class ' . $route->getClass() . ' is not valid: ' . $e->getMessage(), InvocationException::ROUTER, $e);
             }
 
-            $this->container->call([HttpKernel::class, 'parseRequest'], [$route]);
-            $this->callController($route['method']);
-
-        } else {
-            //todo better support for multi-apps
-            $notFoundRoute = $this->container->get(Router::class)->getErrorRoute(404);
-            $this->container->set(ApplicationController::class, $notFoundRoute['class']);
-            $this->callController($notFoundRoute['method']);
+        } catch (\RouterException $ex){
+            if ($ex->getCode() === $ex::NOT_FOUND){
+                //todo better support for multi-apps
+                $notFoundRoute = $this->container->get(Router::class)->getErrorRoute(404);
+                $this->container->set(ApplicationController::class, $notFoundRoute->getClass());
+                $this->callController($notFoundRoute->getAction());
+            }
         }
 
         if (self::isDebug() && ($httpKernel->getContentType() === 'text/plain' || $httpKernel->getContentType() === 'text/html')) {
@@ -314,7 +301,6 @@ class Application
             echo '<p style="position: fixed; bottom:0; margin: 0 auto;"> Total execution time in seconds: ' . (microtime(true) - $time_start) . ' runtime_id: ' . pHackpRuntime . ' memory peak: ' . UnitConversion::byteConvert($memoryPeak) . '</p>';
         }
     }
-
 
 
     private final function callController(string $method){

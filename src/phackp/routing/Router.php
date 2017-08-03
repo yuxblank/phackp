@@ -19,8 +19,10 @@ namespace yuxblank\phackp\routing;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 use Psr\Http\Message\ServerRequestInterface;
+use RouterException;
 use yuxblank\phackp\core\api\ApplicationController;
 use yuxblank\phackp\exceptions\InvocationException;
+use yuxblank\phackp\routing\api\RouteInterface;
 use yuxblank\phackp\utils\ReflectionUtils;
 
 /**
@@ -112,7 +114,7 @@ class Router implements api\Router
     {
         $link = $this->searchThroughRoutes($action, 'action', $method);
         if ($link === null) {
-            $link = $this->getErrorRoute(404)['url'];
+            $link = $this->getErrorRoute(404)->getURI();
         }
 
         if ($params !== null) {
@@ -139,7 +141,7 @@ class Router implements api\Router
 
         $link = $this->searchThroughRoutes($alias, 'alias', $method);
         if ($link === null) {
-            $link = $this->getErrorRoute(404)['url'];
+            $link = $this->getErrorRoute(404)->getURI();
         }
 
         if ($params !== null) {
@@ -175,10 +177,11 @@ class Router implements api\Router
     /**
      * Find the action from httpKernel and set routed parameters if any.
      * if the route has been found return the route.
-     * @return null|array
+     * @return RouteInterface
+     * @throws RouterException
      */
 
-    public function findAction()
+    public function findAction():RouteInterface
     {
 
         foreach ($this->routes[$this->serverRequest->getMethod()] as $key => $route) {
@@ -201,14 +204,20 @@ class Router implements api\Router
             }
 
         }
-        return null;
+        throw new RouterException("Route not found", RouterException::NOT_FOUND);
     }
 
-    public function getErrorRoute(int $code){
+    /**
+     * @param int $code
+     * @return RouteInterface
+     * @throws RouterException
+     */
+    public function getErrorRoute(int $code):RouteInterface{
         if (isset($this->routes['ERROR'][$code])){
-            return $this->routes['ERROR'][$code];
+            $route = $this->routes['ERROR'][$code];
+            return new Route($route['url'],$route['class'],$route['method'], $route['alias'],true);
         }
-        return null;
+        throw new RouterException("Error route with code: ".$code." not defined", RouterException::ROUTE_NOT_DEFINED);
     }
 
 

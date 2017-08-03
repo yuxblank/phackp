@@ -81,7 +81,7 @@ abstract class ServiceProvider implements Service
 
     /**
      * @param string $name of the param
-     * @return array
+     * @return string
      */
     public final function getConfig(string $name)
     {
