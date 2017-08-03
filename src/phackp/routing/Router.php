@@ -119,9 +119,9 @@ class Router implements api\Router
 
         if ($params !== null) {
             $url = $this->fastParamBind($link, $params);
-            return $this->appGlobals['APP_URL'] . '/' . implode('/', $url);
+            return $this->appGlobals['APP_URL'] . implode('/', $url);
         }
-        return $link !== '/' ? $this->appGlobals['APP_URL'] . '/' . $link : $this->appGlobals['APP_URL'] . $link;
+        return $link !== '/' ? $this->appGlobals['APP_URL'] . $link : $this->appGlobals['APP_URL'] . $link;
     }
 
     /**
@@ -146,9 +146,9 @@ class Router implements api\Router
 
         if ($params !== null) {
             $url = $url = $this->fastParamBind($link, $params);
-            return $this->appGlobals['APP_URL'] . '/' . implode('/', $url);
+            return $this->appGlobals['APP_URL']  . implode('/', $url);
         }
-        return $link !== '/' ? $this->appGlobals['APP_URL'] . '/' . $link : $this->appGlobals['APP_URL'] . $link;
+        return $link !== '/' ? $this->appGlobals['APP_URL']  . $link : $this->appGlobals['APP_URL'] . $link;
     }
 
     /**

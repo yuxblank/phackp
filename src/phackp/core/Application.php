@@ -281,7 +281,7 @@ class Application
             $route = $router->findAction();
             try {
                 $this->container->set(ApplicationController::class, $route->getClass());
-                $this->container->call([HttpKernel::class, 'parseRequest'], $route);
+                $this->container->call([HttpKernel::class, 'parseRequest'], array($route));
                 $this->callController($route->getAction());
             } catch (NotFoundException $e) {
                 throw new InvocationException('Class ' . $route->getClass() . ' is not valid: ' . $e->getMessage(), InvocationException::ROUTER, $e);
