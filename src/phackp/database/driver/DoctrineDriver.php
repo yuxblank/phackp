@@ -23,7 +23,7 @@ class DoctrineDriver implements EntitiyManagerDriver
     public function __construct(array $databaseConfig)
     {
         $this->doctrineConfiguration = Setup::createAnnotationMetadataConfiguration(
-            $databaseConfig['entities_path'],
+            $databaseConfig['entities_paths'],
             $databaseConfig['is_dev'],
             $databaseConfig['proxy_dir'],
             $databaseConfig['cache'],

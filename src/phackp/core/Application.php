@@ -251,7 +251,9 @@ class Application
                 HttpKernel::class => function () {
                     return new HttpKernel($this->container->get('app.http'));
                 },
-                EntitiyManagerDriver::class =>  object(DoctrineDriver::class)->constructor("doctrine.config"),
+                EntitiyManagerDriver::class =>  function () {
+                    return new DoctrineDriver($this->container->get('doctrine.config'));
+                },
                 EntityManagerInterface::class =>  \DI\factory([EntitiyManagerDriver::class, 'getDriver'])->scope(Scope::SINGLETON),
                 ServiceProvider::class => object(ServiceProvider::class)->property('container', $this->container),
                 ServerRequestInterface::class => \DI\factory([HttpKernel::class, 'getRequest'])->scope(Scope::PROTOTYPE),
