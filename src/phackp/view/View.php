@@ -1,6 +1,7 @@
 <?php
-namespace yuxblank\phackp\core;
+namespace yuxblank\phackp\view;
 use yuxblank\phackp\routing\api\Router;
+
 /*
  * Copyright (C) 2015 yuri.blanc
  *

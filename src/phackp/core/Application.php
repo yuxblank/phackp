@@ -23,6 +23,7 @@ use yuxblank\phackp\routing\api\Router;
 use yuxblank\phackp\services\api\AutoBootService;
 use yuxblank\phackp\services\exceptions\ServiceProviderException;
 use yuxblank\phackp\utils\UnitConversion;
+use yuxblank\phackp\view\View;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\SapiEmitter;
 use function DI\object;

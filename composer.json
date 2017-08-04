@@ -2,7 +2,6 @@
   "name": "yuxblank/phackp",
   "description": "pHackp aim to provide a fast and easy way to build modern and responsive websites and apps. It provides an Model View Controller structure for organizing your project and tries to be as far as possible 'convention over configuration'",
   "version": "0.4.1-alpha",
-  "minimum-stability": "alpha",
   "license": "MIT",
   "type": "library",
   "homepage":"http://yuxblank.github.io/phackp",
@@ -18,9 +17,9 @@
     "email": "yuxblank@gmail.com"
   },
   "require-dev": {
-    "phpdocumentor/phpdocumentor": "2.*",
     "phpunit/phpunit": "5.3.*",
-    "doctrine/orm" : "2.5.*"
+    "doctrine/orm" : "2.5.*",
+    "twig/twig" : "2.0"
   },
   "require": {
     "php": ">=7.0",
@@ -44,6 +43,9 @@
       "yuxblank\\phackp\\database\\driver\\" : "src/phackp/database/driver",
       "yuxblank\\phackp\\services\\" : "src/phackp/services",
       "yuxblank\\phackp\\providers\\" : "src/phackp/providers",
+      "yuxblank\\phackp\\view\\" : "src/phackp/view",
+      "yuxblank\\phackp\\view\\api\\" : "src/phackp/view/api",
+      "yuxblank\\phackp\\view\\twig" : "src/phackp/view/twig",
       "test\\controller\\" : "tests/src/controller"
     }
   }
