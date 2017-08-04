@@ -14,6 +14,9 @@ use Doctrine\ORM\EntityManagerInterface;
 interface EntitiyManagerDriver
 {
 
+    /**
+     * @return EntityManagerInterface
+     */
     public function getDriver():EntityManagerInterface;
 
 }

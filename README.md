@@ -58,6 +58,7 @@ Actually the frameworks is on heavy development. it has been tested with Apache 
    * Dependency injection (e.g self::oneToMany($this, 'Parent::class') returns $Parent instances.)
    * Ability to use Database class as standalone to preserve "is a" OOP rule. (but Model API is more productive!)
    * Models can always access PDO instance when needed ($this->getPDO())
+   * Doctrine2 Integration
    
 ### Model View Controller
   * Application lifecycle will route the current request to the specified controller method, also when errors or 404.
@@ -98,3 +99,7 @@ Actually the frameworks is on heavy development. it has been tested with Apache 
   * routes GET,POST,PUT,DELETE,OPTIONS,PATCH etc. for CRUD RESTFUL standard API's
   * automatic serialize/un-serialize json-to-array (PSR-7 Middleware)
   * Ready to use CORS filter*
+  
+### 3rd party projects support
+  * PHP-DI (http://php-di.org/)
+  * Doctrine 2 (http://www.doctrine-project.org/projects/orm.html)
