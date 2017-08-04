@@ -60,7 +60,7 @@ abstract class Model
     /**
      * @return \PDO
      */
-    public final function getPDO(): \PDO
+    protected final function getPDO(): \PDO
     {
         return $this->getOrmInstance()->getDB()->getPDO();
     }
@@ -117,27 +117,27 @@ abstract class Model
         return $this->getOrmInstance()->merge($this);
     }
 
-    public function belongsTo(string $target)
+    protected function belongsTo(string $target)
     {
         return $this->getOrmInstance()->oneToOne($this, $target);
     }
 
-    public function hasMany(string $target)
+    protected function hasMany(string $target)
     {
         return $this->getOrmInstance()->oneToMany($this, $target);
     }
 
-    public function hasOne(string $target)
+    protected function hasOne(string $target)
     {
         return $this->getOrmInstance()->manyToOne($this, $target);
     }
 
-    public function hasManyThrough(string $target)
+    protected function hasManyThrough(string $target)
     {
         return $this->getOrmInstance()->manyToMany($this, $target);
     }
 
-    public function _hasManyThrough(string $target)
+    protected function _hasManyThrough(string $target)
     {
         return $this->getOrmInstance()->_manyToMany($this,  $target);
     }

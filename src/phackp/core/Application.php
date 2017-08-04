@@ -7,10 +7,13 @@ use DI\ContainerBuilder;
 use DI\DependencyException;
 use DI\NotFoundException;
 use DI\Scope;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use yuxblank\phackp\core\api\ApplicationController;
+use yuxblank\phackp\database\api\EntitiyManagerDriver;
 use yuxblank\phackp\database\Database;
+use yuxblank\phackp\database\driver\DoctrineDriver;
 use yuxblank\phackp\database\HackORM;
 use yuxblank\phackp\exceptions\ConfigurationException;
 use yuxblank\phackp\exceptions\InvocationException;
@@ -38,6 +41,7 @@ class Application
     protected $version;
     /** @var  Container */
     private $container;
+    private $useDefaultDI = true;
 
 
     /**
@@ -203,7 +207,9 @@ class Application
         $tmp = null;
         $files = glob($config . '*.php');
 
-        $containerBuilder->addDefinitions($this->frameworkDI());
+        if ($this->useDefaultDI){
+            $containerBuilder->addDefinitions($this->frameworkDI());
+        }
         foreach ($files as $file) {
             $containerBuilder->addDefinitions($file);
         }
@@ -211,6 +217,10 @@ class Application
         $containerBuilder->useAutowiring(true);
         $containerBuilder->useAnnotations(true);
         $this->container = $containerBuilder->build();
+    }
+
+    public function disableFrameworkDefaultDI(){
+        $this->useDefaultDI = false;
     }
 
     /**
@@ -241,6 +251,8 @@ class Application
                 HttpKernel::class => function () {
                     return new HttpKernel($this->container->get('app.http'));
                 },
+                EntitiyManagerDriver::class =>  object(DoctrineDriver::class)->constructor("doctrine.config"),
+                EntityManagerInterface::class =>  \DI\factory([EntitiyManagerDriver::class, 'getDriver'])->scope(Scope::SINGLETON),
                 ServiceProvider::class => object(ServiceProvider::class)->property('container', $this->container),
                 ServerRequestInterface::class => \DI\factory([HttpKernel::class, 'getRequest'])->scope(Scope::PROTOTYPE),
                 \yuxblank\phackp\http\api\ServerRequestInterface::class => \DI\factory([HttpKernel::class, 'getRequest'])->scope(Scope::PROTOTYPE),
