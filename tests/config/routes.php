@@ -25,10 +25,14 @@ return [
                 'method' => 'showPost',
                 'class' => test\controller\App::class
             ],
-
             [
                 'url' => '/tag/{id}',
                 'method' => 'tagSearch',
+                'class' => test\controller\App::class
+            ],
+            [
+                'url' => '/json/response',
+                'method' => 'testJsonResponse',
                 'class' => test\controller\App::class
             ],
 

@@ -1,5 +1,7 @@
 <?php
 
+use yuxblank\phackp\http\HttpKernel;
+
 /**
  * Created by IntelliJ IDEA.
  * User: yuri.blanc
@@ -8,13 +10,13 @@
  */
 class HttpKernelTest extends PHPUnit_Framework_TestCase
 {
-    /** @var  \yuxblank\phackp\core\HttpKernel */
+    /** @var  HttpKernel */
     private $httpKernel;
     private $config;
 
     public function setUp(){
         $this->config = require '../config/app.php';
-        $this->httpKernel = new \yuxblank\phackp\core\HttpKernel($this->config['app.http']);
+        $this->httpKernel = new HttpKernel($this->config['app.http']);
     }
 
     public function testInit(){

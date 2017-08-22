@@ -12,6 +12,7 @@ namespace test\controller;
 use Psr\Http\Message\ServerRequestInterface;
 use yuxblank\phackp\core\Controller;
 use Zend\Diactoros\Response;
+use Zend\Diactoros\Response\JsonResponse;
 
 class App extends Controller
 {
@@ -39,6 +40,13 @@ class App extends Controller
         $response = new Response();
         $response->getBody()->write("Pippo!");
         return $response;
+    }
+
+    public function testJsonResponse(){
+        $class = new \stdClass();
+        $class->field1 = "testfield1";
+        $class->field2 = "testfield1";
+        return new JsonResponse($class);
     }
 
 
