@@ -1,5 +1,6 @@
 <?php
 namespace yuxblank\phackp\services\exceptions;
+
 /**
  * Class ServiceProviderException
  * Exception thrown by pHackp ServiceProvider implementation

@@ -19,10 +19,10 @@ namespace yuxblank\phackp\routing;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 use Psr\Http\Message\ServerRequestInterface;
-use RouterException;
 use yuxblank\phackp\core\api\ApplicationController;
 use yuxblank\phackp\exceptions\InvocationException;
 use yuxblank\phackp\routing\api\RouteInterface;
+use yuxblank\phackp\routing\exception\RouterException;
 use yuxblank\phackp\utils\ReflectionUtils;
 
 /**

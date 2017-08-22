@@ -68,9 +68,8 @@ class Database
     protected function connect()
     {
 
-        $dsn = $this->conf['DRIVER'] . ':host=' . $this->conf['HOST'] . ";dbname=" . $this->conf['NAME'];
         try {
-            $this->pdo = new PDO($dsn, $this->conf['USER'], $this->conf['PSW'], $this->conf['OPTIONS']);
+            $this->pdo = new PDO($this->conf['DSN'], $this->conf['USER'], $this->conf['PSW'], $this->conf['OPTIONS']);
         } catch (\PDOException $ex) {
             throw new \PDOException("Cannot create instance of PDO and connect to database, please check configurations");
         }

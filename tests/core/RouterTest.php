@@ -1,12 +1,14 @@
 <?php
+
+use yuxblank\phackp\http\HttpKernel;
+use yuxblank\phackp\routing\Router;
+
 /**
  * Created by IntelliJ IDEA.
  * User: yuri.blanc
  * Date: 04/05/2016
  * Time: 12:30
  */
-use yuxblank\phackp\core\HttpKernel;
-use yuxblank\phackp\core\Router;
 
 final class RouterTest extends PHPUnit_Framework_TestCase
 {
@@ -32,7 +34,7 @@ final class RouterTest extends PHPUnit_Framework_TestCase
     }
 
     public function testFindRouteByAlias(){
-        $this->assertEquals($this->router->alias('blogpost','GET', [1]), $this->APP_URL. '/blog/title/1' );
+        $this->assertEquals($this->router->alias('test.get','GET', [1]), $this->APP_URL. '/blog/title/1' );
     }
 
 

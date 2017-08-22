@@ -8,13 +8,10 @@ return [
     "app.database" =>
     [
         "ID"      => "default",
-        "DRIVER"  => "sqlite::memory",
-        "HOST"    => null,
-        "PORT"    => null,
+        "DSN"     => "sqlite:C:\\Users\yuri.blanc\php\\test.sq",
         "USER"    => null,
         "PSW"     => null,
-        "NAME"    => null,
-        "OPTIONS" => [PDO::ATTR_PERSISTENT => true],
+        "OPTIONS" => [],
     ]
 
 ];

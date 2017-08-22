@@ -1,5 +1,5 @@
 <?php
-
+namespace yuxblank\phackp\routing\exception;
 /**
  * Created by IntelliJ IDEA.
  * User: yuri.blanc

@@ -19,7 +19,8 @@
   "require-dev": {
     "phpunit/phpunit": "5.3.*",
     "doctrine/orm" : "2.5.*",
-    "twig/twig" : "2.0"
+    "twig/twig" : "2.0",
+    "phpunit/dbunit": "^2.0"
   },
   "require": {
     "php": ">=7.0",
@@ -37,6 +38,7 @@
       "yuxblank\\phackp\\http\\api\\": "src/phackp/http/api",
       "yuxblank\\phackp\\routing\\": "src/phackp/routing",
       "yuxblank\\phackp\\routing\\api\\": "src/phackp/routing/api",
+      "yuxblank\\phackp\\routing\\exception\\": "src/phackp/routing/exception",
       "yuxblank\\phackp\\utils\\" : "src/phackp/utils",
       "yuxblank\\phackp\\database\\" : "src/phackp/database",
       "yuxblank\\phackp\\database\\api\\" : "src/phackp/database/api",
