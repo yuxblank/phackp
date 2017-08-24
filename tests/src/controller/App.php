@@ -11,6 +11,7 @@ namespace test\controller;
 
 use Psr\Http\Message\ServerRequestInterface;
 use yuxblank\phackp\core\Controller;
+use yuxblank\phackp\http\ServerRequest;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\JsonResponse;
 
@@ -48,6 +49,19 @@ class App extends Controller
         $class->field2 = "testfield1";
         return new JsonResponse($class);
     }
+
+    public function supaDupaPathParams(ServerRequest $serverRequest){
+        return new JsonResponse($serverRequest->getPathParams());
+    }
+
+
+
+
+
+
+
+
+
 
 
 }

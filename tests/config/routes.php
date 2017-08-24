@@ -43,6 +43,15 @@ return [
             ],
 
         ],
+        'POST' => [
+            [
+                'url' => '/rest/post',
+                'method' => 'testRestPost',
+                'class' => test\controller\RestController::class,
+                'alias' => 'rest.post'
+            ],
+
+        ]
 
     /*    'ERROR' => [
             404 =>

@@ -20,7 +20,8 @@
     "phpunit/phpunit": "5.3.*",
     "doctrine/orm" : "2.5.*",
     "twig/twig" : "2.0",
-    "phpunit/dbunit": "^2.0"
+    "phpunit/dbunit": "^2.0",
+    "guzzlehttp/guzzle": "~6.0"
   },
   "require": {
     "php": ">=7.0",

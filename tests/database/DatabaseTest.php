@@ -20,45 +20,8 @@ class DatabaseTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->config = require "../config/database.php";
-        $this->database = new Database($this->config['app.database']);
-        $this->database->query(
-
-            "CREATE TABLE IF NOT EXISTS CATEGORY
-(
-	ID INT auto_increment
-		PRIMARY KEY,
-	title VARCHAR(200) NULL
-)
-;
-CREATE TABLE IF NOT EXISTS COMMENT 
-(
-	ID INT auto_increment
-		PRIMARY KEY,
-	text VARCHAR(255) NULL,
-	post_id INT NULL
-)
-;
-
-CREATE TABLE IF NOT EXISTS post
-(
-	ID INT auto_increment
-		PRIMARY KEY,
-	title VARCHAR(200) NULL,
-	content TEXT NULL,
-	category_id INT NULL,
-	date_created DATETIME NULL
-)
-;
-
-CREATE TABLE IF NOT EXISTS TAG
-(
-	ID INT auto_increment
-		PRIMARY KEY,
-	tag VARCHAR(200) NULL,
-	post_id INT NULL
-)
-;
-");
+        $this->database = new Database($this->config['database']);
+        $this->database->query(file_get_contents("../scripts/DDL.sql"));
         $this->database->execute();
         $this->createDML();
         /**
