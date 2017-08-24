@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/yuxblank/phackp.svg?branch=master)](https://travis-ci.org/yuxblank/phackp)
+[![Build Status](https://travis-ci.org/yuxblank/phackp.svg?branch=master)](https://travis-ci.org/yuxblank/phackp) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/0e478b7cc2ed4cd485bac0a5335491b4)](https://www.codacy.com/app/yuxblank/phackp?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=yuxblank/phackp&amp;utm_campaign=Badge_Grade)
 
 # phackp
 PHP Micro Framework, born in PHP7 Age!
