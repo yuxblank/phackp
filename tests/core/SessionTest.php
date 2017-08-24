@@ -7,7 +7,6 @@
  */
 use yuxblank\phackp\core\Application;
 use yuxblank\phackp\core\Session;
-@session_start();
 
 class SessionTest extends PHPUnit_Framework_TestCase
 {
@@ -23,9 +22,11 @@ class SessionTest extends PHPUnit_Framework_TestCase
         $this->session = new Session($this->config['app.session']);
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     public function testInstance()
     {
-
         $this->session->setValue('test', [1,2,3,4,5,6=>[new stdClass()]]);
         $this->assertNotNull($this->session->getValue('test'));
     }

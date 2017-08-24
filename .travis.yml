@@ -26,4 +26,3 @@ install:
 
 script: 
   php -S localhost:7000 -t tests/src/ & vendor/bin/phpunit --bootstrap vendor/autoload.php --configuration phpunit.xml tests
-z
