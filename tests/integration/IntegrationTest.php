@@ -19,9 +19,10 @@ class IntegrationTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->config = require "../config/app.php";
+        $path = defined("CONFIG_PATH") ? CONFIG_PATH : "../config/";
+        $this->config = require $path."app.php";
         $this->uri = $this->config['app.globals']['APP_URL'];
-        $dbConf = require "../config/database.php";
+        $dbConf = require $path."database.php";
         $this->dbConfig = $dbConf['database'];
         $this->client = new Client();
 
@@ -70,7 +71,8 @@ class IntegrationTest extends PHPUnit_Framework_TestCase
 
         $install = false;
         $db = new \yuxblank\phackp\database\Database($this->dbConfig);
-        $install &= $db->query(file_get_contents("../scripts/DDL.sql"))->execute();
+        $scriptPath = defined("SCRIPT_PATH") ? SCRIPT_PATH : "../scripts/";
+        $install &= $db->query(file_get_contents($scriptPath."DDL.sql"))->execute();
 
      /*   if (!$install) {
             throw new RuntimeException("Error creating test database");

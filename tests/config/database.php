@@ -5,12 +5,12 @@ return [
      * Database array support many database, just specify ids. Default db id is default
      */
 
-    "app.database" =>
+    "database" =>
     [
         "ID"      => "default",
-        "DSN"     => "sqlite:C:\\Users\yuri.blanc\php\\test.sq",
-        "USER"    => null,
-        "PSW"     => null,
+        "DSN"     => "mysql:host=localhost;dbname=phackptest",
+        "USER"    => "root",
+        "PSW"     => "muska88",
         "OPTIONS" => [],
     ]
 

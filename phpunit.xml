@@ -1,0 +1,12 @@
+<phpunit bootstrap="vendor/autoload.php">
+  <testsuites>
+    <testsuite name="core">
+      <directory>tests/*Test.php files</directory>
+    </testsuite>
+  </testsuites>
+  <php>
+    <const name="CONFIG_PATH" value="tests/config/"/>
+    <const name="SCRIPT_PATH" value="tests/scripts/"/>
+    <const name="APP_PATH" value="tests/src/"/>
+  </php>
+</phpunit>

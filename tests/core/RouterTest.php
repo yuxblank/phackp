@@ -22,8 +22,9 @@ final class RouterTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->config = require "../config/app.php";
-        $this->routes = require "../config/routes.php";
+        $path = defined("CONFIG_PATH") ? CONFIG_PATH : "../config/";
+        $this->config = require $path."app.php";
+        $this->routes = require $path."routes.php";
         $this->APP_URL = $this->config['app.globals']['APP_URL'];
         $this->httpKernel = new HttpKernel([$this->config['app.http']]);
         $this->router = new Router($this->routes['routes'], $this->config['app.globals'], $this->httpKernel->getRequest());

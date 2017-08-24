@@ -19,16 +19,19 @@ class DatabaseTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->config = require "../config/database.php";
+        $path = defined("CONFIG_PATH") ? CONFIG_PATH : "../config/";
+        $scriptPath = defined("SCRIPT_PATH") ? SCRIPT_PATH : "../scripts/";
+        $appPath = defined("APP_PATH") ? APP_PATH : "../";
+        $this->config = require $path."database.php";
         $this->database = new Database($this->config['database']);
-        $this->database->query(file_get_contents("../scripts/DDL.sql"));
+        $this->database->query(file_get_contents($scriptPath."DDL.sql"));
         $this->database->execute();
         $this->createDML();
         /**
          * Create container to make Model instantiable
          */
         Application::getInstance();
-        Application::getInstance()->bootstrap("../");
+        Application::getInstance()->bootstrap($appPath, $path);
         Application::getInstance()->container()->set(Database::class, $this->database);
     }
 

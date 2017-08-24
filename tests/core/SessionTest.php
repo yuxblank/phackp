@@ -17,7 +17,8 @@ class SessionTest extends PHPUnit_Framework_TestCase
 
 
     protected function setUp(){
-        $this->config = require '../config/app.php';
+        $path = defined("CONFIG_PATH") ? CONFIG_PATH : "../config/";
+        $this->config = require $path.'app.php';
         $this->session = new Session($this->config['app.session']);
     }
 

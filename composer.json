@@ -48,7 +48,11 @@
       "yuxblank\\phackp\\providers\\" : "src/phackp/providers",
       "yuxblank\\phackp\\view\\" : "src/phackp/view",
       "yuxblank\\phackp\\view\\api\\" : "src/phackp/view/api",
-      "yuxblank\\phackp\\view\\twig\\" : "src/phackp/view/twig",
+      "yuxblank\\phackp\\view\\twig\\" : "src/phackp/view/twig"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
       "test\\controller\\" : "tests/src/controller",
       "test\\model\\" : "tests/src/model"
     }
