@@ -31,10 +31,11 @@ abstract class Model
     private $ormInstance;
 
 
-    public function __construct()
+    public function __construct(HackORM $hackORM=null)
     {
         // create ORM instance when used outside DI container or when de-serializing.
-        if ($this->ormInstance=== null) {
+        // fixme this implementation won't work when used outside the application container, when it get instantiated by Database::class methods
+        if ($hackORM===null) {
             $this->ormInstance =  Application::getInstance()->container()->get(HackORM::class);
         }
     }
