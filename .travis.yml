@@ -9,10 +9,16 @@ matrix:
   allow_failures:
     - php: hhvm
 
+services:
+  - mysql
+
 mysql:
   database: phackptest
   username: root
   encoding: utf8
+
+before_install:
+  - mysql -e 'CREATE DATABASE phackptest;'
 
 install:
   - composer install

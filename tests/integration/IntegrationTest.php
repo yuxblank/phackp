@@ -62,6 +62,13 @@ class IntegrationTest extends PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
+        $db = new \yuxblank\phackp\database\Database($this->dbConfig);
+        $db->query(
+            "TRUNCATE category;
+                      TRUNCATE post;
+                      TRUNCATE comment;
+                      TRUNCATE tag;"
+        )->execute();
 
     }
 
