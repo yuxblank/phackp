@@ -35,6 +35,12 @@ return [
                 'method' => 'testJsonResponse',
                 'class' => test\controller\App::class
             ],
+            [
+                'url' => '/supa/dupa/{param1}/and/{param2}/{param3}/supa/dupa/{param4}/{param5}',
+                'method' => 'supaDupaPathParams',
+                'class' => test\controller\App::class,
+                'alias' => 'test.supadupa!'
+            ],
 
         ],
 

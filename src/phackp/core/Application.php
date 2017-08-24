@@ -44,6 +44,7 @@ class Application
     private $container;
     private $useDefaultDI = true;
 
+    const RUNTIME_NAME = 'pHackpRuntime';
 
     /**
      * Application constructor.
@@ -179,7 +180,7 @@ class Application
     private final function runtime()
     {
         $id = random_int(1, 9999);
-        define('pHackpRuntime', $id, false);
+        if (!defined(self::RUNTIME_NAME)) define(self::RUNTIME_NAME, $id, false);
     }
 
 
