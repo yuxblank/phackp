@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/yuxblank/phackp.svg?branch=master)](https://travis-ci.org/yuxblank/phackp)
+
 # phackp
 PHP Micro Framework, born in PHP7 Age!
 
