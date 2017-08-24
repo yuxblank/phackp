@@ -10,7 +10,7 @@ return [
         "ID"      => "default",
         "DSN"     => "mysql:host=localhost;dbname=phackptest",
         "USER"    => "root",
-        "PSW"     => "muska88",
+        "PSW"     => "",
         "OPTIONS" => [],
     ]
 
