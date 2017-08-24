@@ -1,35 +1,31 @@
-CREATE TABLE IF NOT EXISTS CATEGORY
+CREATE TABLE IF NOT EXISTS category
 (
-ID INT auto_increment
-PRIMARY KEY,
+  id    INT AUTO_INCREMENT
+    PRIMARY KEY,
   title VARCHAR(200) NULL
-)
-;
-CREATE TABLE IF NOT EXISTS COMMENT
+);
+CREATE TABLE IF NOT EXISTS comment
 (
-ID INT auto_increment
-PRIMARY KEY,
-text VARCHAR(255) NULL,
-  post_id INT NULL
-)
-;
+  id      INT AUTO_INCREMENT
+    PRIMARY KEY,
+  text    VARCHAR(255) NULL,
+  post_id INT          NULL
+);
 
-CREATE TABLE IF NOT EXISTS POST
+CREATE TABLE IF NOT EXISTS post
 (
-ID INT auto_increment
-PRIMARY KEY,
-  title VARCHAR(200) NULL,
-content TEXT NULL,
-  category_id INT NULL,
-  date_created DATETIME NULL
-)
-;
+  id           INT AUTO_INCREMENT
+    PRIMARY KEY,
+  title        VARCHAR(200) NULL,
+  content      TEXT         NULL,
+  category_id  INT          NULL,
+  date_created DATETIME     NULL
+);
 
-CREATE TABLE IF NOT EXISTS TAG
+CREATE TABLE IF NOT EXISTS tag
 (
-ID INT auto_increment
-PRIMARY KEY,
-tag VARCHAR(200) NULL,
-  post_id INT NULL
-)
-;
+  id      INT AUTO_INCREMENT
+    PRIMARY KEY,
+  tag     VARCHAR(200) NULL,
+  post_id INT          NULL
+);

@@ -47,10 +47,10 @@ class DatabaseTest extends PHPUnit_Framework_TestCase
 
         /** Truncate all data */
         $this->database->query(
-            "TRUNCATE category;
+            'TRUNCATE category;
                       TRUNCATE post;
                       TRUNCATE comment;
-                      TRUNCATE tag;"
+                      TRUNCATE tag;'
         );
         $this->database->execute();
 

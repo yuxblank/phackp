@@ -51,7 +51,7 @@ class IntegrationTest extends PHPUnit_Framework_TestCase
 
         $object = array(
             "title" => "Eureka!",
-            "date_created" => date(DATE_ISO8601),
+            "date_created" => date(DATE_ATOM),
             "content" => "<div class='test-crazy'</div>",
             "category_id" => 1
         );

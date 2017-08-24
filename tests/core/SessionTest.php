@@ -22,7 +22,6 @@ class SessionTest extends PHPUnit_Framework_TestCase
         $this->session = new Session($this->config['app.session']);
     }
 
-
     public function testInstance()
     {
         @session_start();

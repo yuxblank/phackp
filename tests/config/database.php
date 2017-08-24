@@ -8,7 +8,7 @@ return [
     "database" =>
     [
         "ID"      => "default",
-        "DSN"     => "mysql:host=localhost;dbname=phackptest",
+        "DSN"     => "mysql:host=127.0.0.1;dbname=phackptest",
         "USER"    => "root",
         "PSW"     => "",
         "OPTIONS" => [],
