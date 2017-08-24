@@ -23,4 +23,6 @@ before_install:
 install:
   - composer install
 
-script: phpunit --bootstrap vendor/autoload.php --configuration phpunit.xml tests
+script: 
+ php -S localhost:7000 -t tests/src/
+ phpunit --bootstrap vendor/autoload.php --configuration phpunit.xml tests
