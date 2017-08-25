@@ -11,10 +11,10 @@
   </php>
   <filter>
     <whitelist processUncoveredFilesFromWhitelist="true">
-      <directory suffix=".php">tests</directory>
-      <exclude>
-        <directory suffix=".php">tests/src</directory>
-      </exclude>
+      <directory suffix=".php">src/phackp</directory>
+<!--      <exclude>
+        <directory suffix=".php">src/phackp</directory>
+      </exclude>-->
     </whitelist>
   </filter>
   <logging>
