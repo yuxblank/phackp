@@ -20,7 +20,7 @@ class Tag extends Model
 
 
     public function posts() {
-        return $this->belongsTo( Post::class);
+        return $this->hasOne( Post::class);
     }
 
 }

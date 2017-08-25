@@ -10,7 +10,9 @@ namespace database;
 
 
 use test\model\Category;
+use test\model\Comment;
 use test\model\Post;
+use test\model\Tag;
 use yuxblank\phackp\core\Application;
 use yuxblank\phackp\database\Database;
 use yuxblank\phackp\database\HackORM;
@@ -88,11 +90,72 @@ class HackORMTest extends \PHPUnit_Framework_TestCase
                 ->getCategory());
 
 
+        /** @var Post $Post */
+        $Post = Post::make();
+        $Post->setTitle("hasOnePost2");
+        $Post->save();
+
+        /** @var Tag $Tag */
+        $Tag = Tag::make();
+        $Tag->tag = "hasOneTag2";
+        $Tag->post_id = $Post->findAsArray("WHERE title=?", "hasOnePost2")['id'];
+        $Tag->save();
+
+        /** @var Tag $tagStored */
+        $tagStored = $Tag->findById($Tag->lastInsertId());
+
+
+        $this->assertInstanceOf(Post::class, $tagStored->posts());
+
     }
 
+    public function testHackModelHasMany(){
+        /** @var Category $Cat */
+        $Cat = Category::make();
+        $Cat->setTitle("hasManyCat");
+        $Cat->save();
+
+        /** @var Post $Post */
+        $Post = Post::make();
+        $Post->setTitle("hasManyPost");
+        $Post->setCategoryId($Cat->find("WHERE title=?", "hasManyCat")->id);
+        $Post->save();
+
+        /** @var Tag $Tag */
+        $Tag = Tag::make();
+        $Tag->tag = "hasManyTag";
+        $Tag->post_id = $Post->findAsArray("WHERE title=?", "hasManyPost")['id'];
+        $Tag->save();
+
+        /** @var Post $Post */
+        $Post = $Post->find("WHERE title=?", "hasManyPost");
+
+        $this->assertCount(1,$Post->tag());
+    }
+
+    public function testHackModelBelongsTo(){
+
+        /** @var Category $Cat */
+        $Cat = Category::make();
+        $Cat->setTitle("belongsToCat");
+        $Cat->save();
+
+        /** @var Post $Post */
+        $Post = Post::make();
+        $Post->setTitle("belongsToPost");
+        $Post->setCategoryId($Cat->find("WHERE title=?", "belongsToCat")->id);
+        $Post->save();
+
+        /** @var Comment $Comment */
+        $Comment = Comment::make();
+        $Comment->text =  "Comment text";
+        $Comment->post_id = Post::make()->find("WHERE title=?","belongsToPost")->id;
+        $Comment->save();
+
+        $this->assertInstanceOf(Post::class,$Comment->findById(1)->post());
 
 
-
+    }
 
 
 
