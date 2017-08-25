@@ -11,13 +11,32 @@ namespace yuxblank\phackp\database\api;
 
 interface ObjectRelationalMapping
 {
-    /** Belongs to */
-    public function oneToOne($a,$b);
-    /** has_many */
-    public function oneToMany($a,$b);
-    /** Has one */
-    public function manyToOne($a,$b);
-    /** Has Many Through */
-    public function manyToMany($a,$b);
+    /** Belongs to
+     * @param $origin
+     * @param $target
+     * @return
+     */
+    public function oneToOne($origin,$target);
+
+    /** has_many
+     * @param $origin
+     * @param $target
+     * @return
+     */
+    public function oneToMany($origin,$target);
+
+    /** Has one
+     * @param $origin
+     * @param $target
+     * @return
+     */
+    public function manyToOne($origin,$target);
+
+    /** Has Many Through
+     * @param $origin
+     * @param $target
+     * @return
+     */
+    public function manyToMany($origin,$target);
 
 }

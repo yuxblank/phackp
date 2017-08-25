@@ -6,7 +6,7 @@
  * Time: 19:39
  */
 
-namespace model;
+namespace test\model;
 
 
 

@@ -54,8 +54,11 @@
   },
   "autoload-dev": {
     "psr-4": {
+      "test\\tools\\" : "tests/tools",
       "test\\controller\\" : "tests/src/controller",
-      "test\\model\\" : "tests/src/model"
+      "test\\model\\" : "tests/src/model",
+      "test\\doctrine\\model\\" : "tests/src/doctrine/model",
+      "test\\doctrine\\repository\\" : "tests/src/doctrine/repository"
     }
   }
 }
