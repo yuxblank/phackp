@@ -345,6 +345,10 @@ class Router implements api\Router
     }
 
     private function createRouteFromArray(array $routeArray){
-        return new Route($routeArray['url'],$routeArray['class'],$routeArray['method'],isset($routeArray['alias']) ? $routeArray['alias'] : null);
+        return new Route(
+            $routeArray['url'],
+            $routeArray['class'],
+            $routeArray['method'],
+            isset($routeArray['params']) ? $routeArray['params'] : [],isset($routeArray['alias']) ? $routeArray['alias'] : null);
     }
 }

@@ -60,6 +60,21 @@ class IntegrationTest extends PHPUnit_Framework_TestCase
     }
 
 
+    public function testRestPut()
+    {
+
+        $object = array(
+            "title" => "EurekaUpdate!",
+            "date_created" => date(DATE_ATOM),
+            "content" => "<div class='test-crazy'> update the post!</div>",
+            "category_id" => 1
+        );
+        $res = $this->client->put($this->uri . "/rest/put/1", ['json' => $object]);
+        $this->assertEquals(\GuzzleHttp\json_decode($res->getBody())->result, "OK");
+    }
+
+
+
     protected function tearDown()
     {
         $db = new \yuxblank\phackp\database\Database($this->dbConfig);
@@ -75,16 +90,11 @@ class IntegrationTest extends PHPUnit_Framework_TestCase
 
     private function createTestDatabase()
     {
-
         $install = false;
         $db = new \yuxblank\phackp\database\Database($this->dbConfig);
         $scriptPath = defined("SCRIPT_PATH") ? SCRIPT_PATH : "../scripts/";
         $install &= $db->query(file_get_contents($scriptPath."DDL.sql"))->execute();
-
-     /*   if (!$install) {
-            throw new RuntimeException("Error creating test database");
-        }*/
-
+        $install &= $db->query(file_get_contents($scriptPath."DML.sql"))->execute();
     }
 
 

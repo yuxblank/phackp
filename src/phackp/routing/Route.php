@@ -25,7 +25,7 @@ class Route implements RouteInterface
     /** @var  bool */
     private $isError;
     /** @var  array */
-    private $params = [];
+    private $params;
 
     /**
      * Route constructor.
@@ -34,13 +34,16 @@ class Route implements RouteInterface
      * @param string $method
      * @param string|null $alias
      * @param bool $isError
+     * @param array $params
      */
-    public function __construct(string $URI, string $class, string $method,string $alias=null, bool $isError=false)
+    public function __construct(string $URI, string $class, string $method, array $params=[], string $alias=null, bool $isError=false)
     {
         $this->URI = $URI;
         $this->class = $class;
         $this->action = $method;
+        $this->params = $params;
         $this->alias = $alias;
+        $this->isError = $isError;
     }
 
     /**

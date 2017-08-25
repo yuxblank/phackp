@@ -20,6 +20,7 @@ use yuxblank\phackp\exceptions\InvocationException;
 use yuxblank\phackp\http\HttpKernel;
 use yuxblank\phackp\http\ServerRequest;
 use yuxblank\phackp\routing\api\Router;
+use yuxblank\phackp\routing\exception\RouterException;
 use yuxblank\phackp\services\api\AutoBootService;
 use yuxblank\phackp\services\exceptions\ServiceProviderException;
 use yuxblank\phackp\utils\UnitConversion;
@@ -303,7 +304,7 @@ class Application
                 throw new InvocationException('Class ' . $route->getClass() . ' is not valid: ' . $e->getMessage(), InvocationException::ROUTER, $e);
             }
 
-        } catch (\RouterException $ex){
+        } catch (RouterException $ex){
             if ($ex->getCode() === $ex::NOT_FOUND){
                 //todo better support for multi-apps
                 $notFoundRoute = $this->container->get(Router::class)->getErrorRoute(404);

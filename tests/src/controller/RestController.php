@@ -38,9 +38,38 @@ class RestController extends Controller
             if ($post->save()){
                 return new JsonResponse(["result" => "OK"]);
             }
-            return new JsonResponse(["result" => "KO"],503);
+            return $this->jsonReturnKO();
         }
-        return new JsonResponse(["result" => "KO",503]);
+        return $this->jsonReturnKO();
+    }
+
+    public function testRestPut(ServerRequestInterface $serverRequest){
+
+        $postId = $serverRequest->getPathParams() ?
+            filter_var($serverRequest->getPathParams()['id'], FILTER_SANITIZE_NUMBER_INT)
+            : null;
+
+        /** @var Post $post */
+        $post = Post::make()->findById($postId);
+        if ($serverRequest && $post)
+            if ($body = $serverRequest->getParsedBody()){
+                $post->setTitle($body['title']);
+                $post->setCategoryId($body['category_id']);
+                $post->setContent(htmlentities($body['content']));
+                if ($post->update()){
+                    return $this->jsonReturnOK();
+                }
+                return $this->jsonReturnKO();
+            }
+        return $this->jsonReturnKO();
+    }
+
+
+    private function jsonReturnKO(){
+        return new JsonResponse(["result" => "KO"], 503);
+    }
+    private function jsonReturnOK(){
+        return new JsonResponse(["result" => "OK"]);
     }
 
 }

@@ -51,6 +51,15 @@ return [
                 'alias' => 'rest.post'
             ],
 
+        ],
+        'PUT' => [
+            [
+                'url' => '/rest/put/{id}',
+                'method' => 'testRestPut',
+                'class' => test\controller\RestController::class,
+                'alias' => 'rest.put'
+            ],
+
         ]
 
     /*    'ERROR' => [
