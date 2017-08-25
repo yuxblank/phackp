@@ -12,21 +12,12 @@
   <filter>
     <whitelist processUncoveredFilesFromWhitelist="true">
       <directory suffix=".php">tests</directory>
-      <file>tests</file>
-      <!--      <exclude>
-              <directory suffix=".php">/path/to/files</directory>
-              <file>/path/to/file</file>
-            </exclude>-->
+      <exclude>
+        <directory suffix=".php">tests/src</directory>
+      </exclude>
     </whitelist>
   </filter>
   <logging>
-    <log type="coverage-html" target="/tmp/report" lowUpperBound="35"
-         highLowerBound="70"/>
     <log type="coverage-clover" target="coverage.xml"/>
-    <log type="coverage-php" target="coverage.serialized"/>
-    <log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
-    <log type="junit" target="logfile.xml" logIncompleteSkipped="false"/>
-    <log type="testdox-html" target="testdox.html"/>
-    <log type="testdox-text" target="testdox.txt"/>
   </logging>
 </phpunit>
