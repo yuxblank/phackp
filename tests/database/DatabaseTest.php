@@ -35,11 +35,6 @@ class DatabaseTest extends PHPUnit_Framework_TestCase
         Application::getInstance()->container()->set(Database::class, $this->database);
     }
 
-    private function createDML(){
-        $this->database->query("INSERT INTO category VALUES (NULL,'testcat')");
-        $this->database->execute();
-
-    }
 
     protected function tearDown()
     {
@@ -110,14 +105,47 @@ class DatabaseTest extends PHPUnit_Framework_TestCase
         $this->database->query("SELECT * FROM category");
         $results = $this->database->resultList();
         $this->assertCount(1,$results);
+        $obj = $this->database->fetchObjectSet();
+        $this->assertInstanceOf(stdClass::class, $obj[0]);
+        $class = $this->database->fetchClassSet(\test\model\Category::class);
+        $this->assertInstanceOf(\test\model\Category::class, $class[0]);
     }
 
+    public function testQuerySingleResult(){
+        $this->database->query('SELECT * FROM category WHERE id=?');
+        $this->database->paramsBinder([1]);
+        $cat = $this->database->singleResult();
+        $this->assertNotEmpty($cat);
+        $obj = $this->database->fetchObj();
+        $this->assertInstanceOf(stdClass::class, $obj);
+        $class = $this->database->fetchSingleClass(\test\model\Category::class);
+        $this->assertInstanceOf(\test\model\Category::class, $class);
+    }
+
+    public function testCount() {
+        $this->database->query("SELECT * FROM category");
+        $count = $this->database->rowCount();
+        $this->assertEquals(1,$count);
+    }
+
+    public function testPDO(){
+        $PDO = $this->database->getPDO();
+        $this->assertInstanceOf(PDO::class,$PDO);
+    }
+
+
+
+    /**
+     * Private methods
+     */
+    private function createDML(){
+        $this->database->query("INSERT INTO category VALUES (NULL,'testcat')");
+        $this->database->execute();
+
+    }
     private function storePost(){
         $this->database->query("INSERT INTO post VALUES (NULL,'prova','<div>some content</div>',1,NULL)")->execute();
     }
-
-
-
 
 
 }

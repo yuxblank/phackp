@@ -35,9 +35,7 @@ abstract class Model
     {
         // create ORM instance when used outside DI container or when de-serializing.
         // fixme this implementation won't work when used outside the application container, when it get instantiated by Database::class methods
-        if ($hackORM===null) {
-            $this->ormInstance =  Application::getInstance()->container()->get(HackORM::class);
-        }
+        $this->ormInstance = $hackORM ?? Application::getInstance()->container()->get(HackORM::class);
     }
 
     /**

@@ -23,6 +23,23 @@ class DbTools
         return $install;
     }
 
+    public static function truncateDatabase()
+    {
+        $path = defined("CONFIG_PATH") ? CONFIG_PATH : "../../config/";
+        $dbConf = require $path."database.php";
+        $db = new \yuxblank\phackp\database\Database($dbConf['database']);
+
+        /** Truncate all data */
+        $db->query(
+            'TRUNCATE category;
+                      TRUNCATE post;
+                      TRUNCATE comment;
+                      TRUNCATE tag;'
+        );
+        $db->execute();
+
+    }
+
 
 
 }
