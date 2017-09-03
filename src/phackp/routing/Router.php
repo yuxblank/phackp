@@ -214,10 +214,9 @@ class Router implements api\Router
      */
     public function getErrorRoute(int $code):RouteInterface{
         if (isset($this->routes['ERROR'][$code])){
-            $route = $this->routes['ERROR'][$code];
-            return new Route($route['url'],$route['class'],$route['method'], $route['alias'] ?? null,true);
+            return $this->createRouteFromArray($this->routes['ERROR'][$code]);
         }
-        throw new RouterException("Error route with code: ".$code." not defined", RouterException::ROUTE_NOT_DEFINED);
+        throw new RouterException('Error route with code: ' .$code. ' not defined', RouterException::ROUTE_NOT_DEFINED);
     }
 
 
