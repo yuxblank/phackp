@@ -19,6 +19,8 @@ class DoctrineDriver implements EntitiyManagerDriver
      * DoctrineDriver constructor.
      * Inject database configuration with the Container
      * @param array $databaseConfig
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \InvalidArgumentException
      */
     public function __construct(array $databaseConfig)
     {
