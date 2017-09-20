@@ -134,15 +134,24 @@ class Router implements api\Router
 
     /**
      * Redirect (302) to another action from an action.
-     * @param RouteInterface $route
+     * @param string $uri
+     * @param array $params
      * @return mixed|void
+     * @internal param RouteInterface $route
      */
 
-    public function switchAction(RouteInterface $route)
+    public function switchAction(string $uri, array $params = null)
     {
-        $r = $this->link($route->getURI(), $route->getParams());
+        $r = $this->link($uri);
         header("location:$r", true, 302);
     }
+
+    public function _switchAction(string $alias, array $params=null)
+    {
+        $r = $this->alias($alias,null,$params);
+        header("location:$r", true, 302);
+    }
+
 
     /**
      * External url redirect

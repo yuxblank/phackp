@@ -26,7 +26,7 @@ interface Router
     public function alias(string $alias, String $method = null, array $params = null):string;
 
     /**
-     * Redirect to an internal or external url
+     * Redirect to an internal or by link (path)
      * @param UriInterface $uri
      * @throws RouterException
      * @return mixed
@@ -35,11 +35,20 @@ interface Router
 
     /**
      * Redirect to an internal route
-     * @param RouteInterface $route
+     * @param string $uri
+     * @param array|null $params
      * @return mixed
      * @throws RouterException
      */
-    public function switchAction(RouteInterface $route);
+    public function switchAction(string $uri, array $params = null);
+    /**
+     * Redirect to an internal route by alias
+     * @param $alias $uri
+     * @param array|null $params
+     * @return mixed
+     * @throws RouterException
+     */
+    public function _switchAction(string $alias, array $params = null);
 
     /**
      * Find the action for the give ServerRequest. The method it's invoked by pHackp runtime in order to detect
