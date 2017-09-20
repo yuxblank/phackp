@@ -1,16 +1,5 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: yuri.blanc
- * Date: 28/06/2017
- * Time: 11:58
- */
-
 namespace yuxblank\phackp\routing\api;
-
-
-use yuxblank\phackp\routing\Route;
-
 interface Router
 {
     /**
@@ -42,7 +31,7 @@ interface Router
      * Find the action for the give ServerRequest. The method it's invoked by pHackp runtime in order to detect
      * the current route.
      * Must return the actual route.
-     * @throws \RouterException
+     * @throws yuxblank\phackp\routing\exception
      * @return RouteInterface
      */
     public function findAction():RouteInterface;
@@ -50,7 +39,7 @@ interface Router
     /**
      * Get an Error route by error code.
      * @param int $code
-     * @throws \RouterException
+     * @throws yuxblank\phackp\routing\exception
      * @return RouteInterface
      */
     public function getErrorRoute(int $code):RouteInterface;
