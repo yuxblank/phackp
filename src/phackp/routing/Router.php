@@ -19,11 +19,13 @@ namespace yuxblank\phackp\routing;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UriInterface;
 use yuxblank\phackp\core\api\ApplicationController;
 use yuxblank\phackp\exceptions\InvocationException;
 use yuxblank\phackp\routing\api\RouteInterface;
 use yuxblank\phackp\routing\exception\RouterException;
 use yuxblank\phackp\utils\ReflectionUtils;
+use Zend\Diactoros\Uri;
 
 /**
  * This class provides routing methods for index.php. Some methods can be used also externally for inverse routing and url
@@ -54,29 +56,6 @@ class Router implements api\Router
         $this->serverRequest = $serverRequest;
     }
 
-    /**
-     * FIXME Too specific, code duplication
-     * @deprecated
-     * @param ApplicationController $instance
-     * @param string $method
-     * @param array|null $params
-     */
-
-    public function doRoute(ApplicationController $instance, string $method, array $params = null)
-    {
-        $refl = new \ReflectionClass($instance);
-
-        foreach ($refl->getMethod($method)->getParameters() as $methodParam){
-            $methodParam->getType();
-        }
-        ReflectionUtils::invoke($instance, 'onBefore');
-        try {
-            $instance->{$method}($params);
-        } catch (InvocationException $ex) {
-            throw new InvocationException('Method ' . $method . ' not found for route class ' . get_class($instance), InvocationException::ROUTER, $ex);
-        }
-        ReflectionUtils::invoke($instance, 'onAfter');
-    }
 
     /**
      * Get a link url without checking if the route is really defined.
@@ -108,6 +87,7 @@ class Router implements api\Router
      * @param String|null $method
      * @param array|null $params
      * @return string
+     * @throws \yuxblank\phackp\routing\exception\RouterException
      */
 
     public function action(string $action, String $method = null, array $params = null)
@@ -121,7 +101,7 @@ class Router implements api\Router
             $url = $this->fastParamBind($link, $params);
             return $this->appGlobals['APP_URL'] . implode('/', $url);
         }
-        return $link !== '/' ? $this->appGlobals['APP_URL'] . $link : $this->appGlobals['APP_URL'] . $link;
+        return $link !== '/' ? $this->appGlobals['APP_URL'] . '/'. $link : $this->appGlobals['APP_URL'] . $link;
     }
 
     /**
@@ -134,9 +114,10 @@ class Router implements api\Router
      * @param String|null $method
      * @param array|null $params
      * @return string
+     * @throws \yuxblank\phackp\routing\exception\RouterException
      */
 
-    public function alias(string $alias, String $method = null, array $params = null)
+    public function alias(string $alias, String $method = null, array $params = null):string
     {
 
         $link = $this->searchThroughRoutes($alias, 'alias', $method);
@@ -148,30 +129,30 @@ class Router implements api\Router
             $url = $url = $this->fastParamBind($link, $params);
             return $this->appGlobals['APP_URL']  . implode('/', $url);
         }
-        return $link !== '/' ? $this->appGlobals['APP_URL']  . $link : $this->appGlobals['APP_URL'] . $link;
+        return $link !== '/' ? $this->appGlobals['APP_URL'] . '/' : $this->appGlobals['APP_URL'] . $link;
     }
 
     /**
      * Redirect (302) to another action from an action.
-     * @param string $url
-     * @param array|null $params
+     * @param RouteInterface $route
+     * @return mixed|void
      */
 
-    public function switchAction(string $url, array $params = null)
+    public function switchAction(RouteInterface $route)
     {
-        $r = $this->link($url, $params);
+        $r = $this->link($route->getURI(), $route->getParams());
         header("location:$r", true, 302);
     }
 
     /**
      * External url redirect
-     * @param string $url
-     * @param bool $external
+     * @param UriInterface $uri
+     * @return mixed|void
      */
 
-    public function redirect(string $url, bool $external=null)
+    public function redirect(UriInterface $uri)
     {
-        header("location:$url", true, 302);
+        header("location:".$uri, true, 302);
     }
 
     /**
@@ -348,6 +329,18 @@ class Router implements api\Router
             $routeArray['url'],
             $routeArray['class'],
             $routeArray['method'],
-            isset($routeArray['params']) ? $routeArray['params'] : [],isset($routeArray['alias']) ? $routeArray['alias'] : null);
+            $routeArray['params'] ?? [], $routeArray['alias'] ?? null);
     }
+
+    public function match(\yuxblank\phackp\http\api\ServerRequestInterface $request): bool
+    {
+        return $this->findAction()->getURI() === $request->getUri();
+    }
+
+    public function generateUri(RouteInterface $route): UriInterface
+    {
+        return new Uri($route->getURI());
+    }
+
+
 }

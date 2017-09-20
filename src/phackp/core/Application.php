@@ -25,6 +25,8 @@ use yuxblank\phackp\routing\exception\RouterException;
 use yuxblank\phackp\services\api\AutoBootService;
 use yuxblank\phackp\services\exceptions\ServiceProviderException;
 use yuxblank\phackp\utils\UnitConversion;
+use yuxblank\phackp\view\exception\ViewException;
+use yuxblank\phackp\view\twig\TwigView;
 use yuxblank\phackp\view\View;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\SapiEmitter;
@@ -230,6 +232,8 @@ class Application
     /**
      * Framework DI factories
      * @return array
+     * @throws \yuxblank\phackp\view\exception\ViewException
+     * @throws \Doctrine\ORM\ORMException
      * @throws \DI\NotFoundException
      * @throws \DI\DependencyException
      * @throws \InvalidArgumentException
@@ -257,6 +261,9 @@ class Application
                 },
                 EntitiyManagerDriver::class =>  function () {
                     return new DoctrineDriver($this->container->get('doctrine.config'));
+                },
+                TwigView::class => function (){
+                    return new TwigView($this->container->get('app.view.twig'), self::$ROOT);
                 },
                 EntityManagerInterface::class =>  \DI\factory([EntitiyManagerDriver::class, 'getDriver'])->scope(Scope::SINGLETON),
                 EntityManager::class =>  \DI\factory([EntitiyManagerDriver::class, 'getDriver'])->scope(Scope::SINGLETON),

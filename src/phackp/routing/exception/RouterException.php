@@ -1,5 +1,7 @@
 <?php
 namespace yuxblank\phackp\routing\exception;
+use Throwable;
+
 /**
  * Created by IntelliJ IDEA.
  * User: yuri.blanc
@@ -11,6 +13,7 @@ class RouterException extends \Exception
 
     const ROUTE_NOT_DEFINED = 1;
     const NOT_FOUND = 404;
+    const INVALID_URI = self::NOT_FOUND;
 
     /**
      * RouterException constructor.
