@@ -177,7 +177,8 @@ class Application
      * @throws \yuxblank\phackp\services\exceptions\ServiceProviderException
      * @throws \InvalidArgumentException
      */
-    public static function getService(string $serviceName){
+    public static function getService(string $serviceName)
+    {
         return self::getInstance()->getServiceInstance($serviceName);
     }
 
@@ -213,7 +214,7 @@ class Application
         $tmp = null;
         $files = glob($config . '*.php');
 
-        if ($this->useDefaultDI){
+        if ($this->useDefaultDI) {
             $containerBuilder->addDefinitions($this->frameworkDI());
         }
         foreach ($files as $file) {
@@ -225,7 +226,8 @@ class Application
         $this->container = $containerBuilder->build();
     }
 
-    public function disableFrameworkDefaultDI(){
+    public function disableFrameworkDefaultDI()
+    {
         $this->useDefaultDI = false;
     }
 
@@ -238,7 +240,7 @@ class Application
      * @throws \DI\DependencyException
      * @throws \InvalidArgumentException
      */
-    private function frameworkDI():array
+    private function frameworkDI(): array
     {
         return
             [
@@ -251,7 +253,7 @@ class Application
                 HackORM::class => object(HackORM::class),
                 View::class => function () {
                     return new View(
-                        $this->container->get('app.view'), array_merge($this->container->get('app.globals'),['APP_ROOT' => self::$ROOT]), $this->container->get(Router::class));
+                        $this->container->get('app.view'), array_merge($this->container->get('app.globals'), ['APP_ROOT' => self::$ROOT]), $this->container->get(Router::class));
                 },
                 Session::class => function () {
                     return new Session($this->container->get('app.session'));
@@ -259,19 +261,19 @@ class Application
                 HttpKernel::class => function () {
                     return new HttpKernel($this->container->get('app.http'));
                 },
-                EntitiyManagerDriver::class =>  function () {
+                EntitiyManagerDriver::class => function () {
                     return new DoctrineDriver($this->container->get('doctrine.config'));
                 },
-                TwigView::class => function (){
+                TwigView::class => function () {
                     return new TwigView($this->container->get('app.view.twig'), self::$ROOT);
                 },
-                EntityManagerInterface::class =>  \DI\factory([EntitiyManagerDriver::class, 'getDriver'])->scope(Scope::SINGLETON),
-                EntityManager::class =>  \DI\factory([EntitiyManagerDriver::class, 'getDriver'])->scope(Scope::SINGLETON),
+                EntityManagerInterface::class => \DI\factory([EntitiyManagerDriver::class, 'getDriver'])->scope(Scope::SINGLETON),
+                EntityManager::class => \DI\factory([EntitiyManagerDriver::class, 'getDriver'])->scope(Scope::SINGLETON),
                 ServiceProvider::class => object(ServiceProvider::class)->property('container', $this->container),
                 ServerRequestInterface::class => \DI\factory([HttpKernel::class, 'getRequest'])->scope(Scope::PROTOTYPE),
                 \yuxblank\phackp\http\api\ServerRequestInterface::class => \DI\factory([HttpKernel::class, 'getRequest'])->scope(Scope::PROTOTYPE),
                 ServerRequest::class => \DI\factory([HttpKernel::class, 'getRequest'])->scope(Scope::PROTOTYPE),
-                Response\EmitterInterface::class => function(){
+                Response\EmitterInterface::class => function () {
                     return new SapiEmitter();
                 }
             ];
@@ -313,8 +315,8 @@ class Application
                 throw new InvocationException('Class ' . $route->getClass() . ' is not valid: ' . $e->getMessage(), InvocationException::ROUTER, $e);
             }
 
-        } catch (RouterException $ex){
-            if ($ex->getCode() === $ex::NOT_FOUND){
+        } catch (RouterException $ex) {
+            if ($ex->getCode() === $ex::NOT_FOUND) {
                 //todo better support for multi-apps
                 $notFoundRoute = $this->container->get(Router::class)->getErrorRoute(404);
                 $this->container->set(ApplicationController::class, $notFoundRoute->getClass());
@@ -329,16 +331,25 @@ class Application
     }
 
 
-    private final function callController(string $method){
+    private final function callController(string $method)
+    {
         $instace = $this->container->get(ApplicationController::class);
-        $this->container()->call([$instace,'onBefore']);
+        $this->container()->call([$instace, 'onBefore']);
 
-        $resp = $this->container()->call([$instace,$method]);
-        if ($resp && $resp instanceof ResponseInterface){
+        $resp = $this->container()->call([$instace, $method]);
+        try {
+            // flush Em
+            $doctrineDriver = $this->container->get(EntityManagerInterface::class);
+            $doctrineDriver->flush();
+        } catch (DependencyException $e) {
+        } catch (NotFoundException $e) {
+        }
+
+        if ($resp && $resp instanceof ResponseInterface) {
             $emitter = $this->container->get(Response\EmitterInterface::class);
             $emitter->emit($resp);
         }
-        $this->container()->call([$instace,'onAfter']);
+        $this->container()->call([$instace, 'onAfter']);
     }
 
 

@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Class DoctrineModelPost
  * @package model
  */
-class Post
+class Post implements \JsonSerializable
 {
     /**
      * @ORM\Id @ORM\Column(type="integer",name="id") @ORM\GeneratedValue
@@ -122,6 +122,16 @@ class Post
     public function comments(){
         //todo
         return [];
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'id' => $this->getId(),
+            'title' => $this->getTitle(),
+            'content' => $this->getContent()
+        ];
+
     }
 
 

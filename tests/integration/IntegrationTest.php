@@ -56,7 +56,8 @@ class IntegrationTest extends PHPUnit_Framework_TestCase
             "category_id" => 1
         );
         $res = $this->client->post($this->uri . "/rest/post", ['json' => $object]);
-        $this->assertEquals(\GuzzleHttp\json_decode($res->getBody())->result, "OK");
+        var_dump(['POST_CREATED' => $res->getBody()->getContents()]);
+        $this->assertNotEmpty(\GuzzleHttp\json_decode($res->getBody()));
     }
 
 

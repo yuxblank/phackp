@@ -31,7 +31,6 @@ class PostRepository
 
     public function savePost(Post $post) {
         $this->em->persist($post);
-        $this->em->flush();
     }
 
     public function getPosts() {

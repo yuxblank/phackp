@@ -24,4 +24,6 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
     {
         parent::__construct($entityManager, new ClassMetadata($entityName));
     }
+
+
 }
