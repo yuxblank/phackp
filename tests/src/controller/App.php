@@ -19,7 +19,7 @@ class App extends Controller
 {
     public function onBefore()
     {
-        // TODO: Implement onBefore() method.
+
     }
 
     public function onAfter()

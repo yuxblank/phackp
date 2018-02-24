@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use yuxblank\phackp\core\api\ApplicationController;
+use yuxblank\phackp\core\api\LifeCycleInterface;
 use yuxblank\phackp\database\api\EntitiyManagerDriver;
 use yuxblank\phackp\database\Database;
 use yuxblank\phackp\database\driver\DoctrineDriver;
@@ -270,12 +271,17 @@ class Application
                 EntityManagerInterface::class => \DI\factory([EntitiyManagerDriver::class, 'getDriver'])->scope(Scope::SINGLETON),
                 EntityManager::class => \DI\factory([EntitiyManagerDriver::class, 'getDriver'])->scope(Scope::SINGLETON),
                 ServiceProvider::class => object(ServiceProvider::class)->property('container', $this->container),
-                ServerRequestInterface::class => \DI\factory([HttpKernel::class, 'getRequest'])->scope(Scope::PROTOTYPE),
-                \yuxblank\phackp\http\api\ServerRequestInterface::class => \DI\factory([HttpKernel::class, 'getRequest'])->scope(Scope::PROTOTYPE),
-                ServerRequest::class => \DI\factory([HttpKernel::class, 'getRequest'])->scope(Scope::PROTOTYPE),
+                ServerRequestInterface::class => \DI\factory([HttpKernel::class, 'getRequest'])->scope(Scope::SINGLETON),
+                \yuxblank\phackp\http\api\ServerRequestInterface::class => \DI\factory([HttpKernel::class, 'getRequest'])->scope(Scope::SINGLETON),
+                ServerRequest::class => \DI\factory([HttpKernel::class, 'getRequest'])->scope(Scope::SINGLETON),
                 Response\EmitterInterface::class => function () {
                     return new SapiEmitter();
-                }
+                },
+                LifeCycleInterface::class => function () {
+                    return new LifeCycle($this->container,
+                        $this->container->get(Response\EmitterInterface::class),
+                        $this->container->get(Router::class));
+                },
             ];
 
     }
@@ -287,69 +293,12 @@ class Application
      * @throws \InvalidArgumentException
      * @throws \DI\DependencyException
      * @throws \DI\NotFoundException
-     * @throws \RuntimeException
      */
     public function run()
     {
-        if (self::isDebug()) {
-            // At start of script
-            $time_start = microtime(true);
-            $memoryPeak = memory_get_peak_usage(true);
-        }
-
-        // get the httpKernel
-
-        $httpKernel = $this->container->get(HttpKernel::class);
-
-        /** @var Router $router */
-        $router = $this->container->make(Router::class);
-
-
-        try {
-            $route = $router->findAction();
-            try {
-                $this->container->set(ApplicationController::class, $route->getClass());
-                $this->container->call([HttpKernel::class, 'parseRequest'], array($route));
-                $this->callController($route->getAction());
-            } catch (NotFoundException $e) {
-                throw new InvocationException('Class ' . $route->getClass() . ' is not valid: ' . $e->getMessage(), InvocationException::ROUTER, $e);
-            }
-
-        } catch (RouterException $ex) {
-            if ($ex->getCode() === $ex::NOT_FOUND) {
-                //todo better support for multi-apps
-                $notFoundRoute = $this->container->get(Router::class)->getErrorRoute(404);
-                $this->container->set(ApplicationController::class, $notFoundRoute->getClass());
-                $this->callController($notFoundRoute->getAction());
-            }
-        }
-
-        if (self::isDebug() && ($httpKernel->getContentType() === 'text/plain' || $httpKernel->getContentType() === 'text/html')) {
-            // Anywhere else in the script
-            echo '<p style="position: fixed; bottom:0; margin: 0 auto;"> Total execution time in seconds: ' . (microtime(true) - $time_start) . ' runtime_id: ' . pHackpRuntime . ' memory peak: ' . UnitConversion::byteConvert($memoryPeak) . '</p>';
-        }
-    }
-
-
-    private final function callController(string $method)
-    {
-        $instace = $this->container->get(ApplicationController::class);
-        $this->container()->call([$instace, 'onBefore']);
-
-        $resp = $this->container()->call([$instace, $method]);
-        try {
-            // flush Em
-            $doctrineDriver = $this->container->get(EntityManagerInterface::class);
-            $doctrineDriver->flush();
-        } catch (DependencyException $e) {
-        } catch (NotFoundException $e) {
-        }
-
-        if ($resp && $resp instanceof ResponseInterface) {
-            $emitter = $this->container->get(Response\EmitterInterface::class);
-            $emitter->emit($resp);
-        }
-        $this->container()->call([$instace, 'onAfter']);
+        /** @var LifeCycleInterface $lifeCycle */
+        $lifeCycle = $this->container->get(LifeCycleInterface::class);
+        $lifeCycle->request();
     }
 
 

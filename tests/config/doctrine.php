@@ -11,7 +11,7 @@ return [
             [
                 'driver'   => 'pdo_mysql',
                 'user'     => 'root',
-                'password' => '',
+                'password' => 'muska88',
                 'dbname'   => 'phackptest',
             ]
     ]
