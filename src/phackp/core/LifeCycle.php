@@ -70,8 +70,8 @@ class LifeCycle implements LifeCycleInterface
     {
         $instace = $this->container->get(ApplicationController::class);
 
-        $resp = $this->container->call([$instace,ApplicationController::EVENT_ON_BEFORE]);
-        if ($resp) {
+        $resp = $this->container->call([$instace, ApplicationController::EVENT_ON_BEFORE]);
+        if ($resp && $resp instanceof ResponseInterface) {
             $this->response($resp);
         } else {
             $resp = $this->container->call([$instace, $method]);
@@ -82,7 +82,9 @@ class LifeCycle implements LifeCycleInterface
             } catch (DependencyException $e) {
             } catch (NotFoundException $e) {
             }
-            $this->response($resp);
+            if ($resp && $resp instanceof ResponseInterface) {
+                $this->response($resp);
+            }
             $this->container->call([$instace, ApplicationController::EVENT_ON_AFTER]);
         }
     }
@@ -90,9 +92,7 @@ class LifeCycle implements LifeCycleInterface
 
     public function response(ResponseInterface $response)
     {
-        if ($response && $response instanceof ResponseInterface) {
-            $this->emitter->emit($response);
-        }
+        $this->emitter->emit($response);
     }
 
 
