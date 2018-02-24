@@ -90,7 +90,9 @@ class LifeCycle implements LifeCycleInterface
 
     public function response(ResponseInterface $response)
     {
-        $this->emitter->emit($response);
+        if ($response && $response instanceof ResponseInterface) {
+            $this->emitter->emit($response);
+        }
     }
 
 
