@@ -75,7 +75,7 @@ class IntegrationTest extends PHPUnit_Framework_TestCase
     }
 
 
-    /** @expectedException \RuntimeException */
+    /** @expectedException \Exception */
     public function testErrorHandler(){
         $res = $this->client->get($this->uri . "/exception", []);
     }
