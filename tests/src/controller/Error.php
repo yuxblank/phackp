@@ -28,7 +28,7 @@ class Error extends Controller
 
     public function error(\Throwable $param){
 
-        throw new \RuntimeException('EXCEPTION_TEST');
+        return new JsonResponse(["error" => "500"]);
     }
 
     public function notFound(){

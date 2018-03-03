@@ -75,9 +75,10 @@ class IntegrationTest extends PHPUnit_Framework_TestCase
     }
 
 
-    /** @expectedException \Exception */
+
     public function testErrorHandler(){
         $res = $this->client->get($this->uri . "/exception", []);
+        $this->assertEquals(\GuzzleHttp\json_decode($res->getBody())->error, '500');
     }
 
     public function testNotFound(){
