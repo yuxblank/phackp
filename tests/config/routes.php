@@ -41,6 +41,12 @@ return [
                 'class' => test\controller\App::class,
                 'alias' => 'test.supadupa!'
             ],
+            [
+                'url' => '/exception',
+                'method' => 'testThrowException',
+                'class' => test\controller\App::class,
+                'alias' => 'test.supadupa!'
+            ],
 
         ],
         'POST' => [
@@ -60,16 +66,22 @@ return [
                 'alias' => 'rest.put'
             ],
 
-        ]
+        ],
 
-    /*    'ERROR' => [
+        'ERROR' => [
             404 =>
                 [
                     'url' => '404',
-                    'method' => 'Error@notFound404',
-                    'class' => Error::class
+                    'method' => 'notFound',
+                    'class' => test\controller\Error::class
                 ],
-        ]*/
+            500  =>
+                [
+                    'url' => '404',
+                    'method' => 'error',
+                    'class' => test\controller\Error::class
+                ]
+        ]
     ]
 
 

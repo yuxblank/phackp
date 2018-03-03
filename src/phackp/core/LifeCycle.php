@@ -13,9 +13,11 @@ use DI\Container;
 use DI\DependencyException;
 use Doctrine\ORM\EntityManagerInterface;
 use Interop\Container\Exception\NotFoundException;
+use Invoker\Exception\NotCallableException;
 use Psr\Http\Message\ResponseInterface;
 use yuxblank\phackp\core\api\ApplicationController;
 use yuxblank\phackp\core\api\LifeCycleInterface;
+use yuxblank\phackp\database\driver\DoctrineDriver;
 use yuxblank\phackp\exceptions\InvocationException;
 use yuxblank\phackp\http\HttpKernel;
 use yuxblank\phackp\routing\api\Router;
@@ -66,33 +68,45 @@ class LifeCycle implements LifeCycleInterface
     }
 
 
-    public function callController(string $method)
+    public function callController(string $method, ...$params)
     {
         $instace = $this->container->get(ApplicationController::class);
 
-        $resp = $this->container->call([$instace, ApplicationController::EVENT_ON_BEFORE]);
-        if ($resp && $resp instanceof ResponseInterface) {
-            $this->response($resp);
-        } else {
-            $resp = $this->container->call([$instace, $method]);
-            try {
-                // flush Em
-                $doctrineDriver = $this->container->get(EntityManagerInterface::class);
-                $doctrineDriver->flush();
-            } catch (DependencyException $e) {
-            } catch (NotFoundException $e) {
-            }
+
+            $resp = $this->container->call([$instace, ApplicationController::EVENT_ON_BEFORE]);
             if ($resp && $resp instanceof ResponseInterface) {
                 $this->response($resp);
+            } else {
+                $resp = $this->container->call([$instace, $method], $params);
+                $this->handleDoctrineDriver();
+                if ($resp && $resp instanceof ResponseInterface) {
+                    $this->response($resp);
+                }
+                $this->container->call([$instace, ApplicationController::EVENT_ON_AFTER]);
             }
-            $this->container->call([$instace, ApplicationController::EVENT_ON_AFTER]);
-        }
+
     }
 
 
     public function response(ResponseInterface $response)
     {
         $this->emitter->emit($response);
+    }
+
+    private function handleDoctrineDriver()
+    {
+        try {
+            $doctrineConfig = $this->container->get('doctrine.config');
+            $isContaierManaged = $doctrineConfig['transaction'] === DoctrineDriver::CONTAINER_MANAGED ?? false;
+            if ($isContaierManaged) {
+                $doctrineDriver = $this->container->get(EntityManagerInterface::class);
+                $doctrineDriver->flush();
+            }
+        } catch (DependencyException $e) {
+        } catch (\DI\NotFoundException $e) {
+        } catch (\InvalidArgumentException $ex) {
+        }
+
     }
 
 

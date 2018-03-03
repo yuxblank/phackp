@@ -79,6 +79,11 @@ class RestController extends Controller
         return $this->jsonReturnKO();
     }
 
+    public function testThrowException(ServerRequestInterface $serverRequest)
+    {
+        throw new \RuntimeException("TEST_EXCEPTION");
+    }
+
 
     private function jsonReturnKO()
     {

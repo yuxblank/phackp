@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use yuxblank\phackp\core\api\ApplicationController;
+use yuxblank\phackp\core\api\ErrorHandlerInterface;
 use yuxblank\phackp\core\api\LifeCycleInterface;
 use yuxblank\phackp\database\api\EntitiyManagerDriver;
 use yuxblank\phackp\database\Database;
@@ -282,6 +283,9 @@ class Application
                         $this->container->get(Response\EmitterInterface::class),
                         $this->container->get(Router::class));
                 },
+                ErrorHandlerInterface::class => function () {
+                    return new ErrorHandler($this->container, $this->container->get(Router::class), $this->container->get(LifeCycleInterface::class));
+                }
             ];
 
     }
@@ -296,6 +300,7 @@ class Application
      */
     public function run()
     {
+        $this->container->get(ErrorHandlerInterface::class);
         /** @var LifeCycleInterface $lifeCycle */
         $lifeCycle = $this->container->get(LifeCycleInterface::class);
         $lifeCycle->request();

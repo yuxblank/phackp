@@ -75,6 +75,19 @@ class IntegrationTest extends PHPUnit_Framework_TestCase
     }
 
 
+    /** @expectedException \RuntimeException */
+    public function testErrorHandler(){
+        $res = $this->client->get($this->uri . "/exception", []);
+    }
+
+    public function testNotFound(){
+        $res = $this->client->get($this->uri . "/pippo/1", []);
+
+        $this->assertEquals(\GuzzleHttp\json_decode($res->getBody())->error, 'not-found');
+    }
+
+
+
 
     protected function tearDown()
     {

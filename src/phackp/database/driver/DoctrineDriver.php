@@ -9,6 +9,8 @@ use yuxblank\phackp\database\api\EntitiyManagerDriver;
 
 class DoctrineDriver implements EntitiyManagerDriver
 {
+    const CONTAINER_MANAGED = 'container';
+    const BEAN              = 'bean';
 
     /** @var \Doctrine\ORM\Configuration */
     private $doctrineConfiguration;

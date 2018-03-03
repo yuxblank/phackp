@@ -16,7 +16,7 @@ interface LifeCycleInterface
 {
     public function request();
 
-    public function callController(string $method);
+    public function callController(string $method,...$params);
 
     public function response(ResponseInterface $response);
 }
