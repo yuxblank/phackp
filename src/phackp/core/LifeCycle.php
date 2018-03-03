@@ -100,7 +100,9 @@ class LifeCycle implements LifeCycleInterface
             $isContaierManaged = $doctrineConfig['transaction'] === DoctrineDriver::CONTAINER_MANAGED ?? false;
             if ($isContaierManaged) {
                 $doctrineDriver = $this->container->get(EntityManagerInterface::class);
-                $doctrineDriver->flush();
+                if ($doctrineDriver->isOpen()) {
+                    $doctrineDriver->flush();
+                }
             }
         } catch (DependencyException $e) {
         } catch (\DI\NotFoundException $e) {
