@@ -9,25 +9,20 @@ use DI\NotFoundException;
 use DI\Scope;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use yuxblank\phackp\core\api\ApplicationController;
 use yuxblank\phackp\core\api\ErrorHandlerInterface;
 use yuxblank\phackp\core\api\LifeCycleInterface;
+use yuxblank\phackp\core\api\Module;
 use yuxblank\phackp\database\api\EntitiyManagerDriver;
 use yuxblank\phackp\database\Database;
 use yuxblank\phackp\database\driver\DoctrineDriver;
 use yuxblank\phackp\database\HackORM;
 use yuxblank\phackp\exceptions\ConfigurationException;
-use yuxblank\phackp\exceptions\InvocationException;
 use yuxblank\phackp\http\HttpKernel;
 use yuxblank\phackp\http\ServerRequest;
 use yuxblank\phackp\routing\api\Router;
-use yuxblank\phackp\routing\exception\RouterException;
 use yuxblank\phackp\services\api\AutoBootService;
 use yuxblank\phackp\services\exceptions\ServiceProviderException;
-use yuxblank\phackp\utils\UnitConversion;
-use yuxblank\phackp\view\exception\ViewException;
 use yuxblank\phackp\view\twig\TwigView;
 use yuxblank\phackp\view\View;
 use Zend\Diactoros\Response;
@@ -49,7 +44,7 @@ class Application
     /** @var  Container */
     private $container;
     private $useDefaultDI = true;
-
+    private $modules = [];
     const RUNTIME_NAME = 'pHackpRuntime';
 
     /**
@@ -301,9 +296,41 @@ class Application
     public function run()
     {
         $this->container->get(ErrorHandlerInterface::class);
+        $this->registerModules();
         /** @var LifeCycleInterface $lifeCycle */
         $lifeCycle = $this->container->get(LifeCycleInterface::class);
         $lifeCycle->request();
+    }
+
+
+    public function addModule(Module $module){
+        try {
+            $refl = new \ReflectionClass($module);
+            $this->modules[$refl->getName()] = $module;
+        } catch (\ReflectionException $e) {
+
+        }
+    }
+
+    /**
+     * @throws DependencyException
+     * @throws NotFoundException
+     */
+    private function registerModules(){
+        $routes = $this->container->get('routes');
+        /** @var Module $module */
+        foreach ($this->modules as $module){
+            // add routes
+            foreach ($module->getRoutes() as $method => $parsedRoute) {
+                foreach ($parsedRoute as $effectiveRoute) {
+                    $routes[$method][] = $effectiveRoute;
+                }
+
+            }
+        }
+
+        $this->container->set('routes', $routes);
+
     }
 
 

@@ -1,6 +1,8 @@
 <?php
+namespace test\tools;
+use yuxblank\phackp\core\api\Module;
 
-class TestModule implements \yuxblank\phackp\core\Module
+class TestModule implements Module
 {
     public static function install()
     {

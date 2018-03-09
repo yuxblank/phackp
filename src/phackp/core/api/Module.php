@@ -6,17 +6,13 @@
  * Time: 0.33
  */
 
-namespace yuxblank\phackp\core;
+namespace yuxblank\phackp\core\api;
 
 
 interface Module
 {
-    
-    public function registerRoutes(array $routes);
-    public function install();
-    public function uninstall();
 
-
-
-
+    public static function install();
+    public static function uninstall();
+    public function getRoutes():array;
 }
