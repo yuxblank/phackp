@@ -9,7 +9,29 @@
 namespace yuxblank\phackp\core\api;
 
 
-class AbstractModuleFactory
+abstract class AbstractModuleFactory implements Module
 {
+    protected $name;
+    protected $routes=[];
+    public function setName(string $name)
+    {
+        $this->name = $name;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getRoutes(): array
+    {
+        return $this->routes;
+    }
+
+    public function setRoutes(array $routes = [])
+    {
+        $this->routes = $routes;
+    }
+
 
 }

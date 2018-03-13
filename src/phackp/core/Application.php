@@ -322,7 +322,8 @@ class Application
         foreach ($this->modules as $module){
             // add routes
             foreach ($module->getRoutes() as $method => $parsedRoute) {
-                foreach ($parsedRoute as $effectiveRoute) {
+                foreach ($parsedRoute as $effectiveRoute)
+                {
                     $routes[$method][] = $effectiveRoute;
                 }
 
