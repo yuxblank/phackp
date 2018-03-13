@@ -104,11 +104,12 @@ class LifeCycle implements LifeCycleInterface
                     $doctrineDriver->flush();
                 }
             }
+            // it's not a required dependency
         } catch (DependencyException $e) {
-        } catch (\DI\NotFoundException $e) {
-        } catch (\InvalidArgumentException $ex) {
-        }
 
+        } catch (\DI\NotFoundException $e) {
+
+        }
     }
 
 
