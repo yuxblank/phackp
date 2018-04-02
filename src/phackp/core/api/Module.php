@@ -18,4 +18,6 @@ interface Module
     public function getName():string ;
     public function getRoutes():array;
     public function setRoutes(array $routes=[]);
+    public function setEntityPaths(array $paths=[]);
+    public function getEntitiesPaths():array;
 }

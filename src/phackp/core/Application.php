@@ -326,7 +326,14 @@ class Application
                 {
                     $routes[$method][] = $effectiveRoute;
                 }
+            }
 
+            if($this->container->has('doctrine.config')){
+                $doctrineConfig = $this->container->get('doctrine.config');
+                foreach ($module->getEntitiesPaths() as $entitiesPath) {
+                    $doctrineConfig['entities_paths'][] = $entitiesPath;
+                }
+                $this->container->set('doctrine.config', $doctrineConfig);
             }
         }
 

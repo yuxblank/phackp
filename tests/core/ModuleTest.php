@@ -21,9 +21,9 @@ class ModuleTest extends PHPUnit_Framework_TestCase
 
     /** @runInSeparateProcess   */
     public function testAddModule(){
-        $module = new TestModule();
-        $app_path = defined("CONFIG_PATH") ? CONFIG_PATH : "./../config";
+        ;$app_path = defined("CONFIG_PATH") ? CONFIG_PATH : "./../config";
         $real = str_replace("/config","",$app_path);
+        $module = new TestModule($real);
         $this->app->bootstrap($real);
         $this->app->addModule($module);
         $this->app->run();
