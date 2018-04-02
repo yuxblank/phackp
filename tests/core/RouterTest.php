@@ -39,7 +39,7 @@ final class RouterTest extends PHPUnit_Framework_TestCase
 
     public function testFindRouteByAlias()
     {
-        $this->assertEquals($this->router->alias('test.get', 'GET', [1]), $this->APP_URL . '/blog/title/1');
+        $this->assertEquals($this->router->alias('test.get', [1], 'GET'), $this->APP_URL . '/blog/title/1');
     }
 
     public function testFindAction()

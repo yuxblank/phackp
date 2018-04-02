@@ -93,15 +93,15 @@ class Router implements api\Router
     public function action(string $action, String $method = null, array $params = null)
     {
         $link = $this->searchThroughRoutes($action, 'action', $method);
-        if ($link === null) {
-            $link = $this->getErrorRoute(404)->getURI();
+        if (!$link) {
+            throw new RouterException(RouterException::NOT_FOUND);
         }
 
         if ($params !== null) {
             $url = $this->fastParamBind($link, $params);
             return $this->appGlobals['APP_URL'] . implode('/', $url);
         }
-        return $link !== '/' ? $this->appGlobals['APP_URL'] . '/'. $link : $this->appGlobals['APP_URL'] . $link;
+        return $this->appGlobals['APP_URL'] . $link;
     }
 
     /**
@@ -117,19 +117,18 @@ class Router implements api\Router
      * @throws \yuxblank\phackp\routing\exception\RouterException
      */
 
-    public function alias(string $alias, String $method = null, array $params = null):string
+    public function alias(string $alias, array $params = null, String $method = null): string
     {
 
         $link = $this->searchThroughRoutes($alias, 'alias', $method);
-        if ($link === null) {
-            $link = $this->getErrorRoute(404)->getURI();
+        if (!$link) {
+            throw new RouterException(RouterException::NOT_FOUND);
         }
-
         if ($params !== null) {
             $url = $url = $this->fastParamBind($link, $params);
-            return $this->appGlobals['APP_URL']  . implode('/', $url);
+            return $this->appGlobals['APP_URL'] . implode('/', $url);
         }
-        return $link !== '/' ? $this->appGlobals['APP_URL'] . '/' : $this->appGlobals['APP_URL'] . $link;
+        return $this->appGlobals['APP_URL'] . $link;
     }
 
     /**
@@ -146,9 +145,9 @@ class Router implements api\Router
         header("location:$r", true, 302);
     }
 
-    public function _switchAction(string $alias, array $params=null)
+    public function _switchAction(string $alias, array $params = null)
     {
-        $r = $this->alias($alias,null,$params);
+        $r = $this->alias($alias, null, $params);
         header("location:$r", true, 302);
     }
 
@@ -161,7 +160,7 @@ class Router implements api\Router
 
     public function redirect(UriInterface $uri)
     {
-        header("location:".$uri, true, 302);
+        header("location:" . $uri, true, 302);
     }
 
     /**
@@ -171,7 +170,7 @@ class Router implements api\Router
      * @throws RouterException
      */
 
-    public function findAction():RouteInterface
+    public function findAction(): RouteInterface
     {
 
         foreach ($this->routes[$this->serverRequest->getMethod()] as $key => $route) {
@@ -202,11 +201,12 @@ class Router implements api\Router
      * @return RouteInterface
      * @throws RouterException
      */
-    public function getErrorRoute(int $code):RouteInterface{
-        if (isset($this->routes['ERROR'][$code])){
+    public function getErrorRoute(int $code): RouteInterface
+    {
+        if (isset($this->routes['ERROR'][$code])) {
             return $this->createRouteFromArray($this->routes['ERROR'][$code]);
         }
-        throw new RouterException('Error route with code: ' .$code. ' not defined', RouterException::ROUTE_NOT_DEFINED);
+        throw new RouterException('Error route with code: ' . $code . ' not defined', RouterException::ROUTE_NOT_DEFINED);
     }
 
 
@@ -333,7 +333,8 @@ class Router implements api\Router
         return $getParams;
     }
 
-    private function createRouteFromArray(array $routeArray){
+    private function createRouteFromArray(array $routeArray)
+    {
         return new Route(
             $routeArray['url'],
             $routeArray['class'],

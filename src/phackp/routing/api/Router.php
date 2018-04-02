@@ -23,7 +23,7 @@ interface Router
      * @throws RouterException
      * @return string
      */
-    public function alias(string $alias, String $method = null, array $params = null):string;
+    public function alias(string $alias, array $params = null, String $method = null):string;
 
     /**
      * Redirect to an internal or by link (path)
